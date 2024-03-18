@@ -14,12 +14,12 @@
     }
   ],
   "paths": {
-    "/student/admission": {
+    "/applicant/admission": {
       "post": {
         "tags": [
           "AdmissionManaging"
         ],
-        "summary": "Creating admission",
+        "summary": "Creating admission and adding it to priority list",
         "security": [
           {
             "bearerAuth": []
@@ -37,7 +37,7 @@
         },
         "responses": {
           "200": {
-            "description": "Admission status changed successfully",
+            "description": "Admission added to list successfully",
             "content": {
               "application/json": {
                 "schema": {
@@ -61,12 +61,12 @@
         }
       }
     },
-    "/student/{AdmissionId}": {
+    "/applicant/{AdmissionId}": {
       "delete": {
         "tags": [
           "AdmissionManaging"
         ],
-        "summary": "Deleting admission",
+        "summary": "Deleting admission from priority list",
         "parameters": [
           {
             "name": "AdmissionId",
@@ -85,7 +85,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Admission status changed successfully",
+            "description": "Admission deletes from list  successfully",
             "content": {
               "application/json": {
                 "schema": {
@@ -102,6 +102,9 @@
           },
           "403": {
             "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not found"
           },
           "500": {
             "description": "InternalServerError"
@@ -166,13 +169,16 @@
           "403": {
             "description": "Forbidden"
           },
+          "404": {
+            "description": "Not found"
+          },
           "500": {
             "description": "InternalServerError"
           }
         }
       }
     },
-    "/priorityList": {
+    "/applicant/priorityList": {
       "get": {
         "tags": [
           "PriorityList"
@@ -206,13 +212,16 @@
           "403": {
             "description": "Forbidden"
           },
+          "404": {
+            "description": "Not found"
+          },
           "500": {
             "description": "InternalServerError"
           }
         }
       }
     },
-    "/priorityList/{AdmissionId}": {
+    "/applicant/priorityList/{AdmissionId}": {
       "patch": {
         "tags": [
           "PriorityList"
@@ -272,8 +281,65 @@
           "403": {
             "description": "Forbidden"
           },
+          "404": {
+            "description": "Not found"
+          },
           "500": {
             "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/manager/{ApplicantId}/priorityList": {
+      "get": {
+        "tags": [
+          "PriorityList"
+        ],
+        "summary": "Getting my admissions in priority list",
+        "parameters": [
+          {
+            "name": "ApplicantId",
+            "in": "path",
+            "description": "Applicant ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Got admissions successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MyAdmission"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "500": {
+            "description": "InternalServerError"
           }
         }
       }
@@ -326,7 +392,65 @@
         },
         "responses": {
           "200": {
-            "description": "Admissions priority successfully changed",
+            "description": "Priority of admission changed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "500": {
+            "description": "InternalServerError"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "PriorityList"
+        ],
+        "summary": "Change priority of admission",
+        "parameters": [
+          {
+            "name": "AdmissionId",
+            "in": "path",
+            "description": "Admission ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "ApplicantId",
+            "in": "path",
+            "description": "Applicant ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Priority deleted from applicant's priority list successfully",
             "content": {
               "application/json": {
                 "schema": {
@@ -346,6 +470,9 @@
           },
           "403": {
             "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not found"
           },
           "500": {
             "description": "Internal Server Error"

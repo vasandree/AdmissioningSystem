@@ -17,7 +17,7 @@
     }
   ],
   "paths": {
-    "/user/profile": {
+    "/profile": {
       "get": {
         "tags": [
           "User"
@@ -96,7 +96,7 @@
         }
       }
     },
-    "/user/register": {
+    "/register": {
       "post": {
         "summary": "Register a new user",
         "tags": [
@@ -132,7 +132,7 @@
         }
       }
     },
-    "/user/login": {
+    "/login": {
       "post": {
         "summary": "User login",
         "tags": [
@@ -168,7 +168,7 @@
         }
       }
     },
-    "/user/logout": {
+    "/logout": {
       "delete": {
         "summary": "User logout",
         "tags": [
@@ -192,7 +192,7 @@
         }
       }
     },
-    "/user/profile/password": {
+    "/profile/password": {
       "patch": {
         "summary": "Reset user password",
         "tags": [
@@ -233,7 +233,7 @@
         }
       }
     },
-    "/user/profile/email": {
+    "/profile/email": {
       "patch": {
         "summary": "Reset user eamil",
         "tags": [
@@ -274,7 +274,7 @@
         }
       }
     },
-    "/user/role": {
+    "/roles": {
       "get": {
         "summary": "Get user roles",
         "tags": [
@@ -305,15 +305,20 @@
         }
       }
     },
-    "/user/role/{id}": {
+    "/role/{UserId}": {
       "patch": {
-        "summary": "Changes user role",
+        "summary": "Adds user role",
         "tags": [
           "Role"
         ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
-            "name": "id",
+            "name": "UserId",
             "in": "path",
             "description": "User ID",
             "required": true,
@@ -346,6 +351,9 @@
           },
           "401": {
             "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not found"
           },
           "500": {
             "description": "InteranLServerError"
@@ -395,6 +403,9 @@
           "403": {
             "description": "Forbidden"
           },
+          "404": {
+            "description": "Not found"
+          },
           "500": {
             "description": "InternalServerError"
           }
@@ -404,7 +415,7 @@
         "tags": [
           "AccountManaging"
         ],
-        "summary": "Get info about applicant",
+        "summary": "Change applicant's info",
         "parameters": [
           {
             "name": "ApplicantId",
@@ -451,6 +462,9 @@
           "403": {
             "description": "Forbidden"
           },
+          "404": {
+            "description": "Not found"
+          },
           "500": {
             "description": "InternalServerError"
           }
@@ -490,9 +504,6 @@
           "birthDate": {
             "type": "string",
             "format": "date-time"
-          },
-          "roles": {
-            "$ref": "#/components/schemas/Roles"
           }
         }
       },
@@ -537,10 +548,6 @@
         "properties": {
           "fullName": {
             "type": "string"
-          },
-          "email": {
-            "type": "string",
-            "format": "email"
           },
           "phone": {
             "type": "string"
@@ -606,16 +613,16 @@
       "Roles": {
         "type": "object",
         "properties": {
-          "admin": {
+          "isAdmin": {
             "type": "boolean"
           },
-          "manager": {
+          "isManager": {
             "type": "boolean"
           },
-          "headManager": {
+          "isHeadManager": {
             "type": "boolean"
           },
-          "student": {
+          "isStudent": {
             "type": "boolean"
           }
         }
@@ -634,9 +641,6 @@
         "properties": {
           "role": {
             "$ref": "#/components/schemas/RolesEnum"
-          },
-          "changeTo": {
-            "type": "boolean"
           }
         }
       }

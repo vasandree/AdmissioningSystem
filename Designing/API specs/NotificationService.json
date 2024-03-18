@@ -1,0 +1,177 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Notifications API",
+    "description": "API specification for managing notifications",
+    "version": "1.0.0"
+  },
+  "tags": [
+    {
+      "name": "ApplicantNotifications"
+    },
+    {
+      "name": "ManagerNotifications"
+    }
+  ],
+  "paths": {
+    "/notifications/applicant/email": {
+      "post": {
+        "tags": [
+          "ApplicantNotifications"
+        ],
+        "summary": "Send email notification to applicant about status change",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StatusNotification"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Email notification sent successfully"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/notifications/manager/appointment": {
+      "post": {
+        "tags": [
+          "ManagerNotifications"
+        ],
+        "summary": "Send notification about manager appointment",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ManagerAppointment"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Notification sent successfully"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/notifications/manager/creation": {
+      "post": {
+        "tags": [
+          "ManagerNotifications"
+        ],
+        "summary": "Send notification about new manager creation",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ManagerCreation"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Notification sent successfully"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "StatusNotification": {
+        "type": "object",
+        "properties": {
+          "applicantEmail": {
+            "type": "string",
+            "format": "email"
+          },
+          "admissionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "status": {
+            "$ref": "#/components/schemas/AdmissionStatus"
+          }
+        }
+      },
+      "AdmissionStatus": {
+        "type": "string",
+        "enum": [
+          "created",
+          "underConsideration",
+          "confirmed",
+          "rejected",
+          "closed"
+        ]
+      },
+      "ManagerAppointment": {
+        "type": "object",
+        "properties": {
+          "applicantEmail": {
+            "type": "string",
+            "format": "email"
+          },
+          "managerEmail": {
+            "type": "string",
+            "format": "email"
+          },
+          "admissionId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "ManagerCreation": {
+        "type": "object",
+        "properties": {
+          "manager_email": {
+            "type": "string",
+            "format": "email"
+          },
+          "faculty": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  }
+}

@@ -14,12 +14,12 @@
     }
   ],
   "paths": {
-    "/manager/admissions": {
+    "/admissions": {
       "get": {
         "tags": [
           "AdmissionManaging"
         ],
-        "summary": "See all admissions",
+        "summary": "Get all admissions",
         "parameters": [
           {
             "name": "ApplicantName",
@@ -204,7 +204,7 @@
         }
       }
     },
-    "/headManager/managers": {
+    "/managers": {
       "get": {
         "tags": [
           "ManagingManagers"
@@ -256,7 +256,7 @@
     "/headManager/{AdmissionId}": {
       "patch": {
         "tags": [
-          "ManagingManagers"
+          "AdmissionManaging"
         ],
         "summary": "Appoint an admission to manager",
         "parameters": [
@@ -317,20 +317,12 @@
         }
       }
     },
-    "/admin/create": {
+    "/manager": {
       "post": {
         "tags": [
           "ManagingManagers"
         ],
-        "parameters": [
-          {
-            "name": "role",
-            "in": "query",
-            "schema": {
-              "$ref": "#/components/schemas/ManagerRoles"
-            }
-          }
-        ],
+        "summary": "Creates manager or head manager",
         "security": [
           {
             "bearerAuth": []
@@ -346,6 +338,10 @@
                   "email": {
                     "type": "string",
                     "format": "email"
+                  },
+                  "faculty": {
+                    "type": "string",
+                    "format": "uuid"
                   }
                 }
               }
@@ -355,6 +351,156 @@
         "responses": {
           "200": {
             "description": "Manager created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "InternalServerError"
+          }
+        }
+      }
+    },
+    "/manager/{ManagerId}": {
+      "get": {
+        "tags": [
+          "ManagingManagers"
+        ],
+        "summary": "Get manager's info",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "ManagerId",
+            "in": "path",
+            "description": "Manager ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Got manager info successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Manager"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "InternalServerError"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "ManagingManagers"
+        ],
+        "summary": "Change manager's info",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "ManagerId",
+            "in": "path",
+            "description": "Manager ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EditManager"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Changed manager info successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "InternalServerError"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "ManagingManagers"
+        ],
+        "summary": "Delete manager",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "ManagerId",
+            "in": "path",
+            "description": "Manager ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Manager deleted successfully",
             "content": {
               "application/json": {
                 "schema": {
@@ -526,7 +672,7 @@
           "id",
           "email",
           "fullName",
-          "role"
+          "faculty"
         ],
         "type": "object",
         "properties": {
@@ -534,14 +680,27 @@
             "type": "string",
             "format": "uuid"
           },
-          "fullname": {
+          "fullName": {
             "type": "string"
           },
           "email": {
             "type": "string"
           },
-          "role": {
-            "$ref": "#/components/schemas/ManagerRoles"
+          "faculty": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "EditManager": {
+        "type": "object",
+        "properties": {
+          "fullName": {
+            "type": "string"
+          },
+          "faculty": {
+            "type": "string",
+            "format": "uuid"
           }
         }
       }
