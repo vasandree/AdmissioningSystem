@@ -1,0 +1,310 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Dictionary Service",
+    "description": "API specification for managing dictionary",
+    "version": "1.1.0"
+  },
+  "tags": [
+    {
+      "name": "ReferenceBooks"
+    },
+    {
+      "name": "Dictionary"
+    }
+  ],
+  "paths": {
+    "/dictionary/programmes": {
+      "get": {
+        "tags": [
+          "Dictionary"
+        ],
+        "summary": "Get list of programmes",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "ProgrammeName",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "ProgrammeCode",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Faculty",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "uuid",
+                "description": "Select multiple faculties",
+                "example": "FacultyId"
+              }
+            }
+          },
+          {
+            "name": "EduacationLevelId",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "description": "Select multiple education levels",
+                "example": "0"
+              }
+            }
+          },
+          {
+            "name": "EducationForm",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "Очная",
+                  "Заочная",
+                  "Очно-заочная"
+                ]
+              }
+            }
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "English",
+                  "Русский"
+                ]
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Info got successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EducationProgramModel"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "InternalServerError"
+          }
+        }
+      }
+    },
+    "/dictionary/import": {
+      "post": {
+        "tags": [
+          "ReferenceBooks"
+        ],
+        "summary": "Import reference books from an external system",
+        "description": "This endpoint allows importing reference books such as faculty, program, and level of education from an external system and storing them in the database.\n",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "login": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Reference books imported successfully"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/dictionary/status": {
+      "get": {
+        "tags": [
+          "ReferenceBooks"
+        ],
+        "summary": "Get the status of importing directories",
+        "description": "This endpoint allows users to view the status of importing directories from the external system.\n",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Status retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "EducationLevelModel": {
+        "required": [
+          "id",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "additionalProperties": false
+      },
+      "EducationProgramModel": {
+        "required": [
+          "createTime",
+          "educationForm",
+          "educationLevel",
+          "faculty",
+          "id",
+          "language",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "createTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "language": {
+            "type": "string",
+            "minLength": 1
+          },
+          "educationForm": {
+            "type": "string",
+            "minLength": 1
+          },
+          "faculty": {
+            "$ref": "#/components/schemas/FacultyModel"
+          },
+          "educationLevel": {
+            "$ref": "#/components/schemas/EducationLevelModel"
+          }
+        },
+        "additionalProperties": false
+      },
+      "FacultyModel": {
+        "required": [
+          "createTime",
+          "id",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "createTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  }
+}
