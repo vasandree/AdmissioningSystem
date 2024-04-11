@@ -1,12 +1,13 @@
 using Common.Configurators;
 using UserApi.Configurators;
 using UserApi.DAL;
+using UserApi.DAL.DbInitializer;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.ConfigureUserDal();
-
 builder.ConfigureUserApiService();
+
+builder.ConfigureUserDal();
 
 builder.ConfigureIdentity();
 
@@ -21,5 +22,5 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseAuthorization();
+
 app.Run();

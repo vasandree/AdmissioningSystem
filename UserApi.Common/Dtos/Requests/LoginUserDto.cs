@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
-using UserApi.Dtos.CustomValidationAttributes;
+using UserApi.Common.Dtos.CustomValidationAttributes;
 
-namespace UserApi.Dtos;
+namespace UserApi.Common.Dtos.Requests;
 
 public class LoginUserDto
 {

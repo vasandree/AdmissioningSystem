@@ -4,13 +4,13 @@ using UserApi.Common.Enums;
 
 namespace UserApi.DAL.DbEntities;
 
-public class StudentEntity
+public class ApplicantEntity
 {
     public Guid Id { get; set; }
-
-    [Required] public Guid UserId { get; set; }
     
-    [Required][ForeignKey("UserId")] public ApplicationUser User { get; set; } = null!;
+    [Required]
+    [ForeignKey("UserId")] 
+    public ApplicationUser User { get; set; } = null!;
     
     public Gender Gender { get; set; }
     

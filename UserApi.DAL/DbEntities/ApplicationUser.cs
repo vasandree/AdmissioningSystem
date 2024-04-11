@@ -6,7 +6,7 @@ public class ApplicationUser : IdentityUser<Guid>
 {
     public string FullName { get; set; }
     
-    public StudentEntity? Student { get; set; }
+    public ApplicantEntity? Student { get; set; }
     
     public ManagerEntity? Manager { get; set; }
     

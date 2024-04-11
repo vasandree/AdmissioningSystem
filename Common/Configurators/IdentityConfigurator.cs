@@ -1,11 +1,12 @@
+
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using UserApi.DAL;
 using UserApi.DAL.DbEntities;
 
-namespace Common.Configurators
-{
+namespace Common.Configurators;
+
     public static class IdentityConfigurator
     {
         public static void ConfigureIdentity(this WebApplicationBuilder builder)
@@ -16,4 +17,5 @@ namespace Common.Configurators
                 .AddSignInManager<SignInManager<ApplicationUser>>();
         }
     }
-}
+
+

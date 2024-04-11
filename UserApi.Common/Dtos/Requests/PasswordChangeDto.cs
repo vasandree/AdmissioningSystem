@@ -1,11 +1,10 @@
 using System.ComponentModel.DataAnnotations;
-using UserApi.Dtos.CustomValidationAttributes;
+using UserApi.Common.Dtos.CustomValidationAttributes;
 
 namespace UserApi.Common.Dtos.Requests;
 
 public class PasswordChangeDto
 {
-      
     [MinLength(6)]
     [MaxLength(30)]
     [Password]

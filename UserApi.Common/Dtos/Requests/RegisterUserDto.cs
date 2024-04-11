@@ -1,7 +1,8 @@
 using System.ComponentModel.DataAnnotations;
+using UserApi.Common.Dtos.CustomValidationAttributes;
 using UserApi.Common.Enums;
 
-namespace UserApi.Dtos.CustomValidationAttributes;
+namespace UserApi.Common.Dtos.Requests;
 
 public class RegisterUserDto
 {
@@ -33,7 +34,3 @@ public class RegisterUserDto
     public DateTime BirthDate { get; set; }
 
 }
-    
-    
-    
-    

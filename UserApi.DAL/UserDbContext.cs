@@ -5,28 +5,28 @@ using UserApi.DAL.DbEntities;
 
 namespace UserApi.DAL;
 
-public sealed class UserDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid>, Guid>
-{
-
-    public  UserDbContext(DbContextOptions<UserDbContext> options) : base(options)
+    public sealed class UserDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid>, Guid>
     {
-    }
+        public UserDbContext(DbContextOptions<UserDbContext> options)
+            : base(options)
+        {
+        }
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        base.OnModelCreating(modelBuilder);
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
         
-        modelBuilder.Entity<ApplicationUser>()
-            .HasOne(x => x.Student)
-            .WithOne(x => x.User)
-            .HasForeignKey<StudentEntity>().IsRequired();
+            modelBuilder.Entity<ApplicationUser>()
+                .HasOne(x => x.Student)
+                .WithOne(x => x.User)
+                .HasForeignKey<ApplicantEntity>().IsRequired();
         
-        modelBuilder.Entity<ApplicationUser>()
-            .HasOne(x => x.Manager)
-            .WithOne(x => x.User)
-            .HasForeignKey<ManagerEntity>().IsRequired();
-        
+            modelBuilder.Entity<ApplicationUser>()
+                .HasOne(x => x.Manager)
+                .WithOne(x => x.User)
+                .HasForeignKey<ManagerEntity>().IsRequired();
+        }
+
+        public DbSet<ApplicantEntity> Applicants { get; set; } = null!;
+        public DbSet<ManagerEntity> Managers { get; set; } = null!;
     }
-    public DbSet<StudentEntity> Students { get; set; } = null!;
-    public DbSet<ManagerEntity> Managers { get; set; } = null!;
-}

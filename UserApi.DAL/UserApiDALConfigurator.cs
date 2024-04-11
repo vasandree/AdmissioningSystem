@@ -13,16 +13,17 @@ public static class UserApiDalConfigurator
         var connection = builder.Configuration.GetConnectionString("PostgresUser");
         builder.Services.AddDbContext<UserDbContext>(options => options.UseNpgsql(connection));
         
-        
     }
 
     public static void ConfigureUserDal(this WebApplication application)
     {
-        using var scope = application.Services.CreateScope();
-        var dbContext = scope.ServiceProvider.GetService<UserDbContext>();
-        dbContext?.Database.Migrate();
+        using (var scope = application.Services.CreateScope())
+        {
+            var dbContext = scope.ServiceProvider.GetService<UserDbContext>();
+            dbContext?.Database.Migrate();
 
-        var initializer = scope.ServiceProvider.GetRequiredService<IDbUserInitializer>();
-        initializer.InitializeUserDb();
+            var initializer = scope.ServiceProvider.GetRequiredService<IDbUserInitializer>();
+            initializer.InitializeUserDb();
+        }
     }
 }

@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
+using UserApi.Common.Dtos.CustomValidationAttributes;
 using UserApi.Common.Enums;
-using UserApi.Dtos.CustomValidationAttributes;
 
 namespace UserApi.Common.Dtos.Requests;
 

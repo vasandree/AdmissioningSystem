@@ -35,12 +35,11 @@ public class DbUserInitializer : IDbUserInitializer
         {
             // ignored
         }
-
-        if (_roleManager.RoleExistsAsync("Student").GetAwaiter().GetResult()) return;
+        if (_roleManager.RoleExistsAsync("Applicant").GetAwaiter().GetResult()) return;
 
         var adminConfig = _configuration.GetSection("AdminConfig").Get<AdminConfig>();
 
-        _roleManager.CreateAsync(new IdentityRole<Guid>("Student")).GetAwaiter().GetResult();
+        _roleManager.CreateAsync(new IdentityRole<Guid>("Applicant")).GetAwaiter().GetResult();
         _roleManager.CreateAsync(new IdentityRole<Guid>("Manager")).GetAwaiter().GetResult();
         _roleManager.CreateAsync(new IdentityRole<Guid>("Admin")).GetAwaiter().GetResult();
         _roleManager.CreateAsync(new IdentityRole<Guid>("HeadManager")).GetAwaiter().GetResult();
