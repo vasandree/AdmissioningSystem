@@ -5,6 +5,8 @@ namespace UserApi.DAL.DbEntities;
 public class ApplicationUser : IdentityUser<Guid>
 {
     public string FullName { get; set; }
+
+    public string? ConfirmCode { get; set; }
     
     public ApplicantEntity? Student { get; set; }
     

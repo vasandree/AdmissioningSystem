@@ -1,7 +1,6 @@
 using Common.Configurators;
 using UserApi.Configurators;
 using UserApi.DAL;
-using UserApi.DAL.DbInitializer;
 
 var builder = WebApplication.CreateBuilder(args);
 
