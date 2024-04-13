@@ -11,7 +11,12 @@ namespace Common.Configurators;
     {
         public static void ConfigureIdentity(this WebApplicationBuilder builder)
         {
-            builder.Services.AddIdentity<ApplicationUser, IdentityRole<Guid>>()
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole<Guid>>(options =>
+                {
+                    options.Password.RequiredLength = 6;
+                    options.Password.RequireNonAlphanumeric = false;
+                    options.User.RequireUniqueEmail = true;
+                })
                 .AddEntityFrameworkStores<UserDbContext>()
                 .AddUserManager<UserManager<ApplicationUser>>()
                 .AddSignInManager<SignInManager<ApplicationUser>>();

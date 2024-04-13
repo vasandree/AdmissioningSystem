@@ -35,23 +35,42 @@ public class DbUserInitializer : IDbUserInitializer
         {
             // ignored
         }
-        if (_roleManager.RoleExistsAsync("Applicant").GetAwaiter().GetResult()) return;
 
-        var adminConfig = _configuration.GetSection("AdminConfig").Get<AdminConfig>();
-
-        _roleManager.CreateAsync(new IdentityRole<Guid>("Applicant")).GetAwaiter().GetResult();
-        _roleManager.CreateAsync(new IdentityRole<Guid>("Manager")).GetAwaiter().GetResult();
-        _roleManager.CreateAsync(new IdentityRole<Guid>("Admin")).GetAwaiter().GetResult();
-        _roleManager.CreateAsync(new IdentityRole<Guid>("HeadManager")).GetAwaiter().GetResult();
-
-        _userManager.CreateAsync(new ApplicationUser
+        if (!_roleManager.RoleExistsAsync("Applicant").GetAwaiter().GetResult())
         {
-            FullName = adminConfig.FullName,
-            Email = adminConfig.Email,
-            UserName = adminConfig.FullName
-        }, adminConfig.Password).GetAwaiter().GetResult();
+            // Create roles
+            _roleManager.CreateAsync(new IdentityRole<Guid>("Applicant")).GetAwaiter().GetResult();
+            _roleManager.CreateAsync(new IdentityRole<Guid>("Manager")).GetAwaiter().GetResult();
+            _roleManager.CreateAsync(new IdentityRole<Guid>("Admin")).GetAwaiter().GetResult();
+            _roleManager.CreateAsync(new IdentityRole<Guid>("HeadManager")).GetAwaiter().GetResult();
+        }
 
-        var user = _context.Users.FirstOrDefault(u => u.Email == adminConfig.Email);
-        if (user != null) _userManager.AddToRoleAsync(user, "Admin").GetAwaiter().GetResult();
+        // Check if admin user exists
+        var adminConfig = _configuration.GetSection("AdminConfig").Get<AdminConfig>();
+        var existingAdmin = _userManager.FindByEmailAsync(adminConfig.Email).GetAwaiter().GetResult();
+        if (existingAdmin == null)
+        {
+            // Create admin user
+            var adminUser = new ApplicationUser
+            {
+                FullName = adminConfig.FullName,
+                Email = adminConfig.Email,
+                UserName = adminConfig.Email // Use email as username for simplicity
+            };
+            var createUserResult = _userManager.CreateAsync(adminUser, adminConfig.Password).GetAwaiter().GetResult();
+            if (createUserResult.Succeeded)
+            {
+                // Assign "Admin" role to the admin user
+                _userManager.AddToRoleAsync(adminUser, "Admin").GetAwaiter().GetResult();
+            }
+            else
+            {
+                // Log or handle error if user creation fails
+                foreach (var error in createUserResult.Errors)
+                {
+                    Console.WriteLine($"Error creating admin user: {error.Description}");
+                }
+            }
+        }
     }
 }
