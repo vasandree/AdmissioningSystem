@@ -11,4 +11,8 @@ public class ApplicationUser : IdentityUser<Guid>
     public ApplicantEntity? Student { get; set; }
 
     public ManagerEntity? Manager { get; set; }
+    
+    public string? RefreshToken { get; set; }
+    
+    public DateTime? RefreshTokenExpiryDate { get; set; }
 }

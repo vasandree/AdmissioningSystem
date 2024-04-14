@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
-using UserApi.Common.Dtos.CustomValidationAttributes;
+using UserApi.Application.Dtos.CustomValidationAttributes;
 
-namespace UserApi.Common.Dtos.Requests;
+namespace UserApi.Application.Dtos.Requests;
 
 public class ForgetPasswordDto
 {

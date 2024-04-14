@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace UserApi.Common.Dtos.Requests;
+namespace UserApi.Application.Dtos.Requests;
 
 public class ChangeEmailDto
 {

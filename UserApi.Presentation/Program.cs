@@ -6,9 +6,9 @@ builder.ConfigureUserApiService();
 
 builder.ConfigureUserDal();
 
-builder.ConfigureRepositories();
-
 builder.ConfigureIdentity();
+
+/*builder.ConfigureRepositories();*/
 
 var app = builder.Build();
 

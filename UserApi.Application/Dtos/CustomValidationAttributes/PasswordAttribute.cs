@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace UserApi.Common.Dtos.CustomValidationAttributes;
+namespace UserApi.Application.Dtos.CustomValidationAttributes;
 
 public class PasswordAttribute : ValidationAttribute
 {

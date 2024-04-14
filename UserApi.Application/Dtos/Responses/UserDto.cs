@@ -1,5 +1,5 @@
 using System.ComponentModel.DataAnnotations;
-using UserApi.Common.Dtos.CustomValidationAttributes;
+using UserApi.Application.Dtos.CustomValidationAttributes;
 using UserApi.Domain.Enums;
 
 namespace UserApi.Common.Dtos.Responses;

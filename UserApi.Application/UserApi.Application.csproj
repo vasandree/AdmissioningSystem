@@ -7,16 +7,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\UserApi.Domain\UserApi.Domain.csproj" />
-      <ProjectReference Include="..\UserApi.Infrastructure\UserApi.Infrastructure.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Services\" />
-    </ItemGroup>
-
-    <ItemGroup>
       <PackageReference Include="MediatR" Version="12.2.0" />
+      <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\UserApi.Domain\UserApi.Domain.csproj" />
     </ItemGroup>
 
 </Project>
