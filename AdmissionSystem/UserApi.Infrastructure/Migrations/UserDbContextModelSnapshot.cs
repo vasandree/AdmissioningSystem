@@ -3,7 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using UserApi.Domain;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using UserApi.Infrastructure;
 
 #nullable disable
@@ -152,7 +152,7 @@ namespace UserApi.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("UserApi.Presentation.DAL.DbEntities.ApplicantEntity", b =>
+            modelBuilder.Entity("UserApi.Domain.DbEntities.ApplicantEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -178,7 +178,7 @@ namespace UserApi.Migrations
                     b.ToTable("Applicants");
                 });
 
-            modelBuilder.Entity("UserApi.Presentation.DAL.DbEntities.ApplicationUser", b =>
+            modelBuilder.Entity("UserApi.Domain.DbEntities.ApplicationUser", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -228,6 +228,12 @@ namespace UserApi.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("boolean");
 
+                    b.Property<string>("RefreshToken")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("RefreshTokenExpiryDate")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text");
 
@@ -250,7 +256,7 @@ namespace UserApi.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("UserApi.Presentation.DAL.DbEntities.ManagerEntity", b =>
+            modelBuilder.Entity("UserApi.Domain.DbEntities.ManagerEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -281,7 +287,7 @@ namespace UserApi.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
                 {
-                    b.HasOne("UserApi.Presentation.DAL.DbEntities.ApplicationUser", null)
+                    b.HasOne("UserApi.Domain.DbEntities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -290,7 +296,7 @@ namespace UserApi.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
                 {
-                    b.HasOne("UserApi.Presentation.DAL.DbEntities.ApplicationUser", null)
+                    b.HasOne("UserApi.Domain.DbEntities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -305,7 +311,7 @@ namespace UserApi.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("UserApi.Presentation.DAL.DbEntities.ApplicationUser", null)
+                    b.HasOne("UserApi.Domain.DbEntities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -314,36 +320,36 @@ namespace UserApi.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
                 {
-                    b.HasOne("UserApi.Presentation.DAL.DbEntities.ApplicationUser", null)
+                    b.HasOne("UserApi.Domain.DbEntities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("UserApi.Presentation.DAL.DbEntities.ApplicantEntity", b =>
+            modelBuilder.Entity("UserApi.Domain.DbEntities.ApplicantEntity", b =>
                 {
-                    b.HasOne("UserApi.Presentation.DAL.DbEntities.ApplicationUser", "User")
+                    b.HasOne("UserApi.Domain.DbEntities.ApplicationUser", "User")
                         .WithOne("Student")
-                        .HasForeignKey("UserApi.Presentation.DAL.DbEntities.ApplicantEntity", "UserId")
+                        .HasForeignKey("UserApi.Domain.DbEntities.ApplicantEntity", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("UserApi.Presentation.DAL.DbEntities.ManagerEntity", b =>
+            modelBuilder.Entity("UserApi.Domain.DbEntities.ManagerEntity", b =>
                 {
-                    b.HasOne("UserApi.Presentation.DAL.DbEntities.ApplicationUser", "User")
+                    b.HasOne("UserApi.Domain.DbEntities.ApplicationUser", "User")
                         .WithOne("Manager")
-                        .HasForeignKey("UserApi.Presentation.DAL.DbEntities.ManagerEntity", "UserId")
+                        .HasForeignKey("UserApi.Domain.DbEntities.ManagerEntity", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("UserApi.Presentation.DAL.DbEntities.ApplicationUser", b =>
+            modelBuilder.Entity("UserApi.Domain.DbEntities.ApplicationUser", b =>
                 {
                     b.Navigation("Manager");
 
