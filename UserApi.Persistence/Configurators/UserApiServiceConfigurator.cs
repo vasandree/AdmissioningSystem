@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using UserApi.Infrastructure.DbInitializer;
 
-namespace UserApi.Application.Configurators;
+namespace UserApi.Persistence.Configurators;
 
 public static class UserApiServiceConfigurator
 {

@@ -1,12 +1,10 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
-using UserApi.Common;
 using UserApi.Domain.DbEntities;
 using UserApi.Infrastructure;
 
-
-namespace UserApi.Application.Configurators;
+namespace UserApi.Persistence.Configurators;
 
     public static class IdentityConfigurator
     {

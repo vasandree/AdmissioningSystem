@@ -26,6 +26,7 @@
     <ItemGroup>
         <ProjectReference Include="..\UserApi.Application\UserApi.Application.csproj" />
         <ProjectReference Include="..\UserApi.Domain\UserApi.Domain.csproj"/>
+        <ProjectReference Include="..\UserApi.Persistence\UserApi.Persistence.csproj" />
     </ItemGroup>
 
 </Project>

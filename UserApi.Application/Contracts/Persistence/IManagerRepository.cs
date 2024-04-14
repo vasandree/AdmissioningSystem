@@ -2,10 +2,10 @@ using UserApi.Domain.DbEntities;
 
 namespace UserApi.Application.Contracts.Persistence;
 
-public interface IManagerRepository : IGenericRepository<Domain.DbEntities.ManagerEntity>
+public interface IManagerRepository : IGenericRepository<ManagerEntity>
 {
     Task<ManagerEntity?> GetById(Guid id);
-    Task<IReadOnlyList<Domain.DbEntities.ManagerEntity>> GetManagers();
-    Task<IReadOnlyList<Domain.DbEntities.ManagerEntity>> GetHeadManagers();
-    Task<IReadOnlyList<Domain.DbEntities.ManagerEntity>> GetManagersByFaculty(Guid id);
+    Task<IReadOnlyList<ManagerEntity>> GetManagers();
+    Task<IReadOnlyList<ManagerEntity>> GetHeadManagers();
+    Task<IReadOnlyList<ManagerEntity>> GetManagersByFaculty(Guid id);
 }

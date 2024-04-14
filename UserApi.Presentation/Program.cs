@@ -1,10 +1,12 @@
-using UserApi.Application.Configurators;
+using UserApi.Persistence.Configurators;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.ConfigureUserApiService();
 
 builder.ConfigureUserDal();
+
+builder.ConfigureRepositories();
 
 builder.ConfigureIdentity();
 

@@ -16,8 +16,4 @@
       <ProjectReference Include="..\UserApi.Domain\UserApi.Domain.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Persistence\Repositories\" />
-    </ItemGroup>
-
 </Project>

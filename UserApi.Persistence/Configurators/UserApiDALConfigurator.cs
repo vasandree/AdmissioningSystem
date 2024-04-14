@@ -2,11 +2,10 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using UserApi.Common;
 using UserApi.Infrastructure;
 using UserApi.Infrastructure.DbInitializer;
 
-namespace UserApi.Application.Configurators;
+namespace UserApi.Persistence.Configurators;
 
 public static class UserApiDalConfigurator
 {
