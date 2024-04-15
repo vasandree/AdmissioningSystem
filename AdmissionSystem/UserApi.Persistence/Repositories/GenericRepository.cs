@@ -10,7 +10,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
     private readonly UserDbContext _context;
     private readonly DbSet<T> _dbSet;
 
-    protected GenericRepository(UserDbContext context)
+    public GenericRepository(UserDbContext context)
     {
         _context = context;
         _dbSet = context.Set<T>();
@@ -23,12 +23,6 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
     public async Task<IReadOnlyList<T>> Find(Expression<Func<T, bool>> expression)
     {
         return await _dbSet.Where(expression).ToListAsync();
-    }
-
-    public async Task CreateAsync(T entity)
-    {
-        await _dbSet.AddAsync(entity); 
-        await _context.SaveChangesAsync();
     }
 
     public async Task UpdateAsync(T entity)

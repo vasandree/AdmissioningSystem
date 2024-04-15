@@ -8,10 +8,16 @@ namespace UserApi.Persistence.Repositories;
 public class UserRepository : GenericRepository<ApplicationUser>, IUserRepository
 {
     private readonly UserManager<ApplicationUser> _userManager;
-    
-    protected UserRepository(UserDbContext context, UserManager<ApplicationUser> userManager) : base(context)
+    private IUserRepository _userRepositoryImplementation;
+
+    public UserRepository(UserDbContext context, UserManager<ApplicationUser> userManager, IGenericRepository<ApplicationUser> genericRepository) : base(context)
     {
         _userManager = userManager;
+    }
+
+    public async Task CreateUser(ApplicationUser user, string password)
+    {
+        await _userManager.CreateAsync(user, password);
     }
 
     public async Task<ApplicationUser?> GetById(Guid id)
@@ -27,5 +33,15 @@ public class UserRepository : GenericRepository<ApplicationUser>, IUserRepositor
     public async Task<IList<string>> GetUserRoles(ApplicationUser user)
     {
         return await _userManager.GetRolesAsync(user);
+    }
+
+    public async Task ChangePassword(ApplicationUser user, string oldPassword, string newPassword)
+    {
+        await _userManager.ChangePasswordAsync(user, oldPassword, newPassword);
+    }
+
+    public async Task<bool> CheckPassword(ApplicationUser user, string password)
+    {
+        return await _userManager.CheckPasswordAsync(user, password);
     }
 }

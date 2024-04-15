@@ -7,16 +7,16 @@ using UserApi.Infrastructure.DbInitializer;
 
 namespace UserApi.Persistence.Configurators;
 
-public static class UserApiDalConfigurator
+public static class UserApiDbConfigurator
 {
-    public static void ConfigureUserDal(this WebApplicationBuilder builder)
+    public static void ConfigureUserDb(this WebApplicationBuilder builder)
     {
         var connection = builder.Configuration.GetConnectionString("PostgresUser");
         builder.Services.AddDbContext<UserDbContext>(options => options.UseNpgsql(connection));
         
     }
 
-    public static void ConfigureUserDal(this WebApplication application)
+    public static void ConfigureUserDb(this WebApplication application)
     {
         using (var scope = application.Services.CreateScope())
         {

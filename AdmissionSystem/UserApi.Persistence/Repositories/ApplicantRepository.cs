@@ -9,7 +9,7 @@ public class ApplicantRepository : GenericRepository<ApplicantEntity>, IApplican
 {
     private readonly UserDbContext _context;
     
-    protected ApplicantRepository(UserDbContext context) : base(context)
+    public ApplicantRepository(UserDbContext context) : base(context)
     {
         _context = context;
     }

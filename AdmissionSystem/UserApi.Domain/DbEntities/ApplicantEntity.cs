@@ -1,6 +1,5 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using UserApi.Domain.Enums;
 
 namespace UserApi.Domain.DbEntities;
 
@@ -11,9 +10,5 @@ public class ApplicantEntity
     [Required] [ForeignKey("User")] public Guid UserId { get; set; }
 
     public ApplicationUser User { get; set; } = null!;
-    public Gender? Gender { get; set; }
 
-    public string? Nationality { get; set; }
-
-    public DateTime? BirthDate { get; set; }
 }

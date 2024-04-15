@@ -9,7 +9,7 @@ public class ManagerRepository : GenericRepository<ManagerEntity>, IManagerRepos
 {
     private readonly UserDbContext _context;
     
-    protected ManagerRepository(UserDbContext context) : base(context)
+    public ManagerRepository(UserDbContext context) : base(context)
     {
         _context = context;
     }

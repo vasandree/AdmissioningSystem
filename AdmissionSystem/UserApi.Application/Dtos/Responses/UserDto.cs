@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using UserApi.Application.Dtos.CustomValidationAttributes;
 using UserApi.Domain.Enums;
 
-namespace UserApi.Common.Dtos.Responses;
+namespace UserApi.Application.Dtos.Responses;
 
 public class UserDto
 {

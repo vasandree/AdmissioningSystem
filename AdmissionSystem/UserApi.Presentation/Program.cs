@@ -1,18 +1,23 @@
+
+
 using UserApi.Persistence.Configurators;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.ConfigureUserApiService();
 
-builder.ConfigureUserDal();
+builder.ConfigureUserDb();
+
+builder.ConfigureAuth();
 
 builder.ConfigureIdentity();
 
-/*builder.ConfigureRepositories();*/
+builder.ConfigureRepositories();
+
 
 var app = builder.Build();
 
-app.ConfigureUserDal();
+app.ConfigureUserDb();
 
 if (app.Environment.IsDevelopment())
 {
@@ -21,5 +26,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
+
+app.UseAuthorization();
 
 app.Run();
