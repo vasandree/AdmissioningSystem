@@ -1,8 +1,11 @@
 using NotificationApi.Infrastructure.Configurators;
+using NotificationApi.Application.Configurators;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.ConfigureNotificationInfrastructure();
+
+builder.ConfigureNotificationApplication();
 
 builder.Services.AddEndpointsApiExplorer();
 

@@ -1,6 +1,6 @@
 using System.Net;
 using System.Net.Mail;
-using System.Net.Mime;
+using Microsoft.Extensions.Options;
 using NotificationApi.Application.Contracts;
 using NotificationApi.Application.Models;
 
@@ -10,11 +10,10 @@ public class SmtpEmailSender : IEmailSender
 {
     private readonly EmailConfig _emailConfig;
 
-    public SmtpEmailSender(EmailConfig emailConfig)
+    public SmtpEmailSender(IOptions<EmailConfig> emailConfig)
     {
-        _emailConfig = emailConfig;
+        _emailConfig = emailConfig.Value;
     }
-
 
     public async Task<bool> SendEmail(EmailMessage email)
     {

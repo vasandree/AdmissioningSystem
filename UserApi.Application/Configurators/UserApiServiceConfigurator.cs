@@ -1,7 +1,8 @@
 using System.Reflection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
-using UserApi.Application.Contracts.Persistence;
+using UserApi.Application.Contracts.Publishers;
+
 
 namespace UserApi.Application.Configurators;
 

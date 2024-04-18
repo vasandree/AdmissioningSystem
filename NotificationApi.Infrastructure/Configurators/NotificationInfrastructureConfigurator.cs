@@ -11,6 +11,6 @@ public static class NotificationInfrastructureConfigurator
     public static void ConfigureNotificationInfrastructure(this WebApplicationBuilder builder)
     {
         builder.Services.Configure<EmailConfig>(builder.Configuration.GetSection("EmailSettings"));
-        builder.Services.AddTransient<IEmailSender, SmtpEmailSender>();
+        builder.Services.AddSingleton<IEmailSender, SmtpEmailSender>();
     }
 }
