@@ -1,19 +1,21 @@
+using System.Text;
 using Common.Models;
+using EasyNetQ;
 using MediatR;
+using Newtonsoft.Json;
 using UserApi.Application.Contracts.Persistence;
-using UserApi.Application.Contracts.Publishers;
 
 namespace UserApi.Application.Features.Commands.SendEmailCode;
 
 public class SendEmailCodeHandler : IRequestHandler<SendEmailCode, Unit>
 {
     private readonly IUserRepository _repository;
-    private readonly IForgetPasswordPublisher _publisher;
+    private readonly IBus _bus;
 
-    public SendEmailCodeHandler(IUserRepository repository,IForgetPasswordPublisher publisher)
+    public SendEmailCodeHandler(IUserRepository repository, IBus bus)
     {
         _repository = repository;
-        _publisher = publisher;
+        _bus = bus;
     }
 
     public async Task<Unit> Handle(SendEmailCode request, CancellationToken cancellationToken)
@@ -25,8 +27,19 @@ public class SendEmailCodeHandler : IRequestHandler<SendEmailCode, Unit>
             {
                 throw new Exception("User not found.");
             }
+
+            var confirmCode = GenerateConfirmCode();
+            user.ConfirmCode = confirmCode;
+            await _repository.UpdateAsync(user);
             
-            _publisher.PublishMessageToRabbitMq(new ForgetPasswordMessage() { Email = user.Email });
+            
+            var body = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new ForgetPasswordMessage
+            {
+                Email = request.Email,
+                ConfirmCode = confirmCode
+            }));
+            
+            await _bus.PubSub.PublishAsync(body, cancellationToken: cancellationToken);
 
             return Unit.Value;
         }
@@ -35,5 +48,13 @@ public class SendEmailCodeHandler : IRequestHandler<SendEmailCode, Unit>
             Console.WriteLine($"An error occurred: {ex.Message}");
             throw; 
         }
+    }
+
+    private string GenerateConfirmCode()
+    {
+        Random rand = new Random();
+        int randomNumber = rand.Next(1, 999999);
+        string code = randomNumber.ToString("D6");
+        return code;
     }
 }

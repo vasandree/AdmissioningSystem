@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Mail;
+using Common.ConfigClasses;
 using Microsoft.Extensions.Options;
 using NotificationApi.Application.Contracts;
 using NotificationApi.Application.Models;
