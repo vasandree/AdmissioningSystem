@@ -1,3 +1,4 @@
+using Common.Exceptions;
 using MediatR;
 using UserApi.Application.Contracts.Persistence;
 using UserApi.Application.Dtos.Responses;
@@ -16,7 +17,8 @@ public class GetUserRolesHandler : IRequestHandler<GetUserRolesQuery, RolesDto>
     public async Task<RolesDto> Handle(GetUserRolesQuery request, CancellationToken cancellationToken)
     {
         var user = await _repository.GetByEmail(request.Email);
-        if (user == null) throw new Exception("No such user");
+        if (user == null) throw new BadRequest("No such user");
+        
         var roles = await _repository.GetUserRoles(user);
         return InsertRolesIntoDto(roles);
     }

@@ -1,4 +1,5 @@
 using AutoMapper;
+using Common.Exceptions;
 using MediatR;
 using UserApi.Application.Contracts.Persistence;
 using UserApi.Application.Dtos.Requests;
@@ -19,7 +20,8 @@ public class UpdateUserInfoHandler : IRequestHandler<UpdateUserProfile, Unit>
     public async Task<Unit> Handle(UpdateUserProfile request, CancellationToken cancellationToken)
     {
         var user = await _repository.GetByEmail(request.Email);
-        if (user == null) throw new Exception("No such user");
+        if (user == null) throw new BadRequest("No such user");
+        
         var newProfileInfo = PutNewValues(request.NewUserInfo, user);
         await _repository.UpdateAsync(newProfileInfo);
         return Unit.Value;

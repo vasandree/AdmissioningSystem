@@ -1,34 +1,48 @@
+using Common.Exceptions;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using UserApi.Application.Contracts.Persistence;
 using UserApi.Application.Dtos.Responses;
+using UserApi.Domain.DbEntities;
 
 namespace UserApi.Application.Features.Commands.LoginUser;
 
 public class LoginUserHandler : IRequestHandler<LoginUserCommand, TokenResponseDto>
 {
-    private readonly IUserRepository _repository;
+    private readonly IUserRepository _user;
     private readonly IJwtService _jwt;
     private readonly IConfiguration _configuration;
+    private readonly IGenericRepository<RefreshToken> _generic;
 
-    public LoginUserHandler(IUserRepository repository, IJwtService jwt, IConfiguration configuration)
+    public LoginUserHandler(IUserRepository repository, IJwtService jwt, IConfiguration configuration, IGenericRepository<RefreshToken> generic)
     {
-        _repository = repository;
+        _user = repository;
         _jwt = jwt;
         _configuration = configuration;
+        _generic = generic;
     }
 
 
     public async Task<TokenResponseDto> Handle(LoginUserCommand request, CancellationToken cancellationToken)
     {
-        var user = await _repository.GetByEmail(request.LoginUserDto.Email);
-        if (user == null) throw new Exception("No such user");
-        if (!await _repository.CheckPassword(user, request.LoginUserDto.Password))
-            throw new Exception("Wrong password");
+        var user = await _user.GetByEmail(request.LoginUserDto.Email);
+        if (user == null) throw new BadRequest("There is no user with such email");
+        
+        if (!await _user.CheckPassword(user, request.LoginUserDto.Password))
+            throw new BadRequest("Wrong password");
+        
         var refreshToken = _jwt.GenerateRefreshTokenString();
-        user.RefreshToken = refreshToken;
-        user.RefreshTokenExpiryDate = DateTime.UtcNow.AddDays(_configuration.GetValue<int>("Jwt:RefreshDaysLifeTime"));
-        await _repository.UpdateAsync(user);
+
+        var refreshTokenEntity = new RefreshToken
+        {
+            UserId = user.Id,
+            Token = refreshToken,
+            ExpiryDate = DateTime.UtcNow.AddDays(_configuration.GetValue<int>("Jwt:RefreshDaysLifeTime")),
+            User = user
+        };
+
+        await _generic.CreateAsync(refreshTokenEntity);
+        
         return new TokenResponseDto()
         {
             AcccessToken = _jwt.GenerateTokenString(request.LoginUserDto.Email),

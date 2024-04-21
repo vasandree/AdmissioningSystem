@@ -1,3 +1,4 @@
+using Common.Exceptions;
 using MediatR;
 using UserApi.Application.Contracts.Persistence;
 
@@ -15,8 +16,9 @@ public class ForgetPasswordHandler : IRequestHandler<ForgetPasswordCommand, Unit
     public async Task<Unit> Handle(ForgetPasswordCommand request, CancellationToken cancellationToken)
     {
         var user = await _repository.GetByEmail(request.Email);
-        if (user == null) throw new Exception("No such user");
-        if (user.ConfirmCode != request.ForgetPassword.ConfirmCode) throw new Exception("Confirm code is incorrect");
+        if (user == null) throw new BadRequest("No such user");
+        if (user.ConfirmCode != request.ForgetPassword.ConfirmCode) 
+            throw new BadRequest("Confirm code is incorrect");
         await _repository.ResetPassword(user, request.ForgetPassword.NewPassword);
         return Unit.Value;
     }

@@ -12,8 +12,10 @@ public sealed class UserDbContext : IdentityDbContext<ApplicationUser, IdentityR
     {
     }
 
-    public DbSet<ApplicantEntity> Applicants { get; set; } = null!;
-    public DbSet<ManagerEntity> Managers { get; set; } = null!;
+    public DbSet<ApplicantEntity> Applicants { get; set; } 
+    public DbSet<ManagerEntity> Managers { get; set; }
+
+    public DbSet<RefreshToken> RefreshTokens { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -22,11 +24,26 @@ public sealed class UserDbContext : IdentityDbContext<ApplicationUser, IdentityR
         modelBuilder.Entity<ApplicationUser>()
             .HasOne(x => x.Student)
             .WithOne(x => x.User)
-            .HasForeignKey<ApplicantEntity>().IsRequired();
+            .HasForeignKey<ApplicantEntity>(x => x.UserId)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<ApplicationUser>()
             .HasOne(x => x.Manager)
             .WithOne(x => x.User)
-            .HasForeignKey<ManagerEntity>().IsRequired();
+            .HasForeignKey<ManagerEntity>(x => x.UserId) 
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Cascade);
+
+
+        modelBuilder.Entity<RefreshToken>()
+            .HasOne(rt => rt.User)
+            .WithMany(u => u.RefreshTokens)
+            .HasForeignKey(rt => rt.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<RefreshToken>()
+            .HasIndex(rt => rt.Token)
+            .IsUnique();
     }
 }

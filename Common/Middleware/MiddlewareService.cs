@@ -18,7 +18,12 @@ public class MiddlewareService
         {
             await _next(context);
         }
-       
+
+        catch (Conflict exception)
+        {
+            context.Response.StatusCode = StatusCodes.Status409Conflict;
+            await context.Response.WriteAsJsonAsync(new { message = exception.Message });
+        }
         catch (Forbidden exception)
         {
             context.Response.StatusCode = StatusCodes.Status403Forbidden;

@@ -1,28 +1,27 @@
+using Common.Exceptions;
 using MediatR;
 using UserApi.Application.Contracts.Persistence;
+using UserApi.Domain.DbEntities;
 
 namespace UserApi.Application.Features.Commands.Revoke;
 
 public class RevokeHandler : IRequestHandler<RevokeCommand, Unit>
 {
-    private readonly IUserRepository _repository;
+    private readonly IGenericRepository<RefreshToken> _repository;
 
-    public RevokeHandler(IUserRepository repository)
+    public RevokeHandler(IGenericRepository<RefreshToken> repository)
     {
         _repository = repository;
     }
 
+
     public async Task<Unit> Handle(RevokeCommand request, CancellationToken cancellationToken)
     {
-        var user = await _repository.GetByEmail(request.Email);
-        if (user == null) 
-        {
-            throw new Exception("No such user");
-        }
-        user.RefreshToken = null;
-        await _repository.UpdateAsync(user);
+        var token =
+            await _repository.Find(x => x.Token == request.RefreshToken);
         
-        // Return Unit to indicate success (assuming RevokeCommand doesn't return any specific result)
+        await _repository.DeleteAsync(token[0]);
+        
         return Unit.Value;
     }
 }
