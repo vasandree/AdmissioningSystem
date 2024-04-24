@@ -1,8 +1,6 @@
-using System.Text;
 using Common.Models;
 using EasyNetQ;
 using MediatR;
-using Newtonsoft.Json;
 using UserApi.Application.Contracts.Persistence;
 
 namespace UserApi.Application.Features.Commands.SendEmailCode;
@@ -31,15 +29,13 @@ public class SendEmailCodeHandler : IRequestHandler<SendEmailCode, Unit>
             var confirmCode = GenerateConfirmCode();
             user.ConfirmCode = confirmCode;
             await _repository.UpdateAsync(user);
-            
-            
-            var body = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new ForgetPasswordMessage
+
+            var notificationMessage = new ForgetPasswordMessage
             {
                 Email = request.Email,
                 ConfirmCode = confirmCode
-            }));
-            
-            await _bus.PubSub.PublishAsync(body, cancellationToken: cancellationToken);
+            };
+            await _bus.PubSub.PublishAsync(notificationMessage, cancellationToken: cancellationToken);
 
             return Unit.Value;
         }

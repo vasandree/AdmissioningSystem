@@ -1,7 +1,8 @@
 using System.Reflection;
-using System.Reflection.Metadata.Ecma335;
+using Common.ConfigClasses;
 using EasyNetQ;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace UserApi.Application.Configurators;
@@ -12,13 +13,13 @@ public static class UserApiServiceConfigurator
     {
         builder.Services.AddMediatR(config => config.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
         builder.Services.AddAutoMapper(typeof(MappingProfile));
-
-        builder.Services.AddSingleton<IBus>(_ =>
-        {
-            var emailBus = RabbitHutch.CreateBus("host=localhost, ");
-            emailBus.Advanced.QueueDeclare( "email_queue", durable: true, exclusive: false, autoDelete: false);
-            return emailBus;
-        });
         
+        var rabbitMqConfig = builder.Configuration.GetSection("RabbitMQ").Get<RabbitMQConfig>()!;
+        var connectionString =
+            $"host={rabbitMqConfig.Host};port={rabbitMqConfig.Port};username={rabbitMqConfig.UserName};password={rabbitMqConfig.Password}";
+        var bus = RabbitHutch.CreateBus(connectionString); 
+        bus.Advanced.QueueDeclare("email_queue");
+        builder.Services.AddSingleton<IBus>(bus);
+
     }
 }

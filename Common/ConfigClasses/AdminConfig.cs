@@ -1,4 +1,4 @@
-namespace UserApi.Infrastructure.ConfigClasses;
+namespace Common.ConfigClasses;
 
 public class AdminConfig
 {

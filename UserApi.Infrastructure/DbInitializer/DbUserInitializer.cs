@@ -1,8 +1,8 @@
+using Common.ConfigClasses;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using UserApi.Domain.DbEntities;
-using UserApi.Infrastructure.ConfigClasses;
 
 namespace UserApi.Infrastructure.DbInitializer;
 
