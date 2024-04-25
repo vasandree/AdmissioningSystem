@@ -22,6 +22,18 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotificationApi.Application
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotificationApi.Infrastructure", "NotificationApi.Infrastructure\NotificationApi.Infrastructure.csproj", "{84737063-858A-452F-81F2-525F4038D26E}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DictionaryApi", "DictionaryApi", "{948DC15C-D543-4853-929A-FCB4CB379115}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DictionaryService.Presentation", "DictionaryService.Presentation\DictionaryService.Presentation.csproj", "{B6F6C26D-91D7-4C45-B3B2-5E4BA9A3CC70}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DictionaryService.Persistence", "DictionaryService.Persistence\DictionaryService.Persistence.csproj", "{E424B4B9-A59A-41DE-AEE2-7039A7722AE4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DictionaryService.Domain", "DictionaryService.Domain\DictionaryService.Domain.csproj", "{54F70FD7-0313-4666-83BA-81886B062256}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DictionaryService.Infrastructure", "DictionaryService.Infrastructure\DictionaryService.Infrastructure.csproj", "{6DA9D88E-FEBA-4D87-8D35-FBEFAF66A46A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DictionaryService.Application", "DictionaryService.Application\DictionaryService.Application.csproj", "{BF6F578C-EB71-47BD-867C-4C533CE8E36C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -64,6 +76,26 @@ Global
 		{84737063-858A-452F-81F2-525F4038D26E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{84737063-858A-452F-81F2-525F4038D26E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{84737063-858A-452F-81F2-525F4038D26E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B6F6C26D-91D7-4C45-B3B2-5E4BA9A3CC70}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B6F6C26D-91D7-4C45-B3B2-5E4BA9A3CC70}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B6F6C26D-91D7-4C45-B3B2-5E4BA9A3CC70}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B6F6C26D-91D7-4C45-B3B2-5E4BA9A3CC70}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E424B4B9-A59A-41DE-AEE2-7039A7722AE4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E424B4B9-A59A-41DE-AEE2-7039A7722AE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E424B4B9-A59A-41DE-AEE2-7039A7722AE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E424B4B9-A59A-41DE-AEE2-7039A7722AE4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{54F70FD7-0313-4666-83BA-81886B062256}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54F70FD7-0313-4666-83BA-81886B062256}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54F70FD7-0313-4666-83BA-81886B062256}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{54F70FD7-0313-4666-83BA-81886B062256}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6DA9D88E-FEBA-4D87-8D35-FBEFAF66A46A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6DA9D88E-FEBA-4D87-8D35-FBEFAF66A46A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6DA9D88E-FEBA-4D87-8D35-FBEFAF66A46A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6DA9D88E-FEBA-4D87-8D35-FBEFAF66A46A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BF6F578C-EB71-47BD-867C-4C533CE8E36C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BF6F578C-EB71-47BD-867C-4C533CE8E36C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BF6F578C-EB71-47BD-867C-4C533CE8E36C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BF6F578C-EB71-47BD-867C-4C533CE8E36C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{B2D6D552-5529-4ACC-8CAE-ABDF8D5C631F} = {AA599E5C-03E5-4D16-AC01-C975BCA3A200}
@@ -74,5 +106,10 @@ Global
 		{B526AEF6-4D3D-4DD7-AA69-13ABA5C6CF22} = {3C1A87E5-0752-4ADE-86AB-B174171E7431}
 		{EA6B04C7-F7D8-4DFF-AFC8-3711ACF22ADC} = {3C1A87E5-0752-4ADE-86AB-B174171E7431}
 		{84737063-858A-452F-81F2-525F4038D26E} = {3C1A87E5-0752-4ADE-86AB-B174171E7431}
+		{B6F6C26D-91D7-4C45-B3B2-5E4BA9A3CC70} = {948DC15C-D543-4853-929A-FCB4CB379115}
+		{E424B4B9-A59A-41DE-AEE2-7039A7722AE4} = {948DC15C-D543-4853-929A-FCB4CB379115}
+		{54F70FD7-0313-4666-83BA-81886B062256} = {948DC15C-D543-4853-929A-FCB4CB379115}
+		{6DA9D88E-FEBA-4D87-8D35-FBEFAF66A46A} = {948DC15C-D543-4853-929A-FCB4CB379115}
+		{BF6F578C-EB71-47BD-867C-4C533CE8E36C} = {948DC15C-D543-4853-929A-FCB4CB379115}
 	EndGlobalSection
 EndGlobal
