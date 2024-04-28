@@ -17,7 +17,8 @@ namespace UserApi.Infrastructure.Configurators;
                 })
                 .AddEntityFrameworkStores<UserDbContext>()
                 .AddUserManager<UserManager<ApplicationUser>>()
-                .AddSignInManager<SignInManager<ApplicationUser>>();
+                .AddSignInManager<SignInManager<ApplicationUser>>()
+                .AddDefaultTokenProviders();
         }
     }
 

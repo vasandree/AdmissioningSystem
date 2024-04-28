@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using UserApi.Infrastructure.BackgroundServices;
 using UserApi.Infrastructure.DbInitializer;
 
 namespace UserApi.Infrastructure.Configurators;
@@ -12,7 +13,8 @@ public static class UserApiDbConfigurator
     {
         var connection = builder.Configuration.GetConnectionString("PostgresUser");
         builder.Services.AddDbContext<UserDbContext>(options => options.UseNpgsql(connection));
-        builder.Services.AddScoped<IDbUserInitializer, DbUserInitializer>(); 
+        builder.Services.AddScoped<IDbUserInitializer, DbUserInitializer>();
+        builder.Services.AddHostedService<ExpireRefreshTokensCleanupService>();
     }
 
     public static void ConfigureUserDb(this WebApplication application)

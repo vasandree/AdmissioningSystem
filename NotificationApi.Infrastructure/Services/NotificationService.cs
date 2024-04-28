@@ -1,3 +1,4 @@
+using Common.Exceptions;
 using Common.Models;
 using EasyNetQ;
 using Microsoft.Extensions.Hosting;
@@ -25,11 +26,18 @@ public class NotificationService : BackgroundService, INotificationService
 
     private async Task SendForgetPassword(ForgetPasswordMessage message)
     {
-        await _sender.SendEmail(new EmailMessage
+        try
         {
-            To = message.Email,
-            Subject = "Reset password",
-            Body = $"Your reset password code: {message.ConfirmCode}"
-        });
+            await _sender.SendEmail(new EmailMessage
+            {
+                To = message.Email,
+                Subject = "Reset password",
+                Body = $"Your reset password code: {message.ConfirmCode}"
+            });
+        }
+        catch (Exception e)
+        {
+            throw new SmtpServerException(e, message.Email, "forget password code");
+        }
     }
 }
