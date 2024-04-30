@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DictionaryService.Domain.Entities;
 
@@ -9,9 +10,12 @@ public class DocumentType
     
     public string Name { get; set; }
     
+    [ForeignKey("EducationLevel")]
+    public int EducationLevelId { get; set; }
+    
     public EducationLevel EducationLevel { get; set; }
     
-    public List<EducationLevel> NextEducationLevels { get; set; }
+    public ICollection<EducationLevel> NextEducationLevels { get; set; }
     
     public DateTime CreateTime { get; set; }
 }

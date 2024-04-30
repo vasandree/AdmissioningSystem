@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DictionaryService.Domain.Entities;
 
@@ -14,6 +15,12 @@ public class Program
     public string Language { get; set; }
     
     public string EducationForm { get; set; }
+    
+    [ForeignKey("Faculty")]
+    public Guid FacultyId { get; set; }
+    
+    [ForeignKey("EducationLevel")]
+    public int EducationLevelId { get; set; }
     
     public Faculty Faculty { get; set; }
     
