@@ -4,7 +4,7 @@ using DictionaryService.Domain.Enums;
 using DictionaryService.Infrastructure;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace DictionaryService.Application.Features.Commands.ImportDictionaries;
@@ -13,19 +13,21 @@ public class ImportDictionariesCommandHandler : IRequestHandler<ImportDictionari
 {
     private readonly HttpClient _httpClient;
     private readonly DictionaryDbContext _context;
-
-    public ImportDictionariesCommandHandler(HttpClient httpClient, DictionaryDbContext context)
+    private readonly ILogger<ImportDictionariesCommandHandler> _logger;
+    
+    public ImportDictionariesCommandHandler(HttpClient httpClient, DictionaryDbContext context, ILogger<ImportDictionariesCommandHandler> logger)
     {
         _httpClient = httpClient;
         _context = context;
+        _logger = logger;
     }
 
-    string url = "https://1c-mockup.kreosoft.space/api/dictionary/";
-    private const string username = "student";
-    private const string password = "ny6gQnyn4ecbBrP9l1Fz";
+    private const string Url = "https://1c-mockup.kreosoft.space/api/dictionary/";
+    private const string Username = "student";
+    private const string Password = "ny6gQnyn4ecbBrP9l1Fz";
 
     private string _authHeaderValue =
-        Convert.ToBase64String(System.Text.Encoding.ASCII.GetBytes($"{username}:{password}"));
+        Convert.ToBase64String(System.Text.Encoding.ASCII.GetBytes($"{Username}:{Password}"));
 
     public async Task<Unit> Handle(ImportDictionariesCommand request, CancellationToken cancellationToken)
     {
@@ -43,7 +45,6 @@ public class ImportDictionariesCommandHandler : IRequestHandler<ImportDictionari
                 await ImportAll();
                 break;
         }
-
         return Unit.Value;
     }
 
@@ -53,7 +54,7 @@ public class ImportDictionariesCommandHandler : IRequestHandler<ImportDictionari
         {
             _httpClient.DefaultRequestHeaders.Authorization =
                 new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", _authHeaderValue);
-            var response = await _httpClient.GetAsync($"{url}education_levels");
+            var response = await _httpClient.GetAsync($"{Url}education_levels");
 
             if (response.IsSuccessStatusCode)
             {
@@ -64,7 +65,7 @@ public class ImportDictionariesCommandHandler : IRequestHandler<ImportDictionari
                 {
                     var existingEducationLevel = await _context.Set<EducationLevel>()
                         .AsNoTracking()
-                        .FirstOrDefaultAsync(el => el.Id == educationLevel.Id + 1);
+                        .FirstOrDefaultAsync(el => el.Id == educationLevel.Id);
 
                     if (existingEducationLevel == null)
                     {
@@ -77,9 +78,11 @@ public class ImportDictionariesCommandHandler : IRequestHandler<ImportDictionari
 
                     await _context.SaveChangesAsync();
                 }
+                _logger.LogInformation("Education levels imported successfully");
             }
             else
             {
+                _logger.LogError($"Failed to import education levels. StatusCode: {response.StatusCode}");
                 throw new ExternalSystemError(response.StatusCode);
             }
 
@@ -87,6 +90,7 @@ public class ImportDictionariesCommandHandler : IRequestHandler<ImportDictionari
         }
         catch (Exception ex)
         {
+            _logger.LogError($"An error occurred while importing education levels: {ex.Message}");
             throw new ExternalSystemException(ex);
         }
     }
@@ -97,7 +101,7 @@ public class ImportDictionariesCommandHandler : IRequestHandler<ImportDictionari
         {
             _httpClient.DefaultRequestHeaders.Authorization =
                 new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", _authHeaderValue);
-            var response = await _httpClient.GetAsync($"{url}faculties");
+            var response = await _httpClient.GetAsync($"{Url}faculties");
 
             if (response.IsSuccessStatusCode)
             {
@@ -121,9 +125,12 @@ public class ImportDictionariesCommandHandler : IRequestHandler<ImportDictionari
 
                         await _context.SaveChangesAsync();
                     }
+                _logger.LogInformation("Faculties imported successfully");
+
             }
             else
             {
+                _logger.LogError($"Failed to import faculties. StatusCode: {response.StatusCode}");
                 throw new ExternalSystemError(response.StatusCode);
             }
 
@@ -131,6 +138,7 @@ public class ImportDictionariesCommandHandler : IRequestHandler<ImportDictionari
         }
         catch (Exception ex)
         {
+            _logger.LogError($"An error occurred while importing faculties: {ex.Message}");
             throw new ExternalSystemException(ex);
         }
     }
@@ -141,7 +149,7 @@ public class ImportDictionariesCommandHandler : IRequestHandler<ImportDictionari
         {
             _httpClient.DefaultRequestHeaders.Authorization =
                 new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", _authHeaderValue);
-            var response = await _httpClient.GetAsync($"{url}document_types");
+            var response = await _httpClient.GetAsync($"{Url}document_types");
 
             if (response.IsSuccessStatusCode)
             {
@@ -159,6 +167,7 @@ public class ImportDictionariesCommandHandler : IRequestHandler<ImportDictionari
 
                     if (existingEducationLevel == null)
                     {
+                        _logger.LogError("Failed to import document types. You should import education levels first");
                         throw new BadRequest("You should import education levels first");
                     }
                     
@@ -173,15 +182,18 @@ public class ImportDictionariesCommandHandler : IRequestHandler<ImportDictionari
 
                     await _context.SaveChangesAsync();
                 }
+                _logger.LogInformation("Document types imported successfully");
             }
             else
             {
+                _logger.LogError($"Failed to import document types. StatusCode: {response.StatusCode}");
                 throw new ExternalSystemError(response.StatusCode);
             }
             return Unit.Value;
         }
         catch (Exception ex)
         {
+            _logger.LogError($"An error occurred while importing document types: {ex.Message}");
             throw new ExternalSystemException(ex);
         }
     }
@@ -192,7 +204,7 @@ public class ImportDictionariesCommandHandler : IRequestHandler<ImportDictionari
         {
             _httpClient.DefaultRequestHeaders.Authorization =
                 new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", _authHeaderValue);
-            var response = await _httpClient.GetAsync($"{url}programs");
+            var response = await _httpClient.GetAsync($"{Url}programs");
 
             if (response.IsSuccessStatusCode)
             {
@@ -210,6 +222,7 @@ public class ImportDictionariesCommandHandler : IRequestHandler<ImportDictionari
 
                     if (existingEducationLevel == null)
                     {
+                        _logger.LogError("Failed to import programs. You should import education levels first");
                         throw new BadRequest("You should import education levels first");
                     }
                     
@@ -218,6 +231,7 @@ public class ImportDictionariesCommandHandler : IRequestHandler<ImportDictionari
 
                     if (existingFaculty == null)
                     {
+                        _logger.LogError("Failed to import programs. You should import faculties first");
                         throw new BadRequest("You should import faculties first");
                     }
                     
@@ -232,15 +246,18 @@ public class ImportDictionariesCommandHandler : IRequestHandler<ImportDictionari
 
                     await _context.SaveChangesAsync();
                 }
+                _logger.LogInformation("Programs types imported successfully");
             }
             else
             {
+                _logger.LogError($"Failed to import programs. StatusCode: {response.StatusCode}");
                 throw new ExternalSystemError(response.StatusCode);
             }
             return Unit.Value;
         }
         catch (Exception ex)
         {
+            _logger.LogError($"An error occurred while importing programs: {ex.Message}");
             throw new ExternalSystemException(ex);
         }
     }

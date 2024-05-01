@@ -1,3 +1,4 @@
+using DictionaryService.Application.Features.Commands.CheckImportStatus;
 using DictionaryService.Application.Features.Commands.ImportDictionaries;
 using DictionaryService.Domain.Enums;
 using MediatR;
@@ -23,4 +24,12 @@ public class DictionaryController : ControllerBase
     {
         return Ok(await _meditor.Send( new ImportDictionariesCommand(dictionaryType)));
     }
+
+    /*[HttpPost]
+    [Authorize]
+    [Route("status")]
+    public async Task<IActionResult> CheckImportStatus(DictionaryType? dictionaryType)
+    {
+        return Ok(await _meditor.Send(new CheckImportStatusCommand(dictionaryType)));
+    }*/
 }
