@@ -30,4 +30,6 @@ public class Program
     
     [Required]
     public DateTime CreateTime { get; set; }
+    
+    public bool IsDeleted { get; set; }
 }

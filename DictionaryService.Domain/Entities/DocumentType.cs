@@ -21,4 +21,6 @@ public class DocumentType
     
     [Required]
     public DateTime CreateTime { get; set; }
+    
+    public bool IsDeleted { get; set; }
 }

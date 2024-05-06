@@ -15,4 +15,6 @@ public class Faculty
     
    [Required] 
    public DateTime CreateTime { get; set; }
+   
+   public bool IsDeleted { get; set; }
 }

@@ -1,8 +1,11 @@
+using DictionaryService.Infrastructure;
+using Newtonsoft.Json.Linq;
+
 namespace DictionaryService.Persistence.Helpers;
 
 public class DeletionCheckHelper
 {
-    public void EducationLevelDeletionCheck()
+    public async void EducationLevelDeletionCheck(List<JObject> jsonEducationLevels, DictionaryDbContext context)
     {
         
     }

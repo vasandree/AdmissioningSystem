@@ -14,13 +14,17 @@ public class ImportDictionariesCommandHandler : IRequestHandler<ImportDictionari
 {
     private readonly HttpClient _httpClient;
     private readonly DictionaryDbContext _context;
-    private readonly ConvertHelper _helper;
+    private readonly ConvertHelper _convertHelper;
+    private readonly DeletionCheckHelper _deletionCheckHelper;
+    private readonly UpdateHelper _updateHelper;
 
-    public ImportDictionariesCommandHandler(HttpClient httpClient, DictionaryDbContext context, ConvertHelper helper)
+    public ImportDictionariesCommandHandler(HttpClient httpClient, DictionaryDbContext context, ConvertHelper helper, DeletionCheckHelper deletionCheckHelper, UpdateHelper updateHelper)
     {
         _httpClient = httpClient;
         _context = context;
-        _helper = helper;
+        _convertHelper = helper;
+        _deletionCheckHelper = deletionCheckHelper;
+        _updateHelper = updateHelper;
     }
 
     private const string Url = "https://1c-mockup.kreosoft.space/api/dictionary/";
@@ -69,7 +73,7 @@ public class ImportDictionariesCommandHandler : IRequestHandler<ImportDictionari
 
                 foreach (var jsonEducationLevel in jsonEducationLevels!)
                 {
-                    var educationLevel = await _helper.ConvertToEducationKLevel(jsonEducationLevel);
+                    var educationLevel = await _convertHelper.ConvertToEducationKLevel(jsonEducationLevel);
 
                     var existingEducationLevel = await _context.Set<EducationLevel>()
                         .AsNoTracking()
@@ -81,11 +85,14 @@ public class ImportDictionariesCommandHandler : IRequestHandler<ImportDictionari
                     }
                     else
                     {
-                        _context.Entry(existingEducationLevel).CurrentValues.SetValues(educationLevel);
+                        _updateHelper.UpdateEducationLevel(educationLevel, existingEducationLevel, _context);
                     }
 
                     await _context.SaveChangesAsync();
                 }
+                
+                _deletionCheckHelper.EducationLevelDeletionCheck(jsonEducationLevels, _context);
+                
             }
             else
             {
@@ -114,7 +121,7 @@ public class ImportDictionariesCommandHandler : IRequestHandler<ImportDictionari
 
                 foreach (var jsonFaculty in jsonFaculties!)
                 {
-                    var faculty = await _helper.ConvertToFaculty(jsonFaculty);
+                    var faculty = await _convertHelper.ConvertToFaculty(jsonFaculty);
 
                     var existingFaculty = await _context.Faculties
                         .FirstOrDefaultAsync(f => f.ExternalId == faculty.ExternalId);
@@ -158,7 +165,7 @@ public class ImportDictionariesCommandHandler : IRequestHandler<ImportDictionari
 
                 foreach (var jsonDocumentType in jsonDocumentTypes!)
                 {
-                    var documentType = await _helper.ConvertToDocumentType(jsonDocumentType, _context);
+                    var documentType = await _convertHelper.ConvertToDocumentType(jsonDocumentType, _context);
 
                     var existingDocumentType = await _context.DocumentTypes
                         .FirstOrDefaultAsync(dt => dt.ExternalId == documentType.ExternalId);
@@ -203,7 +210,7 @@ public class ImportDictionariesCommandHandler : IRequestHandler<ImportDictionari
 
                 foreach (var jsonProgram in jsonPrograms!)
                 {
-                    var program = await _helper.ConvertToProgram(jsonProgram, _context);
+                    var program = await _convertHelper.ConvertToProgram(jsonProgram, _context);
 
                     var existingProgram =
                         await _context.Programs.FirstOrDefaultAsync(p => p.ExternalId == program.ExternalId);

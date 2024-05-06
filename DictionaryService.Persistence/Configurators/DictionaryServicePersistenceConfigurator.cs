@@ -9,5 +9,7 @@ public static class DictionaryServicePersistenceConfigurator
     public static void ConfigureDictionaryServicePersistence(this WebApplicationBuilder builder)
     {
         builder.Services.AddSingleton<ConvertHelper>();
+        builder.Services.AddSingleton<DeletionCheckHelper>();
+        builder.Services.AddSingleton<UpdateHelper>();
     }
 }
