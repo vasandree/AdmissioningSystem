@@ -1,4 +1,5 @@
 using System.Reflection;
+using DictionaryService.Persistence.Helpers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 

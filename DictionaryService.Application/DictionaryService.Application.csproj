@@ -16,6 +16,7 @@
       <ProjectReference Include="..\Common\Common.csproj" />
       <ProjectReference Include="..\DictionaryService.Domain\DictionaryService.Domain.csproj" />
       <ProjectReference Include="..\DictionaryService.Infrastructure\DictionaryService.Infrastructure.csproj" />
+      <ProjectReference Include="..\DictionaryService.Persistence\DictionaryService.Persistence.csproj" />
     </ItemGroup>
 
     <ItemGroup>
