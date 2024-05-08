@@ -24,7 +24,6 @@ public static class SwaggerConfigurator
                 Scheme = "Bearer"
             });
             options.OperationFilter<SwaggerFilter>();
-            options.OperationFilter<FileUploadOperationFilter>();
         });
     }
 }

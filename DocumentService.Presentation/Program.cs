@@ -11,9 +11,9 @@ builder.ConfigureDocumentServicePersistence();
 
 builder.ConfigureDocumentServiceApplication();
 
-builder.ConfigureAuth();
-
 builder.ConfigureSwagger();
+
+builder.ConfigureAuth();
 
 var app = builder.Build();
 
@@ -30,5 +30,11 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 
 app.UseAuthorization();
+
+app.UseStaticFiles();
+
+app.MapControllers();
+
+app.UseMiddleware();
 
 app.Run();

@@ -3,6 +3,7 @@ using System;
 using DocumentService.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DocumentService.Infrastructure.Migrations
 {
     [DbContext(typeof(DocumentsDbContext))]
-    partial class DocumentsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240508162033_educationDocumentEdited")]
+    partial class educationDocumentEdited
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -41,7 +44,7 @@ namespace DocumentService.Infrastructure.Migrations
 
                     b.HasIndex("FileId");
 
-                    b.ToTable("EducationDocuments", (string)null);
+                    b.ToTable("EducationDocuments");
                 });
 
             modelBuilder.Entity("DocumentService.Domain.Entities.File", b =>
@@ -56,7 +59,7 @@ namespace DocumentService.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Files", (string)null);
+                    b.ToTable("Files");
                 });
 
             modelBuilder.Entity("DocumentService.Domain.Entities.Passport", b =>
@@ -78,7 +81,7 @@ namespace DocumentService.Infrastructure.Migrations
 
                     b.HasIndex("FileId");
 
-                    b.ToTable("Passports", (string)null);
+                    b.ToTable("Passports");
                 });
 
             modelBuilder.Entity("DocumentService.Domain.Entities.EducationDocument", b =>

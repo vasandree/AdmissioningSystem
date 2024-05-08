@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using DocumentService.Domain.Enums;
 
 namespace DocumentService.Domain.Entities;
@@ -14,5 +15,6 @@ public abstract class Document
     [Required]
     public Guid UserId { get; set; }
     
+    [ForeignKey("FileId")]
     public File? File { get; set; }
 }

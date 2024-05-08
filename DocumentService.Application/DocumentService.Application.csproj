@@ -19,7 +19,6 @@
       <ProjectReference Include="..\Common\Common.csproj" />
       <ProjectReference Include="..\DocumentService.Domain\DocumentService.Domain.csproj" />
       <ProjectReference Include="..\DocumentService.Infrastructure\DocumentService.Infrastructure.csproj" />
-      <ProjectReference Include="..\DocumentService.Persistence\DocumentService.Persistence.csproj" />
     </ItemGroup>
 
 </Project>
