@@ -3,7 +3,6 @@ using DocumentService.Application.Contracts.Persistence;
 using DocumentService.Application.Helpers;
 using DocumentService.Domain.Entities;
 using DocumentService.Domain.Enums;
-using DocumentService.Infrastructure;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 

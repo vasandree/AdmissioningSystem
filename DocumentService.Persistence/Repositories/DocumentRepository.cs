@@ -24,6 +24,6 @@ public class DocumentRepository<T> : GenericRepository<T>, IDocumentRepository<T
 
     public async Task<Document?> GetByUserId(Guid userId)
     {
-        return await _dbSet.FirstOrDefaultAsync(x => x.UserId == userId);
+        return await _dbSet.Include(p => p.File).FirstOrDefaultAsync(x => x.UserId == userId);
     }
 }
