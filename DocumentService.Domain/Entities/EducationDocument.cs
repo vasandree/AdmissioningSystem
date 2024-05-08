@@ -1,6 +1,12 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace DocumentService.Domain.Entities;
 
 public class EducationDocument : Document
 {
-    public Guid Id { get; set; }
+    [Required]
+    public string Name { get; set; }
+    
+    [Required]
+    public Guid DocumentTypeId { get; set; }
 }

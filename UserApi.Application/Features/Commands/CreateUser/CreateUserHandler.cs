@@ -45,7 +45,7 @@ public class CreateUserHandler : IRequestHandler<CreateUserCommand, TokenRespons
         
         return new TokenResponseDto
         {
-            AcccessToken = _jwt.GenerateTokenString(request.NewUser.Email),
+            AcccessToken = _jwt.GenerateTokenString(request.NewUser.Email, user.Id),
             RefreshToken = refreshToken
         };
     }

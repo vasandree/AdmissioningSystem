@@ -10,7 +10,8 @@ public static class DocumentServiceInfrastructureConfigurator
     public static void ConfigureDocumentServiceInfrastructure(this WebApplicationBuilder builder)
     {
         var connection = builder.Configuration.GetConnectionString("PostgresDocuments");
-        builder.Services.AddDbContext<DocumentsDbContext>();
+        builder.Services.AddDbContext<DocumentsDbContext>(options =>
+            options.UseNpgsql(connection));
     }
     
     public static void ConfigureDocumentServiceInfrastructure(this WebApplication application)

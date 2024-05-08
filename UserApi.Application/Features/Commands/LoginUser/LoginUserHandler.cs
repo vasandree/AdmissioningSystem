@@ -45,7 +45,7 @@ public class LoginUserHandler : IRequestHandler<LoginUserCommand, TokenResponseD
         
         return new TokenResponseDto()
         {
-            AcccessToken = _jwt.GenerateTokenString(request.LoginUserDto.Email),
+            AcccessToken = _jwt.GenerateTokenString(request.LoginUserDto.Email, user.Id),
             RefreshToken = refreshToken
         };
     }
