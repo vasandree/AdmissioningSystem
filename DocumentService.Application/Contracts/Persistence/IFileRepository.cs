@@ -1,8 +1,8 @@
-using File = DocumentService.Domain.Entities.File;
+using DocumentService.Domain.Entities;
 
 namespace DocumentService.Application.Contracts.Persistence;
 
-public interface IFileRepository : IGenericRepository<File>
+public interface IFileRepository : IGenericRepository<DbFile>
 {
-    Task<File?> GetById(Guid id);
+    Task<DbFile?> GetById(Guid id);
 }

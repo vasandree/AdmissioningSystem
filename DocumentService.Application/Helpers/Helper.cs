@@ -1,9 +1,11 @@
+using System.ComponentModel.DataAnnotations;
+using System.Net;
 using Common.Consts.DocumentService;
 using Common.Exceptions;
 using DocumentService.Application.Contracts.Persistence;
 using DocumentService.Domain.Entities;
 using Microsoft.AspNetCore.Http;
-using File = DocumentService.Domain.Entities.File;
+using Microsoft.AspNetCore.StaticFiles;
 
 namespace DocumentService.Application.Helpers;
 
@@ -18,7 +20,7 @@ public class Helper
         _documentRepository = documentRepository;
     }
 
-    public async Task<File> AddFile(IFormFile file)
+    public async Task<DbFile> AddFile(IFormFile file)
     {
         using (var memoryStream = new MemoryStream())
         {
@@ -42,9 +44,11 @@ public class Helper
             }
             
             await file.CopyToAsync(memoryStream);
-            var fileEntity = new File()
+            var id = Guid.NewGuid();
+            var fileEntity = new DbFile()
             {
-                Id = Guid.NewGuid(),
+                Id = id,
+                FileName = $"Passport_{id}{fileExtension}",
                 FileContent = memoryStream.ToArray()
             };
 
@@ -54,7 +58,7 @@ public class Helper
         }
     }
 
-    public async Task UpdateFile(Document document, File newFile)
+    public async Task UpdateFile(Document document, DbFile newFile)
     {
         var oldFile = await _fileRepository.GetById(document.File!.Id);
         document.File = newFile;
@@ -67,4 +71,17 @@ public class Helper
         var fileEntity = await _fileRepository.GetById(id);
         if (fileEntity != null) await _fileRepository.DeleteAsync(fileEntity);
     }
+
+    public (byte[], string, string) ConvertToFile(DbFile file)
+    {
+        var provider = new FileExtensionContentTypeProvider();
+        if (!provider.TryGetContentType(file.FileName, out var _contentType))
+        {
+            _contentType = "application/octet-stream";
+        }
+
+        return (file.FileContent, _contentType, file.FileName);
+
+    }
+
 }

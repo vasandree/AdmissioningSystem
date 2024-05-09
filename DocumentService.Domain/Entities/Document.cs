@@ -16,5 +16,5 @@ public abstract class Document
     public Guid UserId { get; set; }
     
     [ForeignKey("FileId")]
-    public File? File { get; set; }
+    public DbFile? File { get; set; }
 }

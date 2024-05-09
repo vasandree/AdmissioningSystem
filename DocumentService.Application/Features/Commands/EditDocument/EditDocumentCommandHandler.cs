@@ -27,17 +27,16 @@ public class EditDocumentCommandHandler : IRequestHandler<EditDocumentCommand, U
         switch (request.DocumentType)
         {
             case DocumentType.Passport:
-                await EditPassport(request.Id, request.File);
-                break;
+                return await EditPassport(request.Id, request.File);
+
             case DocumentType.EducationDocument:
-                await EditEducationDocument(request.Id, request.File);
-                break;
+                return await EditEducationDocument(request.Id, request.File);
         }
 
-        return Unit.Value;
+        throw new BadRequest("Type of document was not chosen");
     }
 
-    private async Task EditPassport(Guid id, IFormFile file)
+    private async Task<Unit> EditPassport(Guid id, IFormFile file)
     {
         if (!await _passport.CheckExistence(id))
         {
@@ -45,21 +44,25 @@ public class EditDocumentCommandHandler : IRequestHandler<EditDocumentCommand, U
         }
 
         var fileEntity = await _helper.AddFile(file);
-        
+
         var passportEntity = await _passport.GetByUserId(id);
         await _helper.UpdateFile(passportEntity!, fileEntity);
+
+        return Unit.Value;
     }
 
-    private async Task EditEducationDocument(Guid id, IFormFile file)
+    private async Task<Unit> EditEducationDocument(Guid id, IFormFile file)
     {
         if (!await _educationDocument.CheckExistence(id))
         {
             throw new BadRequest("You didn't upload the education document");
         }
-        
+
         var fileEntity = await _helper.AddFile(file);
 
         var educationDocumentEntity = await _educationDocument.GetByUserId(id);
         await _helper.UpdateFile(educationDocumentEntity!, fileEntity);
+
+        return Unit.Value;
     }
 }

@@ -1,6 +1,7 @@
 using DocumentService.Application.Features.Commands.DeleteDocument;
 using DocumentService.Application.Features.Commands.EditDocument;
 using DocumentService.Application.Features.Commands.UploadDocument;
+using DocumentService.Application.Features.Queries.DownloadFile;
 using DocumentService.Domain.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -18,14 +19,23 @@ public class DocumentController : ControllerBase
         _mediator = mediator;
     }
 
-    [Authorize, HttpPost]
+    [Authorize, HttpGet, Route("download")]
+    public async Task<IActionResult> Download(DocumentType documentType)
+    {
+        var result = await _mediator.Send(new DownloadFileCommand(documentType,
+            Guid.Parse(User.FindFirst("UserId")!.Value!)));
+        
+        return File(result.Item1, result.Item2, result.Item3);
+    }
+    
+    [Authorize, HttpPost, Route("upload")]
     public async Task<IActionResult> Upload( DocumentType documentType, IFormFile file)
     {
         return Ok(await _mediator.Send(new UploadDocumentRequest(documentType, file,
             Guid.Parse(User.FindFirst("UserId")!.Value!))));
     }
 
-    [Authorize, HttpPut]
+    [Authorize, HttpPut,Route("edit")]
     public async Task<IActionResult> Edit( DocumentType documentType, IFormFile file)
     {
         return Ok(await _mediator.Send(new EditDocumentCommand(documentType, file,

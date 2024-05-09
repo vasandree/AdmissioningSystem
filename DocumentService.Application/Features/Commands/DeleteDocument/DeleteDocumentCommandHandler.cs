@@ -13,7 +13,8 @@ public class DeleteDocumentCommandHandler : IRequestHandler<DeleteDocumentComman
     private readonly IDocumentRepository<EducationDocument> _educationDocument;
     private readonly Helper _helper;
 
-    public DeleteDocumentCommandHandler(IDocumentRepository<Passport> passport, IDocumentRepository<EducationDocument> educationDocument, Helper helper)
+    public DeleteDocumentCommandHandler(IDocumentRepository<Passport> passport,
+        IDocumentRepository<EducationDocument> educationDocument, Helper helper)
     {
         _passport = passport;
         _educationDocument = educationDocument;
@@ -25,17 +26,15 @@ public class DeleteDocumentCommandHandler : IRequestHandler<DeleteDocumentComman
         switch (request.DocumentType)
         {
             case DocumentType.Passport:
-                await DeletePassport(request.Id);
-                break;
+                return await DeletePassport(request.Id);
             case DocumentType.EducationDocument:
-                await DeleteEducationDocument(request.Id);
-                break;
+                return await DeleteEducationDocument(request.Id);
         }
 
-        return Unit.Value;
+        throw new BadRequest("Type of document was not chosen");
     }
 
-    private async Task DeletePassport(Guid id)
+    private async Task<Unit> DeletePassport(Guid id)
     {
         if (!await _passport.CheckExistence(id))
         {
@@ -45,16 +44,21 @@ public class DeleteDocumentCommandHandler : IRequestHandler<DeleteDocumentComman
         var passportEntity = await _passport.GetByUserId(id);
         await _passport.DeleteAsync(passportEntity! as Passport);
         await _helper.DeleteFile(passportEntity!.File.Id);
+
+        return Unit.Value;
     }
 
-    private async Task DeleteEducationDocument(Guid id)
+    private async Task<Unit> DeleteEducationDocument(Guid id)
     {
         if (!await _educationDocument.CheckExistence(id))
         {
             throw new BadRequest("There is no education document to delete");
         }
+
         var educationDocumentEntity = await _educationDocument.GetByUserId(id);
         await _educationDocument.DeleteAsync(educationDocumentEntity! as EducationDocument);
         await _helper.DeleteFile(educationDocumentEntity!.File.Id);
+
+        return Unit.Value;
     }
 }

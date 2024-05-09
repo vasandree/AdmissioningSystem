@@ -14,7 +14,8 @@ public class UploadDocumentRequestHandler : IRequestHandler<UploadDocumentReques
     private readonly IDocumentRepository<Passport> _passport;
     private readonly IDocumentRepository<EducationDocument> _educationDocument;
 
-    public UploadDocumentRequestHandler(Helper helper, IDocumentRepository<Passport> passport, IDocumentRepository<EducationDocument> educationDocument)
+    public UploadDocumentRequestHandler(Helper helper, IDocumentRepository<Passport> passport,
+        IDocumentRepository<EducationDocument> educationDocument)
     {
         _helper = helper;
         _passport = passport;
@@ -26,23 +27,23 @@ public class UploadDocumentRequestHandler : IRequestHandler<UploadDocumentReques
         switch (request.DocumentType)
         {
             case DocumentType.Passport:
-                await UploadPassport(request.Id, request.File);
-                break;
+                return await UploadPassport(request.Id, request.File);
             case DocumentType.EducationDocument:
-                await UploadEducationDocument(request.Id, request.File);
-                break;
+                return await UploadEducationDocument(request.Id, request.File);
         }
-        
-        return Unit.Value;
+
+        throw new BadRequest("Type of document was not chosen");
     }
 
-    private async Task UploadPassport(Guid id, IFormFile passport)
+    private async Task<Unit> UploadPassport(Guid id, IFormFile passport)
     {
         if (await _passport.CheckExistence(id))
         {
             throw new BadRequest("You have already uploaded file");
-        };
-        
+        }
+
+        ;
+
         var file = await _helper.AddFile(passport);
 
         var passportEntity = new Passport
@@ -54,16 +55,19 @@ public class UploadDocumentRequestHandler : IRequestHandler<UploadDocumentReques
         };
 
         await _passport.CreateAsync(passportEntity);
+
+        return Unit.Value;
     }
 
-    private async Task UploadEducationDocument(Guid id, IFormFile passport)
+    private async Task<Unit> UploadEducationDocument(Guid id, IFormFile passport)
     {
-        
         if (await _educationDocument.CheckExistence(id))
         {
             throw new BadRequest("You have already uploaded file");
-        };
-        
+        }
+
+        ;
+
         var file = await _helper.AddFile(passport);
 
         var educationDocument = new EducationDocument()
@@ -75,5 +79,7 @@ public class UploadDocumentRequestHandler : IRequestHandler<UploadDocumentReques
         };
 
         await _educationDocument.CreateAsync(educationDocument);
+
+        return Unit.Value;
     }
 }
