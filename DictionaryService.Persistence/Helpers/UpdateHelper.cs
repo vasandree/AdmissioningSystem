@@ -17,9 +17,47 @@ public class UpdateHelper
         }
         else
         {
-            
         }
 
+        await context.SaveChangesAsync();
+    }
+
+    public async Task UpdateFaculty(Faculty faculty, Faculty existingFaculty, DictionaryDbContext context)
+    {
+        existingFaculty.Name = faculty.Name;
+        existingFaculty.CreateTime = faculty.CreateTime;
+        existingFaculty.IsDeleted = false;
+        
+        context.Entry(existingFaculty).State = EntityState.Modified;
+        await context.SaveChangesAsync();
+    }
+
+    public async Task UpdateDocumentType(DocumentType documentType, DocumentType existingDocumentType,
+        DictionaryDbContext context)
+    {
+        existingDocumentType.EducationLevel = documentType.EducationLevel;
+        existingDocumentType.Name = documentType.Name;
+        existingDocumentType.CreateTime = documentType.CreateTime;
+        existingDocumentType.EducationLevelId = documentType.EducationLevelId;
+        existingDocumentType.NextEducationLevels = documentType.NextEducationLevels;
+        existingDocumentType.IsDeleted = false;
+
+        context.Entry(existingDocumentType).State = EntityState.Modified;
+        await context.SaveChangesAsync();
+    }
+
+    public async Task UpdateProgram(Program program, Program existingProgram, DictionaryDbContext context)
+    {
+        existingProgram.EducationLevel = program.EducationLevel;
+        existingProgram.CreateTime = program.CreateTime;
+        existingProgram.Faculty = program.Faculty;
+        existingProgram.Code = program.Code;
+        existingProgram.Language = program.Language;
+        existingProgram.EducationForm = program.EducationForm;
+        existingProgram.Name = program.Name;
+        existingProgram.IsDeleted = false;
+
+        context.Entry(existingProgram).State = EntityState.Modified;
         await context.SaveChangesAsync();
     }
 }

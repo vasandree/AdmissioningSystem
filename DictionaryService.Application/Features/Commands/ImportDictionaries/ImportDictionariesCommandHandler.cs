@@ -81,14 +81,15 @@ public class ImportDictionariesCommandHandler : IRequestHandler<ImportDictionari
 
                     if (existingEducationLevel == null)
                     {
-                        _context.Set<EducationLevel>().Add(educationLevel);
+                        _context.EducationLevels.Add(educationLevel);
+                        await _context.SaveChangesAsync();
                     }
                     else
                     {
                         _updateHelper.UpdateEducationLevel(educationLevel, existingEducationLevel, _context);
                     }
 
-                    await _context.SaveChangesAsync();
+                    
                 }
                 
                 _deletionCheckHelper.EducationLevelDeletionCheck(jsonEducationLevels, _context);
@@ -118,7 +119,8 @@ public class ImportDictionariesCommandHandler : IRequestHandler<ImportDictionari
                 var result = response.Content.ReadAsStringAsync().Result;
                 var jsonFaculties = JsonConvert.DeserializeObject<List<JObject>>(result);
 
-
+                await _deletionCheckHelper.FacultiesDeletionCheck(jsonFaculties, _context);
+                
                 foreach (var jsonFaculty in jsonFaculties!)
                 {
                     var faculty = await _convertHelper.ConvertToFaculty(jsonFaculty);
@@ -128,15 +130,13 @@ public class ImportDictionariesCommandHandler : IRequestHandler<ImportDictionari
 
                     if (existingFaculty == null)
                     {
-                        faculty.Id = new Guid();
                         _context.Faculties.Add(faculty);
+                        await _context.SaveChangesAsync();
                     }
                     else
                     {
-                        _context.Entry(faculty).State = EntityState.Modified;
+                        await _updateHelper.UpdateFaculty(faculty, existingFaculty, _context);
                     }
-
-                    await _context.SaveChangesAsync();
                 }
             }
             else
@@ -163,6 +163,8 @@ public class ImportDictionariesCommandHandler : IRequestHandler<ImportDictionari
                 var result = await response.Content.ReadAsStringAsync();
                 var jsonDocumentTypes = JsonConvert.DeserializeObject<List<JObject>>(result);
 
+                await _deletionCheckHelper.DocumentTypesDeletionCheck(jsonDocumentTypes, _context);
+                
                 foreach (var jsonDocumentType in jsonDocumentTypes!)
                 {
                     var documentType = await _convertHelper.ConvertToDocumentType(jsonDocumentType, _context);
@@ -173,14 +175,15 @@ public class ImportDictionariesCommandHandler : IRequestHandler<ImportDictionari
                     if (existingDocumentType == null)
                     {
                         _context.DocumentTypes.Add(documentType);
+                        await _context.SaveChangesAsync();
                     }
                     else
                     {
-                        _context.Entry(existingDocumentType).CurrentValues.SetValues(documentType);
+                        await _updateHelper.UpdateDocumentType(documentType, existingDocumentType, _context);
                     }
                 }
 
-                await _context.SaveChangesAsync();
+                
             }
             else
             {
@@ -208,6 +211,8 @@ public class ImportDictionariesCommandHandler : IRequestHandler<ImportDictionari
                 var jsonObject = JsonConvert.DeserializeObject<JObject>(result);
                 var jsonPrograms = jsonObject!["programs"]!.ToObject<List<JObject>>();
 
+                await _deletionCheckHelper.ProgramsDeletionCheck(jsonPrograms, _context);
+                
                 foreach (var jsonProgram in jsonPrograms!)
                 {
                     var program = await _convertHelper.ConvertToProgram(jsonProgram, _context);
@@ -218,14 +223,16 @@ public class ImportDictionariesCommandHandler : IRequestHandler<ImportDictionari
                     if (existingProgram == null)
                     {
                         _context.Programs.Add(program);
+                        await _context.SaveChangesAsync();
                     }
                     else
                     {
-                        _context.Entry(existingProgram).CurrentValues.SetValues(program);
+                        await _updateHelper.UpdateProgram(program, existingProgram, _context);
                     }
-
-                    await _context.SaveChangesAsync();
+                    
                 }
+                
+                
             }
             else
             {
