@@ -1,18 +1,18 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserApi.Domain", "UserApi.Domain\UserApi.Domain.csproj", "{B2D6D552-5529-4ACC-8CAE-ABDF8D5C631F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserService.Domain", "UserService.Domain\UserService.Domain.csproj", "{B2D6D552-5529-4ACC-8CAE-ABDF8D5C631F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserApi.Infrastructure", "UserApi.Infrastructure\UserApi.Infrastructure.csproj", "{AF4C6651-BCE4-4BDE-9622-B6B96323A12C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserService.Infrastructure", "UserService.Infrastructure\UserService.Infrastructure.csproj", "{AF4C6651-BCE4-4BDE-9622-B6B96323A12C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserApi.Persistence", "UserApi.Persistence\UserApi.Persistence.csproj", "{328EDD4B-456A-4630-A6AB-2DB3ECDF5052}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserService.Persistence", "UserService.Persistence\UserService.Persistence.csproj", "{328EDD4B-456A-4630-A6AB-2DB3ECDF5052}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserApi.Presentation", "UserApi.Presentation\UserApi.Presentation.csproj", "{CD888BA5-CA8E-4E8B-BCA2-9B7777494DB3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserService.Presentation", "UserService.Presentation\UserService.Presentation.csproj", "{CD888BA5-CA8E-4E8B-BCA2-9B7777494DB3}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UserApi", "UserApi", "{AA599E5C-03E5-4D16-AC01-C975BCA3A200}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UserService", "UserService", "{AA599E5C-03E5-4D16-AC01-C975BCA3A200}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{F20B8D31-BB50-4BD5-8E89-E4E42D75FFD4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserApi.Application", "UserApi.Application\UserApi.Application.csproj", "{4623A43C-AFDD-482F-A4EF-CC91DC3813F2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserService.Application", "UserService.Application\UserService.Application.csproj", "{4623A43C-AFDD-482F-A4EF-CC91DC3813F2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NotificationApi", "NotificationApi", "{3C1A87E5-0752-4ADE-86AB-B174171E7431}"
 EndProject
