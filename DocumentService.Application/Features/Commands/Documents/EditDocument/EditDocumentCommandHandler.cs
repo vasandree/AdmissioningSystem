@@ -6,7 +6,7 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using BadRequest = Common.Exceptions.BadRequest;
 
-namespace DocumentService.Application.Features.Commands.EditDocument;
+namespace DocumentService.Application.Features.Commands.Documents.EditDocument;
 
 public class EditDocumentCommandHandler : IRequestHandler<EditDocumentCommand, Unit>
 {

@@ -1,4 +1,5 @@
 using System.Reflection;
+using DocumentService.Application.AutoMapper;
 using DocumentService.Application.Helpers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,6 +11,8 @@ public static class DocumentServiceConfigurator
     public static void ConfigureDocumentServiceApplication(this WebApplicationBuilder builder)
     {
         builder.Services.AddMediatR(config => config.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+        builder.Services.AddAutoMapper(typeof(MappingProfile));
+
         builder.Services.AddTransient<Helper>();
     }
 }

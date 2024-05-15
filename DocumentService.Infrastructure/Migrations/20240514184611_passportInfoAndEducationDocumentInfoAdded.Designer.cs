@@ -3,6 +3,7 @@ using System;
 using DocumentService.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DocumentService.Infrastructure.Migrations
 {
     [DbContext(typeof(DocumentsDbContext))]
-    partial class DocumentsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240514184611_passportInfoAndEducationDocumentInfoAdded")]
+    partial class passportInfoAndEducationDocumentInfoAdded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

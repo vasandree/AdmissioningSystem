@@ -1,4 +1,5 @@
 using Common.Models;
+using Common.Models.RabbitMqMessages;
 using EasyNetQ;
 using MediatR;
 using UserApi.Application.Contracts.Persistence;

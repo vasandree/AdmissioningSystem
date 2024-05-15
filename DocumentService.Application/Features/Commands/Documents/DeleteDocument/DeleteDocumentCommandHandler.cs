@@ -5,7 +5,7 @@ using DocumentService.Domain.Entities;
 using DocumentService.Domain.Enums;
 using MediatR;
 
-namespace DocumentService.Application.Features.Commands.DeleteDocument;
+namespace DocumentService.Application.Features.Commands.Documents.DeleteDocument;
 
 public class DeleteDocumentCommandHandler : IRequestHandler<DeleteDocumentCommand, Unit>
 {
@@ -41,8 +41,19 @@ public class DeleteDocumentCommandHandler : IRequestHandler<DeleteDocumentComman
             throw new BadRequest("There is no passport to delete");
         }
 
-        var passportEntity = await _passport.GetByUserId(id);
-        await _passport.DeleteAsync(passportEntity! as Passport);
+        var passportEntity = (Passport)(await _passport.GetByUserId(id))!;
+
+        if (passportEntity.IssueDate != null || passportEntity.IssuedBy != null ||
+            passportEntity.SeriesAndNumber != null || passportEntity.DateOfBirth != null)
+        {
+            passportEntity.File = null;
+            await _passport.UpdateAsync(passportEntity);
+        }
+        else
+        {
+            await _passport.DeleteAsync(passportEntity);
+        }
+
         await _helper.DeleteFile(passportEntity!.File.Id);
 
         return Unit.Value;
@@ -55,8 +66,18 @@ public class DeleteDocumentCommandHandler : IRequestHandler<DeleteDocumentComman
             throw new BadRequest("There is no education document to delete");
         }
 
-        var educationDocumentEntity = await _educationDocument.GetByUserId(id);
-        await _educationDocument.DeleteAsync(educationDocumentEntity! as EducationDocument);
+        var educationDocumentEntity = (EducationDocument)(await _educationDocument.GetByUserId(id))!;
+
+        if (educationDocumentEntity.EducationDocumentType != null || educationDocumentEntity.Name != null)
+        {
+            educationDocumentEntity.File = null;
+        }
+        else
+        {
+            await _educationDocument.DeleteAsync(educationDocumentEntity);
+
+        }
+        
         await _helper.DeleteFile(educationDocumentEntity!.File.Id);
 
         return Unit.Value;

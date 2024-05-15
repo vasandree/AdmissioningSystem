@@ -6,7 +6,7 @@ using DocumentService.Domain.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 
-namespace DocumentService.Application.Features.Commands.UploadDocument;
+namespace DocumentService.Application.Features.Commands.Documents.UploadDocument;
 
 public class UploadDocumentRequestHandler : IRequestHandler<UploadDocumentRequest, Unit>
 {
@@ -37,48 +37,66 @@ public class UploadDocumentRequestHandler : IRequestHandler<UploadDocumentReques
 
     private async Task<Unit> UploadPassport(Guid id, IFormFile passport)
     {
-        if (await _passport.CheckExistence(id))
+        var existingPassport = (Passport)(await _passport.GetByUserId(id));
+
+        if (existingPassport != null && existingPassport.File != null)
         {
-            throw new BadRequest("You have already uploaded file");
+            throw new BadRequest("You have already added file");
         }
-
-        ;
-
+        
         var file = await _helper.AddFile(passport);
-
-        var passportEntity = new Passport
+        
+        if (existingPassport == null)
         {
-            Id = Guid.NewGuid(),
-            DocumentType = DocumentType.Passport,
-            UserId = id,
-            File = file,
-        };
+            var passportEntity = new Passport
+            {
+                Id = Guid.NewGuid(),
+                DocumentType = DocumentType.Passport,
+                UserId = id,
+                File = file,
+            };
 
-        await _passport.CreateAsync(passportEntity);
+            await _passport.CreateAsync(passportEntity);
+        }
+        else
+        {
+            existingPassport.File = file;
+
+            await _passport.DeleteAsync(existingPassport);
+        }
+        
 
         return Unit.Value;
     }
 
     private async Task<Unit> UploadEducationDocument(Guid id, IFormFile passport)
     {
-        if (await _educationDocument.CheckExistence(id))
+        var existingEducationDocument = (EducationDocument) await _educationDocument.GetByUserId(id);
+        
+        if (existingEducationDocument != null && existingEducationDocument.File != null )
         {
             throw new BadRequest("You have already uploaded file");
         }
 
-        ;
-
         var file = await _helper.AddFile(passport);
-
-        var educationDocument = new EducationDocument()
+        if (existingEducationDocument == null)
         {
-            Id = new Guid(),
-            DocumentType = DocumentType.EducationDocument,
-            UserId = id,
-            File = file,
-        };
+            var educationDocument = new EducationDocument()
+            {
+                Id = new Guid(),
+                DocumentType = DocumentType.EducationDocument,
+                UserId = id,
+                File = file,
+            };
 
-        await _educationDocument.CreateAsync(educationDocument);
+            await _educationDocument.CreateAsync(educationDocument);
+        }
+        else
+        {
+            existingEducationDocument.File = file;
+
+            await _educationDocument.UpdateAsync(existingEducationDocument);
+        }
 
         return Unit.Value;
     }

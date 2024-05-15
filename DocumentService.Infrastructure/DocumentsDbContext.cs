@@ -12,7 +12,7 @@ public class DocumentsDbContext : DbContext
     
     public DbSet<EducationDocument> EducationDocuments { get; set; }
     public DbSet<Passport> Passports { get; set; }
-    public DbSet<DbFile?> Files { get; set; }
+    public DbSet<DbFile> Files { get; set; }
     
     
 }
