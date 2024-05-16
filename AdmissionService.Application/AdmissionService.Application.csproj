@@ -6,4 +6,18 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <Folder Include="Configurator\" />
+      <Folder Include="Features\Queries\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\AdmissionService.Domain\AdmissionService.Domain.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="MediatR" Version="12.2.0" />
+      <PackageReference Include="MediatR.Contracts" Version="2.0.1" />
+    </ItemGroup>
+
 </Project>

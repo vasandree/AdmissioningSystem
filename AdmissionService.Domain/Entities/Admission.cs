@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using AdmissionService.Domain.Enums;
+using Common.Models.Dtos;
 
 namespace AdmissionService.Domain.Entities;
 
@@ -12,11 +13,14 @@ public class Admission
     [ForeignKey("Applicant")]
     public Guid ApplicantId { get; set; }
 
+    [Required]
     public AdmissionStatus Status { get; set; }
     
+    [Required]
     public int Priority { get; set; }
     
-    // add programme
+    [Required]
+    public ProgramDto Program { get; set; }
     
     public Applicant Applicant { get; set; }
 }
