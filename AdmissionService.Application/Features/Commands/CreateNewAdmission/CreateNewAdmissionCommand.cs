@@ -3,4 +3,4 @@ using MediatR;
 
 namespace AdmissionService.Application.Features.Commands.CreateNewAdmission;
 
-public record CreateNewAdmissionCommand(Guid UserId, AdmissionRequest AdmissionRequest) : IRequest<Unit>;
+public record CreateNewAdmissionCommand(Guid UserId, CreateAdmissionRequest CreateAdmissionRequest) : IRequest<Unit>;

@@ -20,7 +20,12 @@ public class Admission
     public int Priority { get; set; }
     
     [Required]
+    public Guid ProgramId { get; set; }
+    
+    [Required]
     public ProgramDto Program { get; set; }
     
     public Applicant Applicant { get; set; }
+    
+    public Guid? ManagerId { get; set; }
 }

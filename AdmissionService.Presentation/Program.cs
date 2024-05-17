@@ -1,6 +1,15 @@
+using AdmissionService.Application.Contracts;
+using AdmissionService.Infrastructure.Configurator;
+using AdmissionService.Persistence.Configurator;
 using Common.Configurator;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.ConfigureAdmissionServiceInfrastructure();
+
+builder.ConfigureAdmissionServicePersistence();
+
+builder.ConfigureAdmissionServiceApplication();
 
 builder.ConfigureSwagger();
 
@@ -15,5 +24,13 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
+
+app.UseAuthorization();
+
+app.MapControllers();
+
+app.UseMiddleware();
 
 app.Run();

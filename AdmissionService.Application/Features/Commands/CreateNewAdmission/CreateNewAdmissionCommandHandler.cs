@@ -1,4 +1,5 @@
 using AdmissionService.Application.Contracts.Persistence;
+using AdmissionService.Application.Helpers;
 using AdmissionService.Domain.Entities;
 using AdmissionService.Domain.Enums;
 using Common.Exceptions;
@@ -11,17 +12,19 @@ public class CreateNewAdmissionCommandHandler : IRequestHandler<CreateNewAdmissi
 {
     private readonly IAdmissionRepository _admission;
     private readonly IApplicantRepository _applicant;
+    private readonly AdmissionsRearrangeHelper _helper;
 
-    public CreateNewAdmissionCommandHandler(IAdmissionRepository admission, IApplicantRepository applicant)
+    public CreateNewAdmissionCommandHandler(IAdmissionRepository admission, IApplicantRepository applicant,
+        AdmissionsRearrangeHelper helper)
     {
         _admission = admission;
         _applicant = applicant;
+        _helper = helper;
     }
 
     public async Task<Unit> Handle(CreateNewAdmissionCommand request, CancellationToken cancellationToken)
     {
         //todo: check if user exists
-
         if (!await _admission.CheckIfAdmissionIsAvailable(request.UserId))
             throw new BadRequest("You added maximum amount of programs");
 
@@ -34,6 +37,11 @@ public class CreateNewAdmissionCommandHandler : IRequestHandler<CreateNewAdmissi
         EducationDocumentTypeDto educationDocumentType = null;
         if (!_admission.CheckIfEducationLevelIsAvailable(program, educationDocumentType))
             throw new BadRequest("Education Level of this program is not available for you");
+
+        if (!await _admission.CheckIfPriorityAvailable(request.UserId, request.CreateAdmissionRequest.Priority))
+        {
+            await _helper.RearrangeAdmissionsByAddingNewOne(request.UserId, request.CreateAdmissionRequest.Priority);
+        }
 
 
         Applicant applicant;
@@ -58,10 +66,12 @@ public class CreateNewAdmissionCommandHandler : IRequestHandler<CreateNewAdmissi
             AdmissionId = Guid.NewGuid(),
             ApplicantId = request.UserId,
             Status = AdmissionStatus.Created,
-            Priority = request.AdmissionRequest.Priority,
+            Priority = request.CreateAdmissionRequest.Priority,
             Program = program,
             Applicant = applicant
         });
+
+        //todo: add role "Applicant"
 
         return Unit.Value;
     }

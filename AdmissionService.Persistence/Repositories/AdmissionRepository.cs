@@ -19,16 +19,34 @@ public class AdmissionRepository : GenericRepository<Admission>, IAdmissionRepos
     }
 
 
+    public async Task<Admission> GetById(Guid id)
+    {
+        return (await _context.Admissions.FirstOrDefaultAsync(x => x.AdmissionId == id))!;
+    }
+
+    public async Task<bool> CheckIfPriorityAvailable(Guid userId, int priority)
+    {
+        var admissions = await _context.Admissions.Where(x => x.ApplicantId == userId).ToListAsync();
+        return admissions.Count == 0 || admissions.Any(x => x.Priority != priority);
+    }
+
+    public bool CheckIfNewPriorityIsAvailable(Guid userId, int priority)
+    {
+        var admissionsAmount =  _context.Admissions.Count(x => x.ApplicantId == userId);
+        return priority <= admissionsAmount;
+    }
+    
     public async Task<bool> CheckIfAdmissionExists(Guid admissionId)
     {
         return await _context.Admissions.AnyAsync(x => x.AdmissionId == admissionId);
     }
 
-    public async Task<bool> CheckIfAdmissionRefersToApplicant(Guid admissionId, Guid applicantId)
+    public async Task<bool> CheckIfAdmissionBelongsToApplicant(Guid userId, Guid admissionId)
     {
         var admission = await _context.Admissions.FirstOrDefaultAsync(x => x.AdmissionId == admissionId);
-        return admission!.ApplicantId == applicantId;
+        return admission!.ApplicantId == userId;
     }
+
 
     public async Task<bool> CheckIfAdmissionIsAvailable(Guid userId)
     {
@@ -53,6 +71,8 @@ public class AdmissionRepository : GenericRepository<Admission>, IAdmissionRepos
 
     public async Task<List<Admission>> GetApplicantsAdmissions(Guid userId)
     {
-        return await _context.Admissions.Where(x => x.ApplicantId == userId).ToListAsync();
+        return await _context.Admissions.Where(x => x.ApplicantId == userId)
+            .OrderBy(x => x.Priority)
+            .ToListAsync();
     }
 }
