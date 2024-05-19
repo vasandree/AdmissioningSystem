@@ -1,10 +1,10 @@
+using AutoMapper;
 using Common.Exceptions;
-using DictionaryService.Domain.Entities;
+using DictionaryService.Application.Contracts.Persistence;
 using DictionaryService.Domain.Enums;
 using DictionaryService.Infrastructure;
-using DictionaryService.Persistence.Helpers;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -13,26 +13,30 @@ namespace DictionaryService.Application.Features.Commands.ImportDictionaries;
 public class ImportDictionariesCommandHandler : IRequestHandler<ImportDictionariesCommand, Unit>
 {
     private readonly HttpClient _httpClient;
-    private readonly DictionaryDbContext _context;
-    private readonly ConvertHelper _convertHelper;
-    private readonly DeletionCheckHelper _deletionCheckHelper;
-    private readonly UpdateHelper _updateHelper;
+    private readonly IEducationLevelRepository _educationLevel;
+    private readonly IFacultyRepository _faculty;
+    private readonly IDocumentTypeRepository _documentType;
+    private readonly IProgramRepository _program;
 
-    public ImportDictionariesCommandHandler(HttpClient httpClient, DictionaryDbContext context, ConvertHelper helper, DeletionCheckHelper deletionCheckHelper, UpdateHelper updateHelper)
+    private readonly string _url;
+    private readonly string _authHeaderValue;
+
+    public ImportDictionariesCommandHandler(HttpClient httpClient, DictionaryDbContext context,
+        IConfiguration configuration, IEducationLevelRepository educationLevel, IMapper mapper,
+        IFacultyRepository faculty, IDocumentTypeRepository documentType, IProgramRepository program)
     {
         _httpClient = httpClient;
-        _context = context;
-        _convertHelper = helper;
-        _deletionCheckHelper = deletionCheckHelper;
-        _updateHelper = updateHelper;
+        _educationLevel = educationLevel;
+        _faculty = faculty;
+        _documentType = documentType;
+        _program = program;
+        _url = configuration.GetSection("ExternalSystem:BaseURL").Get<string>()!;
+        _authHeaderValue =
+            Convert.ToBase64String(System.Text.Encoding.ASCII.GetBytes(
+                $"{configuration.GetSection("ExternalSystem:Username").Get<string>()!}" +
+                $":{configuration.GetSection("ExternalSystem:Password").Get<string>()!}"));
     }
 
-    private const string Url = "https://1c-mockup.kreosoft.space/api/dictionary/";
-    private const string Username = "student";
-    private const string Password = "ny6gQnyn4ecbBrP9l1Fz";
-
-    private string _authHeaderValue =
-        Convert.ToBase64String(System.Text.Encoding.ASCII.GetBytes($"{Username}:{Password}"));
 
     public async Task<Unit> Handle(ImportDictionariesCommand request, CancellationToken cancellationToken)
     {
@@ -50,7 +54,7 @@ public class ImportDictionariesCommandHandler : IRequestHandler<ImportDictionari
             case DictionaryType.Program:
                 await ImportProgram();
                 break;
-            case null:
+            case DictionaryType.All:
                 await ImportAll();
                 break;
         }
@@ -60,188 +64,231 @@ public class ImportDictionariesCommandHandler : IRequestHandler<ImportDictionari
 
     private async Task ImportEducationLevel()
     {
-        try
+        _httpClient.DefaultRequestHeaders.Authorization =
+            new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", _authHeaderValue);
+        var response = await _httpClient.GetAsync($"{_url}education_levels");
+
+        if (response.IsSuccessStatusCode)
         {
-            _httpClient.DefaultRequestHeaders.Authorization =
-                new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", _authHeaderValue);
-            var response = await _httpClient.GetAsync($"{Url}education_levels");
+            var result = response.Content.ReadAsStringAsync().Result;
+            var jsonEducationLevels = JsonConvert.DeserializeObject<List<JObject>>(result);
 
-            if (response.IsSuccessStatusCode)
+
+            if (await _educationLevel.CheckIfNotEmpty())
             {
-                var result = response.Content.ReadAsStringAsync().Result;
-                var jsonEducationLevels = JsonConvert.DeserializeObject<List<JObject>>(result);
+                var toDelete =
+                    await _educationLevel.GetEntitiesToDelete(jsonEducationLevels!.Select(e => e.Value<int>("id")));
+                await _educationLevel.SoftDeleteEntities(toDelete);
 
-                foreach (var jsonEducationLevel in jsonEducationLevels!)
+                if (toDelete.Count > 0)
                 {
-                    var educationLevel = await _convertHelper.ConvertToEducationKLevel(jsonEducationLevel);
-
-                    var existingEducationLevel = await _context.Set<EducationLevel>()
-                        .AsNoTracking()
-                        .FirstOrDefaultAsync(el => el.ExternalId == educationLevel.ExternalId);
-
-                    if (existingEducationLevel == null)
+                    var documentTypesToDelete = await _documentType.GetEntitiesToDeleteByEducationLevel(toDelete);
+                    if (documentTypesToDelete.Count > 0)
                     {
-                        _context.EducationLevels.Add(educationLevel);
-                        await _context.SaveChangesAsync();
-                    }
-                    else
-                    {
-                        _updateHelper.UpdateEducationLevel(educationLevel, existingEducationLevel, _context);
+                        await _documentType.SoftDeleteEntities(documentTypesToDelete!);
                     }
 
-                    
+
+                    var programsToDelete = await _program.GetEntitiesToDeleteByEducationLevel(toDelete);
+                    if (programsToDelete.Count > 0)
+                    {
+                        await _program.SoftDeleteEntities(programsToDelete!);
+                    }
+
+                    //todo: send emails
                 }
-                
-                _deletionCheckHelper.EducationLevelDeletionCheck(jsonEducationLevels, _context);
-                
             }
-            else
+
+            foreach (var jsonEducationLevel in jsonEducationLevels!)
             {
-                throw new ExternalSystemError(response.StatusCode);
+                if (await _educationLevel.CheckExistenceByExternalId(jsonEducationLevel.Value<int>("id")))
+                {
+                    var existingEducationLevel =
+                        await _educationLevel.GetByExternalId(jsonEducationLevel.Value<int>("id"));
+
+                    if (_educationLevel.CheckIfChanged(existingEducationLevel, jsonEducationLevel))
+                    {
+                        await _educationLevel.UpdateAsync(existingEducationLevel, jsonEducationLevel);
+                    }
+                }
+                else
+                {
+                    await _educationLevel.CreateAsync(jsonEducationLevel);
+                }
             }
         }
-        catch (Exception ex)
+        else
         {
-            throw new ExternalSystemException(ex);
+            throw new ExternalSystemError(response.StatusCode);
         }
     }
 
     private async Task ImportFaculty()
     {
-        try
+        _httpClient.DefaultRequestHeaders.Authorization =
+            new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", _authHeaderValue);
+        var response = await _httpClient.GetAsync($"{_url}faculties");
+
+        if (response.IsSuccessStatusCode)
         {
-            _httpClient.DefaultRequestHeaders.Authorization =
-                new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", _authHeaderValue);
-            var response = await _httpClient.GetAsync($"{Url}faculties");
+            var result = response.Content.ReadAsStringAsync().Result;
+            var jsonFaculties = JsonConvert.DeserializeObject<List<JObject>>(result);
 
-            if (response.IsSuccessStatusCode)
+            if (await _faculty.CheckIfNotEmpty())
             {
-                var result = response.Content.ReadAsStringAsync().Result;
-                var jsonFaculties = JsonConvert.DeserializeObject<List<JObject>>(result);
-
-                await _deletionCheckHelper.FacultiesDeletionCheck(jsonFaculties, _context);
-                
-                foreach (var jsonFaculty in jsonFaculties!)
+                var toDelete =
+                    await _faculty.GetEntitiesToDelete(jsonFaculties!.Select(e =>
+                        Guid.Parse(e.Value<string>("id")!)));
+                if (toDelete.Count > 0)
                 {
-                    var faculty = await _convertHelper.ConvertToFaculty(jsonFaculty);
+                    await _faculty.SoftDeleteEntities(toDelete);
+                }
 
-                    var existingFaculty = await _context.Faculties
-                        .FirstOrDefaultAsync(f => f.ExternalId == faculty.ExternalId);
 
-                    if (existingFaculty == null)
+                var programsToDelete = await _program.GetEntitiesToDeleteByFaculty(toDelete);
+                if (programsToDelete.Count > 0)
+                {
+                    await _program.SoftDeleteEntities(programsToDelete!);
+                }
+
+
+                //todo: send emails
+            }
+
+            foreach (var jsonFaculty in jsonFaculties!)
+            {
+                if (await _faculty.CheckExistenceByExternalId(Guid.Parse(jsonFaculty.Value<string>("id")!)))
+                {
+                    var existingFaculty =
+                        await _faculty.GetByExternalId(Guid.Parse(jsonFaculty.Value<string>("id")!));
+
+                    if (_faculty.CheckIfChanged(existingFaculty, jsonFaculty))
                     {
-                        _context.Faculties.Add(faculty);
-                        await _context.SaveChangesAsync();
-                    }
-                    else
-                    {
-                        await _updateHelper.UpdateFaculty(faculty, existingFaculty, _context);
+                        await _faculty.UpdateAsync(existingFaculty, jsonFaculty);
                     }
                 }
-            }
-            else
-            {
-                throw new ExternalSystemError(response.StatusCode);
+                else
+                {
+                    await _faculty.CreateAsync(jsonFaculty);
+                }
             }
         }
-        catch (Exception ex)
+        else
         {
-            throw new ExternalSystemException(ex);
+            throw new ExternalSystemError(response.StatusCode);
         }
     }
 
+
     private async Task ImportDocumentType()
     {
-        try
+        _httpClient.DefaultRequestHeaders.Authorization =
+            new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", _authHeaderValue);
+        var response = await _httpClient.GetAsync($"{_url}document_types");
+
+        if (response.IsSuccessStatusCode)
         {
-            _httpClient.DefaultRequestHeaders.Authorization =
-                new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", _authHeaderValue);
-            var response = await _httpClient.GetAsync($"{Url}document_types");
+            var result = await response.Content.ReadAsStringAsync();
+            var jsonDocumentTypes = JsonConvert.DeserializeObject<List<JObject>>(result);
 
-            if (response.IsSuccessStatusCode)
+            if (await _documentType.CheckIfNotEmpty())
             {
-                var result = await response.Content.ReadAsStringAsync();
-                var jsonDocumentTypes = JsonConvert.DeserializeObject<List<JObject>>(result);
-
-                await _deletionCheckHelper.DocumentTypesDeletionCheck(jsonDocumentTypes, _context);
-                
-                foreach (var jsonDocumentType in jsonDocumentTypes!)
+                var toDelete =
+                    await _documentType.GetEntitiesToDelete(jsonDocumentTypes!.Select(e =>
+                        Guid.Parse(e.Value<string>("id")!)));
+                if (toDelete.Count > 0)
                 {
-                    var documentType = await _convertHelper.ConvertToDocumentType(jsonDocumentType, _context);
+                    await _documentType.SoftDeleteEntities(toDelete);
+                    //todo: delete documents
+                }
+            }
 
-                    var existingDocumentType = await _context.DocumentTypes
-                        .FirstOrDefaultAsync(dt => dt.ExternalId == documentType.ExternalId);
 
-                    if (existingDocumentType == null)
+            foreach (var jsonDocumentType in jsonDocumentTypes!)
+            {
+                if (await _documentType.CheckExistenceByExternalId(
+                        Guid.Parse(jsonDocumentType.Value<string>("id")!)))
+                {
+                    var existingDocumentType =
+                        await _documentType.GetByExternalId(Guid.Parse(jsonDocumentType.Value<string>("id")!));
+
+                    if (await _documentType.CheckIfChanged(existingDocumentType, jsonDocumentType))
                     {
-                        _context.DocumentTypes.Add(documentType);
-                        await _context.SaveChangesAsync();
-                    }
-                    else
-                    {
-                        await _updateHelper.UpdateDocumentType(documentType, existingDocumentType, _context);
+                        await _documentType.UpdateAsync(existingDocumentType, jsonDocumentType);
                     }
                 }
-
-                
-            }
-            else
-            {
-                throw new ExternalSystemError(response.StatusCode);
+                else
+                {
+                    await _documentType.CreateAsync(jsonDocumentType);
+                }
             }
         }
-        catch (Exception ex)
+        else
         {
-            throw new ExternalSystemException(ex);
+            throw new ExternalSystemError(response.StatusCode);
         }
     }
 
 
     private async Task ImportProgram()
     {
-        try
+        int totalPages;
+        int pageNumber = 1;
+        int pageSize = 100;
+        List<JObject> allPrograms = new List<JObject>();
+
+        do
         {
             _httpClient.DefaultRequestHeaders.Authorization =
                 new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", _authHeaderValue);
-            var response = await _httpClient.GetAsync($"{Url}programs?page=1&size=500");
+            var response = await _httpClient.GetAsync($"{_url}programs?page={pageNumber}&size={pageSize}");
 
             if (response.IsSuccessStatusCode)
             {
                 var result = await response.Content.ReadAsStringAsync();
                 var jsonObject = JsonConvert.DeserializeObject<JObject>(result);
-                var jsonPrograms = jsonObject!["programs"]!.ToObject<List<JObject>>();
+                var jsonPrograms = jsonObject["programs"].ToObject<List<JObject>>();
 
-                await _deletionCheckHelper.ProgramsDeletionCheck(jsonPrograms, _context);
-                
-                foreach (var jsonProgram in jsonPrograms!)
-                {
-                    var program = await _convertHelper.ConvertToProgram(jsonProgram, _context);
+                allPrograms.AddRange(jsonPrograms);
 
-                    var existingProgram =
-                        await _context.Programs.FirstOrDefaultAsync(p => p.ExternalId == program.ExternalId);
-
-                    if (existingProgram == null)
-                    {
-                        _context.Programs.Add(program);
-                        await _context.SaveChangesAsync();
-                    }
-                    else
-                    {
-                        await _updateHelper.UpdateProgram(program, existingProgram, _context);
-                    }
-                    
-                }
-                
-                
+                totalPages = jsonObject["pagination"]["count"].ToObject<int>();
+                pageNumber++;
             }
             else
             {
                 throw new ExternalSystemError(response.StatusCode);
             }
-        }
-        catch (Exception ex)
+        } while (pageNumber <= totalPages);
+
+        if (await _program.CheckIfNotEmpty())
         {
-            throw new ExternalSystemException(ex);
+            var toDelete = await _program.GetEntitiesToDelete(allPrograms!.Select(e =>
+                Guid.Parse(e.Value<string>("id")!)));
+            if (toDelete.Count > 0)
+            {
+                await _program.SoftDeleteEntities(toDelete);
+
+                //todo: send emails
+            }
+        }
+
+        foreach (var jsonProgram in allPrograms)
+        {
+            if (await _program.CheckExistenceByExternalId(
+                    Guid.Parse(jsonProgram.Value<string>("id")!)))
+            {
+                var existingDocumentType =
+                    await _program.GetByExternalId(Guid.Parse(jsonProgram.Value<string>("id")!));
+
+                if (await _program.CheckIfChanged(existingDocumentType, jsonProgram))
+                {
+                    await _program.UpdateAsync(existingDocumentType, jsonProgram);
+                }
+            }
+            else
+            {
+                await _program.CreateAsync(jsonProgram);
+            }
         }
     }
 

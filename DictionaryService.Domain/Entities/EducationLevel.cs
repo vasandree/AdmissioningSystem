@@ -2,17 +2,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace DictionaryService.Domain.Entities;
 
-public class EducationLevel
+public class EducationLevel : DictionaryEntity
 {
+    [Required] public int ExternalId { get; set; }
     
-    [Key]
-    public Guid Id { get; set; }
-    
-    [Required]
-    public int ExternalId { get; set; }
-    
-    [Required]
-    public string Name { get; set; }
-    
-    public bool IsDeleted { get; set; }
 }

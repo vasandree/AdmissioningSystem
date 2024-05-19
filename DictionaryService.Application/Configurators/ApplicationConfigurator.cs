@@ -1,5 +1,5 @@
 using System.Reflection;
-using DictionaryService.Persistence.Helpers;
+using DictionaryService.Application.MappingProfiles;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -11,5 +11,7 @@ public static class ApplicationConfigurator
     {
         builder.Services.AddMediatR(config => config.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
         builder.Services.AddHttpClient();
+        builder.Services.AddAutoMapper(typeof(MappingProfile));
+
     }
 }

@@ -16,11 +16,10 @@ public class DictionaryDbContext : DbContext
     public DbSet<EducationLevel> EducationLevels { get; set; }
     public DbSet<Faculty> Faculties { get; set; }
     public DbSet<Program> Programs { get; set; }
-
+    
   
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
 
-        
     }
 }

@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+using DictionaryService.Application.Features.Commands.CheckImportStatus;
 using DictionaryService.Application.Features.Commands.ImportDictionaries;
 using DictionaryService.Domain.Enums;
 using MediatR;
@@ -17,18 +19,20 @@ public class DictionaryController : ControllerBase
     }
 
     [HttpPost]
-    [Authorize]
+    /*[Authorize]*/
     [Route("import")]
     public async Task<IActionResult> ImportDictionary(DictionaryType dictionaryType)
     {
+        //todo: add role checker   
         return Ok(await _meditor.Send( new ImportDictionariesCommand(dictionaryType)));
     }
 
-    /*[HttpPost]
-    [Authorize]
+    [HttpPost]
+    /*[Authorize]*/
     [Route("status")]
-    public async Task<IActionResult> CheckImportStatus(DictionaryType? dictionaryType)
+    public async Task<IActionResult> CheckImportStatus([Required] int requestId)
     {
-        return Ok(await _meditor.Send(new CheckImportStatusCommand(dictionaryType)));
-    }*/
+        //todo: add role checker   
+        return Ok(await _meditor.Send(new CheckImportStatusCommand()));
+    }
 }

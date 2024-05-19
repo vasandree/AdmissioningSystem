@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DictionaryService.Infrastructure.Migrations
 {
     [DbContext(typeof(DictionaryDbContext))]
-    [Migration("20240506183056_addedIsDealeted")]
-    partial class addedIsDealeted
+    [Migration("20240519122459_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

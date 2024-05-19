@@ -4,4 +4,4 @@ using MediatR;
 
 namespace DictionaryService.Application.Features.Commands.CheckImportStatus;
 
-/*public record CheckImportStatusCommand(DictionaryType? DictionaryType) : IRequest<ImportStatusDto>, IRequest;*/
+public record CheckImportStatusCommand : IRequest<ImportStatusDto>;

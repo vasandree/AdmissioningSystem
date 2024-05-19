@@ -1,11 +1,12 @@
+using DictionaryService.Application.DTOs;
 using MediatR;
 
 namespace DictionaryService.Application.Features.Commands.CheckImportStatus;
 
-/*public class CheckImportStatusCommandHandler : IRequestHandler<CheckImportStatusCommand>
+public class CheckImportStatusCommandHandler : IRequestHandler<CheckImportStatusCommand, ImportStatusDto>
 {
-    public Task Handle(CheckImportStatusCommand request, CancellationToken cancellationToken)
+    public Task<ImportStatusDto> Handle(CheckImportStatusCommand request, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }
-}*/
+}

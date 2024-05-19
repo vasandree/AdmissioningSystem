@@ -1,26 +1,19 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DictionaryService.Domain.Entities;
 
-public class DocumentType
+public class DocumentType : DictionaryEntity
 {
-    [Key]
-    public Guid Id { get; set; }
-    
-    [Required]
-    public Guid ExternalId { get; set; }
-    
-    [Required]
-    public string Name { get; set; }
+    [Required] public Guid ExternalId { get; set; }
 
     [Required]
+    [ForeignKey("EducationLevel")]
     public Guid EducationLevelId { get; set; }
-    public EducationLevel EducationLevel { get; set; }
-    
-    public List<EducationLevel>? NextEducationLevels { get; set; }
-    
-    [Required]
-    public DateTime CreateTime { get; set; }
-    
-    public bool IsDeleted { get; set; }
+
+    [Required] public EducationLevel EducationLevel { get; set; }
+
+    public List<EducationLevel> NextEducationLevels { get; set; }
+
+    [Required] public DateTime CreateTime { get; set; }
 }
