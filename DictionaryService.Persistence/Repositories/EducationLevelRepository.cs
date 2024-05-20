@@ -1,7 +1,6 @@
 using DictionaryService.Application.Contracts.Persistence;
 using DictionaryService.Domain.Entities;
 using DictionaryService.Infrastructure;
-using DictionaryService.Persistence.Helpers;
 using DictionaryService.Persistence.Helpers.Converters;
 using DictionaryService.Persistence.Helpers.Update;
 using Microsoft.EntityFrameworkCore;
@@ -42,21 +41,27 @@ public class EducationLevelRepository : DictionaryRepository<EducationLevel>, IE
         return await _context.EducationLevels.FirstOrDefaultAsync(x => x.ExternalId == externalId)!;
     }
 
-    public async Task CreateAsync(JObject jsonEducationLevel)
+    public new async Task CreateAsync(EducationLevel educationLevel)
     {
-        await _context.EducationLevels.AddAsync(_converterHelper.ConvertToEducationLevel(jsonEducationLevel));
+        await _context.EducationLevels.AddAsync(educationLevel);
         await _context.SaveChangesAsync();
     }
 
-    public bool CheckIfChanged(EducationLevel educationLevel, JObject jsonEducationLevel)
+    public bool CheckIfChanged(EducationLevel educationLevel, EducationLevel newEducationLevel)
     {
-        return _update.CheckIfEducationLevelUpdated(educationLevel, jsonEducationLevel);
+        return _update.CheckIfEducationLevelUpdated(educationLevel, newEducationLevel);
     }
 
-    public async Task UpdateAsync(EducationLevel educationLevel, JObject jsonEducationLevel)
+    public async Task UpdateAsync(EducationLevel educationLevel, EducationLevel newEducationLevel)
     {
-        _update.UpdateEducationLevel(educationLevel, jsonEducationLevel);
+        _update.UpdateEducationLevel(educationLevel, newEducationLevel);
         _context.Entry(educationLevel).State = EntityState.Modified;
         await _context.SaveChangesAsync();
+    }
+    
+
+    public EducationLevel Convert(JObject jsonEducationLevel)
+    {
+        return  _converterHelper.ConvertToEducationLevel(jsonEducationLevel);
     }
 }

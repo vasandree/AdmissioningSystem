@@ -17,17 +17,22 @@ public class ProgramConverter
 
     public async Task<Program> ConvertToProgram(JObject jsonProgram)
     {
-        if (!await _educationLevel.CheckExistenceByExternalId(jsonProgram["educationLevel"]!.Value<int>("id")))
+        var educationLevel = _educationLevel.Convert(jsonProgram.Value<JObject>("educationLevel")!);
+        if (!await _educationLevel.CheckExistenceByExternalId(educationLevel.ExternalId))
         {
-            await _educationLevel.CreateAsync(jsonProgram.Value<JObject>("educationLevel")!);
+            await _educationLevel.CreateAsync(educationLevel);
         }
-        var educationLevel = await _educationLevel.GetByExternalId(jsonProgram["educationLevel"]!.Value<int>("id"));
 
-        if (!await _faculty.CheckExistenceByExternalId(Guid.Parse(jsonProgram["faculty"]!.Value<string>("id")!)))
+        educationLevel = await _educationLevel.GetByExternalId(educationLevel.ExternalId);
+
+        var faculty = _faculty.Convert(jsonProgram.Value<JObject>("faculty")!);
+
+        if (!await _faculty.CheckExistenceByExternalId(faculty.ExternalId))
         {
-            await _faculty.CreateAsync(jsonProgram.Value<JObject>("faculty")!);
+            await _faculty.CreateAsync(faculty);
         }
-        var faculty = await _faculty.GetByExternalId(Guid.Parse(jsonProgram["faculty"]!.Value<string>("id")!));
+
+        faculty = await _faculty.GetByExternalId(faculty.ExternalId);
 
         return new Program
         {

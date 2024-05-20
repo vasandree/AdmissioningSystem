@@ -15,12 +15,14 @@ public class DocumentTypeConverter
 
     public async Task<DocumentType> ConvertToDocumentType(JObject jsonDocumentType)
     {
-        if (!await _educationLevel.CheckExistenceByExternalId(jsonDocumentType["educationLevel"]!.Value<int>("id")))
+        var educationLevel = _educationLevel.Convert(jsonDocumentType.Value<JObject>("educationLevel")!);
+
+        if (!await _educationLevel.CheckExistenceByExternalId(educationLevel.ExternalId))
         {
-            await _educationLevel.CreateAsync(jsonDocumentType.Value<JObject>("educationLevel")!);
+            await _educationLevel.CreateAsync(educationLevel);
         }
-        
-        var educationLevel = await _educationLevel.GetByExternalId(jsonDocumentType["educationLevel"]!.Value<int>("id"));
+
+        educationLevel = await _educationLevel.GetByExternalId(educationLevel.ExternalId);
 
         var documentType = new DocumentType
         {
@@ -33,28 +35,6 @@ public class DocumentTypeConverter
             CreateTime = jsonDocumentType.Value<DateTime>("createTime").ToUniversalTime(),
         };
 
-        var jsonNextEducationLevels = jsonDocumentType["nextEducationLevels"]?.ToObject<List<JObject>>();
-        if (jsonNextEducationLevels.Count > 0)
-        {
-            documentType.NextEducationLevels = await ConvertNextEducationLevels(jsonNextEducationLevels);
-        }
-
         return documentType;
-    }
-
-    private async Task<List<EducationLevel>> ConvertNextEducationLevels(List<JObject> jsonNextEducationLevels)
-    {
-        var nextEducationLevels = new List<EducationLevel>();
-        foreach (var jsonNextEducationLevel in jsonNextEducationLevels)
-        {
-            var nextEducationLevelExternalId = jsonNextEducationLevel.Value<int>("id");
-            if (!await _educationLevel.CheckExistenceByExternalId(nextEducationLevelExternalId))
-            {
-                await _educationLevel.CreateAsync(jsonNextEducationLevel);
-            }
-            var educationLevel = await _educationLevel.GetByExternalId(nextEducationLevelExternalId);
-            nextEducationLevels.Add(educationLevel);
-        }
-        return nextEducationLevels;
     }
 }

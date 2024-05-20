@@ -1,20 +1,18 @@
 using DictionaryService.Domain.Entities;
-using Newtonsoft.Json.Linq;
 
 namespace DictionaryService.Persistence.Helpers.Update;
 
 public class FacultyUpdate
 {
-    public bool CheckIfFacultyUpdated(Faculty faculty, JObject jsonFaculty)
+    public bool CheckIfFacultyUpdated(Faculty faculty, Faculty newFaculty)
     {
-        return faculty.Name != jsonFaculty.Value<string>("name") ||
-               faculty.CreateTime != jsonFaculty.Value<DateTime>("createTime").ToUniversalTime();
+        return faculty.Name != newFaculty.Name;
     }
     
-    public void UpdateFaculty(Faculty faculty, JObject jsonFaculty)
+    public void UpdateFaculty(Faculty faculty, Faculty newFaculty)
     {
-        faculty.CreateTime = jsonFaculty.Value<DateTime>("createTime").ToUniversalTime();
-        faculty.Name = jsonFaculty.Value<string>("name")!;
+        faculty.CreateTime = newFaculty.CreateTime;
+        faculty.Name = newFaculty.Name!;
         faculty.IsDeleted = false;
     }
 

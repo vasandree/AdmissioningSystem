@@ -11,13 +11,13 @@ public interface IProgramRepository : IDictionaryRepository<Program>
 
     Task<Program> GetByExternalId(Guid externalId);
 
-    Task CreateAsync(JObject jsonProgram);
+    bool CheckIfChanged(Program program, Program newProgram);
 
-    Task<bool> CheckIfChanged(Program program, JObject jsonProgram);
-
-    Task UpdateAsync(Program program, JObject jsonProgram);
+    Task UpdateAsync(Program program, Program newProgram);
 
     Task<List<Program?>> GetEntitiesToDeleteByEducationLevel(List<EducationLevel> deletedEducationLevel);
 
     Task<List<Program?>> GetEntitiesToDeleteByFaculty(List<Faculty> deletedFaculties);
+    
+    Task<Program> Convert(JObject jsonProgram);
 }

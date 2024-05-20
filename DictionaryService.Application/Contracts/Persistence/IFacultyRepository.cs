@@ -10,10 +10,11 @@ public interface IFacultyRepository : IDictionaryRepository<Faculty>
     Task<List<Faculty>> GetEntitiesToDelete(IEnumerable<Guid> newIds);
 
     Task<Faculty> GetByExternalId(Guid externalId);
+    
 
-    Task CreateAsync(JObject jsonFaculty);
+    bool CheckIfChanged(Faculty faculty, Faculty newFaculty);
 
-    bool CheckIfChanged(Faculty faculty, JObject jsonFaculty);
-
-    Task UpdateAsync(Faculty faculty, JObject jsonFaculty);
+    Task UpdateAsync(Faculty faculty, Faculty newFaculty);
+    
+    Faculty Convert(JObject jsonFaculty);
 }

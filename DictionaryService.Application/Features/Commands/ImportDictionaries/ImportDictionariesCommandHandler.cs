@@ -101,19 +101,21 @@ public class ImportDictionariesCommandHandler : IRequestHandler<ImportDictionari
 
             foreach (var jsonEducationLevel in jsonEducationLevels!)
             {
-                if (await _educationLevel.CheckExistenceByExternalId(jsonEducationLevel.Value<int>("id")))
+                var newEducationLevel = _educationLevel.Convert(jsonEducationLevel);
+
+                if (await _educationLevel.CheckExistenceByExternalId(newEducationLevel.ExternalId))
                 {
                     var existingEducationLevel =
-                        await _educationLevel.GetByExternalId(jsonEducationLevel.Value<int>("id"));
+                        await _educationLevel.GetByExternalId(newEducationLevel.ExternalId);
 
-                    if (_educationLevel.CheckIfChanged(existingEducationLevel, jsonEducationLevel))
+                    if (_educationLevel.CheckIfChanged(existingEducationLevel, newEducationLevel))
                     {
-                        await _educationLevel.UpdateAsync(existingEducationLevel, jsonEducationLevel);
+                        await _educationLevel.UpdateAsync(existingEducationLevel, newEducationLevel);
                     }
                 }
                 else
                 {
-                    await _educationLevel.CreateAsync(jsonEducationLevel);
+                    await _educationLevel.CreateAsync(newEducationLevel);
                 }
             }
         }
@@ -157,19 +159,21 @@ public class ImportDictionariesCommandHandler : IRequestHandler<ImportDictionari
 
             foreach (var jsonFaculty in jsonFaculties!)
             {
-                if (await _faculty.CheckExistenceByExternalId(Guid.Parse(jsonFaculty.Value<string>("id")!)))
+                var newFaculty = _faculty.Convert(jsonFaculty);
+
+                if (await _faculty.CheckExistenceByExternalId(newFaculty.ExternalId))
                 {
                     var existingFaculty =
-                        await _faculty.GetByExternalId(Guid.Parse(jsonFaculty.Value<string>("id")!));
+                        await _faculty.GetByExternalId(newFaculty.ExternalId);
 
-                    if (_faculty.CheckIfChanged(existingFaculty, jsonFaculty))
+                    if (_faculty.CheckIfChanged(existingFaculty, newFaculty))
                     {
-                        await _faculty.UpdateAsync(existingFaculty, jsonFaculty);
+                        await _faculty.UpdateAsync(existingFaculty, newFaculty);
                     }
                 }
                 else
                 {
-                    await _faculty.CreateAsync(jsonFaculty);
+                    await _faculty.CreateAsync(newFaculty);
                 }
             }
         }
@@ -196,6 +200,7 @@ public class ImportDictionariesCommandHandler : IRequestHandler<ImportDictionari
                 var toDelete =
                     await _documentType.GetEntitiesToDelete(jsonDocumentTypes!.Select(e =>
                         Guid.Parse(e.Value<string>("id")!)));
+                
                 if (toDelete.Count > 0)
                 {
                     await _documentType.SoftDeleteEntities(toDelete);
@@ -206,20 +211,21 @@ public class ImportDictionariesCommandHandler : IRequestHandler<ImportDictionari
 
             foreach (var jsonDocumentType in jsonDocumentTypes!)
             {
-                if (await _documentType.CheckExistenceByExternalId(
-                        Guid.Parse(jsonDocumentType.Value<string>("id")!)))
+                var newDocumentType = await _documentType.Convert(jsonDocumentType);
+
+                if (await _documentType.CheckExistenceByExternalId(newDocumentType.ExternalId))
                 {
                     var existingDocumentType =
-                        await _documentType.GetByExternalId(Guid.Parse(jsonDocumentType.Value<string>("id")!));
+                        await _documentType.GetByExternalId(newDocumentType.ExternalId);
 
-                    if (await _documentType.CheckIfChanged(existingDocumentType, jsonDocumentType))
+                    if (await _documentType.CheckIfChanged(existingDocumentType, newDocumentType, jsonDocumentType["nextEducationLevels"]!.ToObject<List<JObject>>()))
                     {
-                        await _documentType.UpdateAsync(existingDocumentType, jsonDocumentType);
+                        await _documentType.UpdateAsync(existingDocumentType, newDocumentType, jsonDocumentType.Value<List<JObject>>("nextEducationLevels")!);
                     }
                 }
                 else
                 {
-                    await _documentType.CreateAsync(jsonDocumentType);
+                    await _documentType.CreateAsync(newDocumentType, jsonDocumentType["nextEducationLevels"]!.ToObject<List<JObject>>());
                 }
             }
         }
@@ -274,20 +280,21 @@ public class ImportDictionariesCommandHandler : IRequestHandler<ImportDictionari
 
         foreach (var jsonProgram in allPrograms)
         {
-            if (await _program.CheckExistenceByExternalId(
-                    Guid.Parse(jsonProgram.Value<string>("id")!)))
+            var newProgram = await _program.Convert(jsonProgram);
+
+            if (await _program.CheckExistenceByExternalId(newProgram.ExternalId))
             {
                 var existingDocumentType =
-                    await _program.GetByExternalId(Guid.Parse(jsonProgram.Value<string>("id")!));
+                    await _program.GetByExternalId(newProgram.ExternalId);
 
-                if (await _program.CheckIfChanged(existingDocumentType, jsonProgram))
+                if (_program.CheckIfChanged(existingDocumentType, newProgram))
                 {
-                    await _program.UpdateAsync(existingDocumentType, jsonProgram);
+                    await _program.UpdateAsync(existingDocumentType, newProgram);
                 }
             }
             else
             {
-                await _program.CreateAsync(jsonProgram);
+                await _program.CreateAsync(newProgram);
             }
         }
     }

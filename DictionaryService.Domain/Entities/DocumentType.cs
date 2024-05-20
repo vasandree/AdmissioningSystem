@@ -13,7 +13,5 @@ public class DocumentType : DictionaryEntity
 
     [Required] public EducationLevel EducationLevel { get; set; }
 
-    public List<EducationLevel> NextEducationLevels { get; set; }
-
     [Required] public DateTime CreateTime { get; set; }
 }

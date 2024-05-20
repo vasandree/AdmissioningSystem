@@ -1,7 +1,6 @@
 using DictionaryService.Application.Contracts.Persistence;
 using DictionaryService.Domain.Entities;
 using DictionaryService.Infrastructure;
-using DictionaryService.Persistence.Helpers;
 using DictionaryService.Persistence.Helpers.Converters;
 using DictionaryService.Persistence.Helpers.Update;
 using Microsoft.EntityFrameworkCore;
@@ -43,21 +42,26 @@ public class FacultyRepository : DictionaryRepository<Faculty>, IFacultyReposito
         return await _context.Faculties.FirstOrDefaultAsync(x => x.ExternalId == externalId)!;
     }
 
-    public async Task CreateAsync(JObject jsonFaculty)
+    public new async Task CreateAsync(Faculty newFaculty)
     {
-        await _context.Faculties.AddAsync(_converter.ConvertToFaculty(jsonFaculty));
+        await _context.Faculties.AddAsync(newFaculty);
         await _context.SaveChangesAsync();
     }
 
-    public bool CheckIfChanged(Faculty faculty, JObject jsonFaculty)
+    public bool CheckIfChanged(Faculty faculty, Faculty newFaculty)
     {
-        return _update.CheckIfFacultyUpdated(faculty, jsonFaculty);
+        return _update.CheckIfFacultyUpdated(faculty, newFaculty);
     }
 
-    public async Task UpdateAsync(Faculty faculty, JObject jsonFaculty)
+    public async Task UpdateAsync(Faculty faculty, Faculty newFaculty)
     {
-        _update.UpdateFaculty(faculty, jsonFaculty);
+        _update.UpdateFaculty(faculty, newFaculty);
         _context.Entry(faculty).State = EntityState.Modified;
         await _context.SaveChangesAsync();
+    }
+
+    public Faculty Convert(JObject jsonFaculty)
+    {
+        return _converter.ConvertToFaculty(jsonFaculty);
     }
 }

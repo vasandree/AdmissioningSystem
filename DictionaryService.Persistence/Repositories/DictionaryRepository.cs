@@ -2,6 +2,7 @@ using DictionaryService.Application.Contracts.Persistence;
 using DictionaryService.Domain.Entities;
 using DictionaryService.Infrastructure;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Linq;
 
 namespace DictionaryService.Persistence.Repositories;
 
@@ -13,7 +14,7 @@ public class DictionaryRepository<T> : GenericRepository<T>, IDictionaryReposito
     {
         _context = context;
     }
-    
+
 
     public async Task SoftDeleteEntities(List<T> toDelete)
     {
@@ -24,10 +25,17 @@ public class DictionaryRepository<T> : GenericRepository<T>, IDictionaryReposito
             await _context.SaveChangesAsync();
         }
     }
-    
+
 
     public async Task<T> GetById(Guid id)
     {
         return (await _context.Set<T>().FirstOrDefaultAsync(x => x.Id == id))!;
+    }
+
+    public new async Task<List<T>> GetAllAsync()
+    {
+        return await _context.Set<T>()
+            .Where(x => x.IsDeleted == false)
+            .AsNoTracking().ToListAsync();
     }
 }

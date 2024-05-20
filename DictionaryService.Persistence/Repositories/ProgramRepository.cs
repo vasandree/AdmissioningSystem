@@ -1,7 +1,6 @@
 using DictionaryService.Application.Contracts.Persistence;
 using DictionaryService.Domain.Entities;
 using DictionaryService.Infrastructure;
-using DictionaryService.Persistence.Helpers;
 using DictionaryService.Persistence.Helpers.Converters;
 using DictionaryService.Persistence.Helpers.Update;
 using Microsoft.EntityFrameworkCore;
@@ -15,7 +14,8 @@ public class ProgramRepository : DictionaryRepository<Program>, IProgramReposito
     private readonly ProgramUpdate _update;
     private readonly ProgramConverter _converter;
 
-    public ProgramRepository(DictionaryDbContext context, ProgramUpdate update, ProgramConverter converter) : base(context)
+    public ProgramRepository(DictionaryDbContext context, ProgramUpdate update, ProgramConverter converter) :
+        base(context)
     {
         _context = context;
         _update = update;
@@ -24,7 +24,8 @@ public class ProgramRepository : DictionaryRepository<Program>, IProgramReposito
 
     public async Task<bool> CheckExistenceByExternalId(Guid externalId)
     {
-        return await _context.Programs.AnyAsync(x => x.ExternalId == externalId);    }
+        return await _context.Programs.AnyAsync(x => x.ExternalId == externalId);
+    }
 
     public async Task<List<Program>> GetEntitiesToDelete(IEnumerable<Guid> newIds)
     {
@@ -37,26 +38,24 @@ public class ProgramRepository : DictionaryRepository<Program>, IProgramReposito
 
     public async Task<Program> GetByExternalId(Guid externalId)
     {
-        return await _context.Programs.FirstOrDefaultAsync(x => x.ExternalId == externalId)!;
+        return await _context.Programs
+            .Include(x => x.EducationLevel)
+            .Include(x => x.Faculty)
+            .FirstOrDefaultAsync(x => x.ExternalId == externalId)!;
     }
 
-    public async Task CreateAsync(JObject jsonProgram)
+    public bool CheckIfChanged(Program program, Program newProgram)
     {
-        await _context.Programs.AddAsync(await _converter.ConvertToProgram(jsonProgram));
-        await _context.SaveChangesAsync();
+        return  _update.CheckIfProgramUpdated(program, newProgram);
     }
 
-    public async Task<bool> CheckIfChanged(Program program, JObject jsonProgram)
+    public async Task UpdateAsync(Program program, Program newProgram)
     {
-        return await _update.CheckIfProgramUpdated(program, jsonProgram);
-    }
-
-    public async Task UpdateAsync(Program program, JObject jsonProgram)
-    {
-        await _update.UpdateProgram(program, jsonProgram);
+        await _update.UpdateProgram(program, newProgram);
         _context.Entry(program).State = EntityState.Modified;
         await _context.SaveChangesAsync();
     }
+    
 
     public async Task<List<Program?>> GetEntitiesToDeleteByEducationLevel(List<EducationLevel> deletedEducationLevel)
     {
@@ -70,5 +69,10 @@ public class ProgramRepository : DictionaryRepository<Program>, IProgramReposito
         return await _context.Programs
             .Where(docType => deletedFaculties.Any(faculty => faculty == docType.Faculty))
             .ToListAsync();
+    }
+
+    public async Task<Program> Convert(JObject jsonProgram)
+    {
+        return await _converter.ConvertToProgram(jsonProgram);
     }
 }

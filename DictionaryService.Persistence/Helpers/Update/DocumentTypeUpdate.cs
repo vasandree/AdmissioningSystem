@@ -8,72 +8,134 @@ public class DocumentTypeUpdate
 {
     private readonly IEducationLevelRepository _educationLevel;
     private readonly EducationLevelUpdate _educationLevelUpdate;
+    private readonly INextEducationLevelRepository _nextEducationLevel;
 
-    public DocumentTypeUpdate(IEducationLevelRepository educationLevel, EducationLevelUpdate educationLevelUpdate)
+    public DocumentTypeUpdate(IEducationLevelRepository educationLevel, EducationLevelUpdate educationLevelUpdate,
+        INextEducationLevelRepository nextEducationLevel)
     {
         _educationLevel = educationLevel;
         _educationLevelUpdate = educationLevelUpdate;
+        _nextEducationLevel = nextEducationLevel;
     }
 
-    public async Task<bool> CheckIfDocumentTypeUpdated(DocumentType documentType, JObject jsonDocumentType)
+    public async Task<bool> CheckIfDocumentTypeUpdated(DocumentType documentType, DocumentType newDocumentType,
+        List<JObject> newNextEducationLevels)
     {
-        return documentType.Name != jsonDocumentType.Value<string>("name") ||
-               documentType.CreateTime != jsonDocumentType.Value<DateTime>("createTime").ToUniversalTime() ||
-               documentType.EducationLevel !=
-               await _educationLevel.GetByExternalId(jsonDocumentType.Value<int>("educationLevel:id")) ||
-               !await CheckNextEducationLevels(documentType,
-                   jsonDocumentType["nextEducationLevels"]!.ToObject<List<JObject>>()!);
+        return documentType.Name != newDocumentType.Name ||
+               _educationLevelUpdate.CheckIfEducationLevelUpdated(documentType.EducationLevel,
+                   newDocumentType.EducationLevel) ||
+               await CheckIfNextEducationLevelsUpdated(documentType.Id, newNextEducationLevels);
     }
-    
-    public async Task UpdateDocumentType(DocumentType documentType, JObject jsonDocumentType)
-    {
-        if (!await _educationLevel.CheckExistenceByExternalId(jsonDocumentType.Value<int>("educationLevel:id")))
-            await _educationLevel.CreateAsync(jsonDocumentType.Value<JObject>("educationLevel")!);
-       
-        var educationLevel = await _educationLevel.GetByExternalId(jsonDocumentType.Value<int>("educationLevel:id"));
-        if (_educationLevelUpdate.CheckIfEducationLevelUpdated(educationLevel, jsonDocumentType.Value<JObject>("educationLevel")!))
-            _educationLevelUpdate.UpdateEducationLevel(educationLevel, jsonDocumentType.Value<JObject>("educationLevel")!);
-        
 
-        documentType.Name = jsonDocumentType.Value<string>("name")!;
-        documentType.CreateTime = jsonDocumentType.Value<DateTime>("createTime").ToUniversalTime();
+    private async Task<bool> CheckIfNextEducationLevelsUpdated(Guid documentTypeId,
+        List<JObject> jsonNewNextEducationLevels)
+    {
+        var oldNextEducationLevels = await _nextEducationLevel.GetEducationLevels(documentTypeId);
+        var newNextEducationLevels = jsonNewNextEducationLevels.Select(json => _educationLevel.Convert(json)).ToList();
+
+        var oldIds = oldNextEducationLevels.Select(e => e.ExternalId).ToList();
+        var newIds = newNextEducationLevels.Select(e => e.ExternalId).ToList();
+
+        if (!oldIds.SequenceEqual(newIds)) return true;
+
+        foreach (var newNextEducationLevel in newNextEducationLevels)
+        {
+            var oldNextEducationLevel =
+                oldNextEducationLevels.FirstOrDefault(e => e.ExternalId == newNextEducationLevel.ExternalId);
+            if (oldNextEducationLevel == null) return true;
+
+            if (_educationLevel.CheckIfChanged(newNextEducationLevel, oldNextEducationLevel))
+                return true;
+        }
+
+        return false;
+    }
+
+    public async Task UpdateDocumentType(DocumentType documentType, DocumentType newDocumentType)
+    {
+        EducationLevel educationLevel;
+        if (!await _educationLevel.CheckExistenceByExternalId(newDocumentType.EducationLevel.ExternalId))
+        {
+            await _educationLevel.CreateAsync(newDocumentType.EducationLevel);
+            educationLevel = await _educationLevel.GetByExternalId(newDocumentType.EducationLevel.ExternalId);
+        }
+        else
+        {
+            educationLevel = await _educationLevel.GetByExternalId(newDocumentType.EducationLevel.ExternalId);
+            if (_educationLevelUpdate.CheckIfEducationLevelUpdated(educationLevel, newDocumentType.EducationLevel))
+                _educationLevelUpdate.UpdateEducationLevel(educationLevel, newDocumentType.EducationLevel);
+        }
+
+
+        documentType.Name = newDocumentType.Name;
+        documentType.CreateTime = newDocumentType.CreateTime;
         documentType.EducationLevelId = educationLevel.Id;
         documentType.EducationLevel = educationLevel;
         documentType.IsDeleted = false;
-
-        await UpdateNextEducationLevels(documentType,
-            jsonDocumentType["nextEducationLevels"]!.ToObject<List<JObject>>()!);
-    }
-    
-    private async Task<bool> CheckNextEducationLevels(DocumentType documentType, List<JObject> nextEducationLevels)
-    {
-        var oldNextEducationLevels = documentType.NextEducationLevels;
-
-        var newNextEducationLevels = await GetNextEducationLevels(nextEducationLevels);
-        var upToDate = oldNextEducationLevels.SequenceEqual(newNextEducationLevels);
-        return upToDate;
     }
 
-    private async Task<List<EducationLevel>> GetNextEducationLevels(List<JObject> nextEducationLevels)
+
+    public async Task CreateNextEducationLevels(DocumentType documentType, List<JObject> jsonNextEducationLevels)
     {
-        var newNextEducationLevels = new List<EducationLevel>();
-        foreach (var next in nextEducationLevels)
+        var oldLevels = await _nextEducationLevel.GetNextEducationLevelsOfDocumentType(documentType.Id);
+
+        if (jsonNextEducationLevels.Count > 0)
         {
-            if (!await _educationLevel.CheckExistenceByExternalId(next.Value<int>("id")))
+            List<NextEducationLevel> addedLevels = new List<NextEducationLevel>();
+            foreach (var jsonNextEducationLevel in jsonNextEducationLevels)
             {
-                await _educationLevel.CreateAsync(next);
+                var educationLevel = _educationLevel.Convert(jsonNextEducationLevel);
+
+                if (!await _educationLevel.CheckExistenceByExternalId(educationLevel.ExternalId))
+                {
+                    await _educationLevel.CreateAsync(educationLevel);
+                }
+                else
+                {
+                    var oldEducationLevel = await _educationLevel.GetByExternalId(educationLevel.ExternalId);
+                    if (_educationLevelUpdate.CheckIfEducationLevelUpdated(oldEducationLevel, educationLevel))
+                        _educationLevelUpdate.UpdateEducationLevel(oldEducationLevel, educationLevel);
+                }
+
+                educationLevel = await _educationLevel.GetByExternalId(educationLevel.ExternalId);
+
+                if (!await _nextEducationLevel.CheckIfExists(documentType.Id, educationLevel.ExternalId))
+                {
+                    var newLevel = new NextEducationLevel
+                    {
+                        Id = Guid.NewGuid(),
+                        EducationLevelId = educationLevel.Id,
+                        DocumentTypeId = documentType.Id,
+                        EducationLevelExternalId = educationLevel.ExternalId,
+                        DocumentTypeExternalId = documentType.ExternalId
+                    };
+                    await _nextEducationLevel.CreateAsync(newLevel);
+                }
+
+                addedLevels.Add(
+                    await _nextEducationLevel.GetByExternalIds(documentType.ExternalId, educationLevel.ExternalId));
             }
-            newNextEducationLevels.Add(await _educationLevel.GetByExternalId(next.Value<int>("id")));
+
+            if (oldLevels.Count > 0)
+            {
+                foreach (var oldLevel in oldLevels)
+                {
+                    if (!addedLevels.Any(al => al.Id == oldLevel!.Id))
+                    {
+                        await _nextEducationLevel.DeleteAsync(oldLevel!);
+                    }
+                }
+            }
         }
-
-        return newNextEducationLevels;
-    }
-
-    private async Task UpdateNextEducationLevels(DocumentType documentType, List<JObject> newNextLevels)
-    {
-        if (!await CheckNextEducationLevels(documentType, newNextLevels))
+        else
         {
-            documentType.NextEducationLevels = await GetNextEducationLevels(newNextLevels);
+            if (oldLevels.Count > 0)
+            {
+                foreach (var oldLevel in oldLevels)
+                {
+                    await _nextEducationLevel.DeleteAsync(oldLevel!);
+                }
+            }
         }
     }
 }

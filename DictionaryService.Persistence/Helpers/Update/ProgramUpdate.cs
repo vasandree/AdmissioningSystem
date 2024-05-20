@@ -11,7 +11,8 @@ public class ProgramUpdate
     private readonly EducationLevelUpdate _educationLevelUpdate;
     private readonly FacultyUpdate _facultyUpdate;
 
-    public ProgramUpdate(IEducationLevelRepository educationLevel, IFacultyRepository faculty, EducationLevelUpdate educationLevelUpdate, FacultyUpdate facultyUpdate)
+    public ProgramUpdate(IEducationLevelRepository educationLevel, IFacultyRepository faculty,
+        EducationLevelUpdate educationLevelUpdate, FacultyUpdate facultyUpdate)
     {
         _educationLevel = educationLevel;
         _faculty = faculty;
@@ -19,41 +20,58 @@ public class ProgramUpdate
         _facultyUpdate = facultyUpdate;
     }
 
-    public async Task<bool> CheckIfProgramUpdated(Program program, JObject jsonProgram)
+    public bool CheckIfProgramUpdated(Program program, Program newProgram)
     {
-        return program.Name != jsonProgram.Value<string>("name") ||
-               program.CreateTime != jsonProgram.Value<DateTime>("createTime").ToUniversalTime() ||
-               program.Code != jsonProgram.Value<string>("code") ||
-               program.Language != jsonProgram.Value<string>("language") ||
-               program.EducationForm != jsonProgram.Value<string>("educationForm") ||
-               program.Faculty !=
-               await _faculty.GetByExternalId(Guid.Parse(jsonProgram.Value<string>("faculty:id")!)) ||
-               program.EducationLevel !=
-               await _educationLevel.GetByExternalId(jsonProgram.Value<int>("educationLevel:id"));
+        return program.Name != newProgram.Name ||
+               program.Code != newProgram.Code ||
+               program.Language != newProgram.Language ||
+               program.EducationForm != newProgram.EducationForm ||
+               _educationLevelUpdate.CheckIfEducationLevelUpdated(program.EducationLevel, newProgram.EducationLevel) ||
+               _facultyUpdate.CheckIfFacultyUpdated(program.Faculty, newProgram.Faculty);
     }
-    
-    public async Task UpdateProgram(Program program, JObject jsonProgram)
-    {
-        if (!await _educationLevel.CheckExistenceByExternalId(jsonProgram["educationLevel"]!.Value<int>("id")))
-            await _educationLevel.CreateAsync(jsonProgram.Value<JObject>("educationLevel")!);
-       
-        var educationLevel = await _educationLevel.GetByExternalId(jsonProgram["educationLevel"]!.Value<int>("id"));
-        
-        if (_educationLevelUpdate.CheckIfEducationLevelUpdated(educationLevel, jsonProgram.Value<JObject>("educationLevel")!))
-            _educationLevelUpdate.UpdateEducationLevel(educationLevel, jsonProgram.Value<JObject>("educationLevel")!);
-        
-        if (!await _faculty.CheckExistenceByExternalId(Guid.Parse(jsonProgram["faculty"]!.Value<string>("id")!)));
-        await _faculty.CreateAsync(jsonProgram.Value<JObject>("faculty")!);
-       
-        var faculty = await _faculty.GetByExternalId(Guid.Parse(jsonProgram["faculty"]!.Value<string>("id")!));
-        if (_facultyUpdate.CheckIfFacultyUpdated(faculty, jsonProgram.Value<JObject>("faculty")!))
-            _facultyUpdate.UpdateFaculty(faculty, jsonProgram.Value<JObject>("faculty")!);
 
-        program.Name = jsonProgram.Value<string>("name")!;
-        program.Code = jsonProgram.Value<string>("code")!;
-        program.Language = jsonProgram.Value<string>("language")!;
-        program.EducationForm = jsonProgram.Value<string>("educationForm")!;
-        program.CreateTime = jsonProgram.Value<DateTime>("createTime").ToUniversalTime();
+    public async Task UpdateProgram(Program program, Program newProgram)
+    {
+        EducationLevel educationLevel;
+        Faculty faculty;
+
+        if (!await _educationLevel.CheckExistenceByExternalId(newProgram.EducationLevel.ExternalId))
+        {
+            await _educationLevel.CreateAsync(newProgram.EducationLevel);
+            educationLevel = await _educationLevel.GetByExternalId(newProgram.EducationLevel.ExternalId);
+        }
+        else
+        {
+            educationLevel = await _educationLevel.GetByExternalId(newProgram.EducationLevel.ExternalId);
+            if (_educationLevelUpdate.CheckIfEducationLevelUpdated(educationLevel, newProgram.EducationLevel))
+            {
+                _educationLevelUpdate.UpdateEducationLevel(educationLevel, newProgram.EducationLevel);
+                await _educationLevel.UpdateAsync(educationLevel);
+            }
+            educationLevel = await _educationLevel.GetByExternalId(newProgram.EducationLevel.ExternalId);
+        }
+
+        if (!await _faculty.CheckExistenceByExternalId(newProgram.Faculty.ExternalId))
+        {
+            await _faculty.CreateAsync(newProgram.Faculty);
+            faculty = await _faculty.GetByExternalId(newProgram.Faculty.ExternalId);
+        }
+        else
+        {
+            faculty = await _faculty.GetByExternalId(newProgram.Faculty.ExternalId);
+            if (_facultyUpdate.CheckIfFacultyUpdated(faculty, newProgram.Faculty))
+            {
+                _facultyUpdate.UpdateFaculty(faculty, newProgram.Faculty);
+                await _faculty.UpdateAsync(faculty);
+            }
+            faculty = await _faculty.GetByExternalId(newProgram.Faculty.ExternalId);
+        }
+        
+        program.Name = newProgram.Name;
+        program.Code = newProgram.Code;
+        program.Language = newProgram.Language;
+        program.EducationForm = newProgram.EducationForm;
+        program.CreateTime = newProgram.CreateTime;
         program.EducationLevel = educationLevel;
         program.Faculty = faculty;
     }

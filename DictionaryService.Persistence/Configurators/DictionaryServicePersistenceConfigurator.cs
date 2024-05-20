@@ -18,6 +18,7 @@ public static class DictionaryServicePersistenceConfigurator
         builder.Services.AddTransient<IFacultyRepository, FacultyRepository>();
         builder.Services.AddTransient<IDocumentTypeRepository, DocumentTypeRepository>();
         builder.Services.AddTransient<IProgramRepository, ProgramRepository>();
+        builder.Services.AddTransient<INextEducationLevelRepository, NextEducationLevelRepository>();
         
         builder.Services.AddScoped<DocumentTypeConverter>(); 
         builder.Services.AddScoped<EducationLevelConverter>(); 

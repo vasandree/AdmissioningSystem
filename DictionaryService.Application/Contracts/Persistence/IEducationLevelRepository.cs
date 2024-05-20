@@ -11,9 +11,9 @@ public interface IEducationLevelRepository : IDictionaryRepository<EducationLeve
 
     Task<EducationLevel> GetByExternalId(int externalId);
 
-    Task CreateAsync(JObject jsonEducationLevel);
+    bool CheckIfChanged(EducationLevel educationLevel, EducationLevel newEducationLevel);
 
-    bool CheckIfChanged(EducationLevel educationLevel, JObject jsonEducationLevel);
-
-    Task UpdateAsync(EducationLevel educationLevel, JObject jsonEducationLevel);
+    Task UpdateAsync(EducationLevel educationLevel, EducationLevel newEducationLevel);
+    
+    EducationLevel Convert(JObject jsonEducationLevel);
 }

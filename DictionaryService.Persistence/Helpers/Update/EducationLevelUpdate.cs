@@ -5,14 +5,14 @@ namespace DictionaryService.Persistence.Helpers.Update;
 
 public class EducationLevelUpdate
 {
-    public bool CheckIfEducationLevelUpdated(EducationLevel educationLevel, JObject jsonEducationLevel)
+    public bool CheckIfEducationLevelUpdated(EducationLevel educationLevel, EducationLevel newEducationLevel)
     {
-        return educationLevel.Name != jsonEducationLevel.Value<string>("name");
+        return educationLevel.Name != newEducationLevel.Name;
     }
-    
-    public void UpdateEducationLevel(EducationLevel educationLevel, JObject jsonEducationLevel)
+
+    public void UpdateEducationLevel(EducationLevel educationLevel, EducationLevel newEducationLevel)
     {
-        educationLevel.Name = jsonEducationLevel.Value<string>("name")!;
+        educationLevel.Name = newEducationLevel.Name;
         educationLevel.IsDeleted = false;
     }
 

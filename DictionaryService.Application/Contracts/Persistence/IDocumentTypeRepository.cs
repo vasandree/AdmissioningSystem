@@ -11,11 +11,16 @@ public interface IDocumentTypeRepository : IDictionaryRepository<DocumentType>
 
     Task<DocumentType> GetByExternalId(Guid externalId);
 
-    Task CreateAsync(JObject jsonDocumentType);
+    new Task CreateAsync(DocumentType documentType, List<JObject> jsonNextEducationLevels);
 
-    Task<bool> CheckIfChanged(DocumentType documentType, JObject jsonDocumentType);
+    Task<bool> CheckIfChanged(DocumentType documentType, DocumentType newDocumentType,
+        List<JObject> jsonNewNextEducationLevels);
 
-    Task UpdateAsync(DocumentType documentType, JObject jsonDocumentType);
+    Task UpdateAsync(DocumentType documentType, DocumentType newDocumentType, List<JObject> jsonNewNextEducationLevels);
 
     Task<List<DocumentType?>> GetEntitiesToDeleteByEducationLevel(List<EducationLevel> deletedEducationLevel);
+
+    new Task<List<DocumentType>> GetAllAsync();
+
+    Task<DocumentType> Convert(JObject jsonDocumentType);
 }
