@@ -3,7 +3,6 @@ using DictionaryService.Application.Features.Commands.CheckImportStatus;
 using DictionaryService.Application.Features.Commands.ImportDictionaries;
 using DictionaryService.Domain.Enums;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DictionaryService.Presentation.Controllers;
@@ -21,10 +20,10 @@ public class DictionaryController : ControllerBase
     [HttpPost]
     /*[Authorize]*/
     [Route("import")]
-    public async Task<IActionResult> ImportDictionary(DictionaryType dictionaryType)
+    public async Task<IActionResult> ImportDictionary([FromQuery] DictionaryType dictionaryType = DictionaryType.All)
     {
         //todo: add role checker   
-        return Ok(await _meditor.Send( new ImportDictionariesCommand(dictionaryType)));
+        return Ok(await _meditor.Send(new ImportDictionariesCommand(dictionaryType)));
     }
 
     [HttpPost]

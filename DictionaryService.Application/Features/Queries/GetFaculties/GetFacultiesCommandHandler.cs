@@ -21,9 +21,6 @@ public class GetFacultiesCommandHandler : IRequestHandler<GetFacultiesCommand, F
 
     public async Task<FacultiesPagedDto> Handle(GetFacultiesCommand request, CancellationToken cancellationToken)
     {
-        if (request.Size < 1 || request.Page < 1)
-            throw new BadRequest("Size and Page must be greater than or equal to 1.");
-
         var faculties = await _faculty.GetAllAsync();
 
         var totalPages = (int)Math.Ceiling((double)faculties.Count / request.Size);

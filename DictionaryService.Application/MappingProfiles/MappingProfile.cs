@@ -11,5 +11,6 @@ public class MappingProfile : Profile
         CreateMap<DocumentType, EducationDocumentTypeDto>();
         CreateMap<EducationLevel, EducationLevelDto>();
         CreateMap<Faculty, FacultyDto>();
+        CreateMap<Program, ProgramDto>();
     }
 }

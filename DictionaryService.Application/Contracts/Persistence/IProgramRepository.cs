@@ -20,4 +20,6 @@ public interface IProgramRepository : IDictionaryRepository<Program>
     Task<List<Program?>> GetEntitiesToDeleteByFaculty(List<Faculty> deletedFaculties);
     
     Task<Program> Convert(JObject jsonProgram);
+
+    IQueryable<Program> GetAllAsQueryable();
 }

@@ -64,4 +64,9 @@ public class FacultyRepository : DictionaryRepository<Faculty>, IFacultyReposito
     {
         return _converter.ConvertToFaculty(jsonFaculty);
     }
+
+    public async Task<bool> CheckIfExists(Guid id)
+    {
+        return await _context.Faculties.AnyAsync(x => x.Id == id);
+    }
 }

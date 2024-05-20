@@ -21,8 +21,8 @@ public class ImportDictionariesCommandHandler : IRequestHandler<ImportDictionari
     private readonly string _url;
     private readonly string _authHeaderValue;
 
-    public ImportDictionariesCommandHandler(HttpClient httpClient, DictionaryDbContext context,
-        IConfiguration configuration, IEducationLevelRepository educationLevel, IMapper mapper,
+    public ImportDictionariesCommandHandler(HttpClient httpClient,
+        IConfiguration configuration, IEducationLevelRepository educationLevel,
         IFacultyRepository faculty, IDocumentTypeRepository documentType, IProgramRepository program)
     {
         _httpClient = httpClient;

@@ -37,7 +37,7 @@ public class NextEducationLevelRepository : GenericRepository<NextEducationLevel
         var educationLevelIds = nextEducationLevels.Select(nel => nel.EducationLevelId).ToList();
 
         var educationLevels = await _context.EducationLevels
-            .Where(el => educationLevelIds.Contains(el.Id))
+            .Where(el => educationLevelIds.Contains(el.Id) && !el.IsDeleted)
             .ToListAsync();
 
         return educationLevels;

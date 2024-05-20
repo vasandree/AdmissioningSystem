@@ -1,6 +1,8 @@
 using DictionaryService.Application.Features.Queries.GetDocumentType;
 using DictionaryService.Application.Features.Queries.GetEducationLevels;
 using DictionaryService.Application.Features.Queries.GetFaculties;
+using DictionaryService.Application.Features.Queries.GetPrograms;
+using DictionaryService.Domain.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,10 +12,12 @@ namespace DictionaryService.Presentation.Controllers;
 public class InfoController : ControllerBase
 {
     private readonly IMediator _mediator;
+    private int _size;
 
-    public InfoController(IMediator mediator)
+    public InfoController(IMediator mediator, IConfiguration configuration)
     {
         _mediator = mediator;
+        _size = configuration.GetValue<int>("DefaultPageSize");
     }
 
     [HttpGet, Route("education_levels")]
@@ -21,7 +25,7 @@ public class InfoController : ControllerBase
     {
         return Ok(await _mediator.Send(new GetEducationLevelsCommand()));
     }
-    
+
     [HttpGet, Route("document_types")]
     public async Task<IActionResult> GetAllDocumentTypes()
     {
@@ -29,8 +33,22 @@ public class InfoController : ControllerBase
     }
 
     [HttpGet, Route("faculties")]
-    public async Task<IActionResult> GetAllFaculties([FromQuery] int size = 10, [FromQuery]int page = 1)
+    public async Task<IActionResult> GetAllFaculties([FromQuery] int? size = 10, [FromQuery] int? page = 1)
     {
-        return Ok(await _mediator.Send(new GetFacultiesCommand(size, page)));
+        return Ok(await _mediator.Send(new GetFacultiesCommand(size ?? _size, page ?? 1)));
+    }
+
+    [HttpGet, Route("programs")]
+    public async Task<IActionResult> GetPrograms(
+        [FromQuery] Guid[]? faculties,
+        [FromQuery] Language? language,
+        [FromQuery] FormOfEducation? formOfEducation,
+        [FromQuery] string? code,
+        [FromQuery] string? name,
+        [FromQuery] int? size = 10,
+        [FromQuery] int? page = 1)
+    {
+        return Ok(await _mediator.Send(new GetProgramsCommand(faculties, language, formOfEducation, code, name,
+            size ?? _size, page ?? 1)));
     }
 }

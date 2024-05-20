@@ -17,4 +17,6 @@ public interface IFacultyRepository : IDictionaryRepository<Faculty>
     Task UpdateAsync(Faculty faculty, Faculty newFaculty);
     
     Faculty Convert(JObject jsonFaculty);
+
+    Task<bool> CheckIfExists(Guid id);
 }

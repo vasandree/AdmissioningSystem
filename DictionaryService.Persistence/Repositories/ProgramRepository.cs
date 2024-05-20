@@ -75,4 +75,11 @@ public class ProgramRepository : DictionaryRepository<Program>, IProgramReposito
     {
         return await _converter.ConvertToProgram(jsonProgram);
     }
+
+    public IQueryable<Program> GetAllAsQueryable()
+    {
+        return _context.Programs.AsQueryable()
+            .Include(x=>x.Faculty)
+            .Include(x=>x.EducationLevel);
+    }
 }
