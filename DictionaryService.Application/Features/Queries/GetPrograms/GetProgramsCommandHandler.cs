@@ -4,7 +4,7 @@ using Common.Models;
 using Common.Models.Dtos;
 using Common.Models.Dtos.PagedDtos;
 using DictionaryService.Application.Contracts.Persistence;
-using DictionaryService.Domain;
+using DictionaryService.Domain.Dictionaries;
 using DictionaryService.Domain.Entities;
 using DictionaryService.Domain.Enums;
 using MediatR;
@@ -17,12 +17,16 @@ public class GetProgramsCommandHandler : IRequestHandler<GetProgramsCommand, Pro
     private readonly IProgramRepository _program;
     private readonly IFacultyRepository _faculty;
     private readonly IMapper _mapper;
+    private readonly EducationFormDictionary _educationFormDictionary;
+    private readonly LanguageDictionary _languageDictionary;
 
-    public GetProgramsCommandHandler(IProgramRepository program, IFacultyRepository faculty, IMapper mapper)
+    public GetProgramsCommandHandler(IProgramRepository program, IFacultyRepository faculty, IMapper mapper, LanguageDictionary languageDictionary, EducationFormDictionary educationFormDictionary)
     {
         _program = program;
         _faculty = faculty;
         _mapper = mapper;
+        _languageDictionary = languageDictionary;
+        _educationFormDictionary = educationFormDictionary;
     }
 
     public async Task<ProgramsPagedListDto> Handle(GetProgramsCommand request, CancellationToken cancellationToken)
@@ -75,14 +79,14 @@ public class GetProgramsCommandHandler : IRequestHandler<GetProgramsCommand, Pro
     private IQueryable<Program> GetLanguage(IQueryable<Program> programs, Language? language)
     {
         return language != null
-            ? programs.Where(x => x.Language == StringsDictionary.LanguageStrings[language.Value])
+            ? programs.Where(x => x.Language == _languageDictionary.GetLanguage(language.Value))
             : programs;
     }
 
-    private static IQueryable<Program> GetEducationForm(IQueryable<Program> programs, FormOfEducation? formOfEducation)
+    private IQueryable<Program> GetEducationForm(IQueryable<Program> programs, FormOfEducation? formOfEducation)
     {
         return formOfEducation != null
-            ? programs.Where(x => x.EducationForm == StringsDictionary.FormOfEducationStrings[formOfEducation!.Value])
+            ? programs.Where(x => x.EducationForm == _educationFormDictionary.GetFormOfEducation(formOfEducation.Value))
             : programs;
     }
 

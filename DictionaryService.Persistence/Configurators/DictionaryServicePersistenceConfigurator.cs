@@ -1,5 +1,4 @@
 using DictionaryService.Application.Contracts.Persistence;
-using DictionaryService.Persistence.Helpers;
 using DictionaryService.Persistence.Helpers.Converters;
 using DictionaryService.Persistence.Helpers.Update;
 using DictionaryService.Persistence.Repositories;

@@ -13,5 +13,6 @@ public static class ApplicationConfigurator
         builder.Services.AddHttpClient();
         builder.Services.AddAutoMapper(typeof(MappingProfile));
 
+        builder.Services.AddSingleton<ImportTaskTracker>();
     }
 }

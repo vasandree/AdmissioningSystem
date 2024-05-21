@@ -3,4 +3,4 @@ using MediatR;
 
 namespace DictionaryService.Application.Features.Commands.ImportDictionaries;
 
-public record ImportDictionariesCommand(DictionaryType? DictionaryType) : IRequest<Unit>;
+public record ImportDictionariesCommand(DictionaryType? DictionaryType) : IRequest<Guid>;

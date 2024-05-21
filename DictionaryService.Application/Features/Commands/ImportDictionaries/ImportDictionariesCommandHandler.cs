@@ -1,8 +1,6 @@
-using AutoMapper;
 using Common.Exceptions;
 using DictionaryService.Application.Contracts.Persistence;
 using DictionaryService.Domain.Enums;
-using DictionaryService.Infrastructure;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
@@ -10,26 +8,29 @@ using Newtonsoft.Json.Linq;
 
 namespace DictionaryService.Application.Features.Commands.ImportDictionaries;
 
-public class ImportDictionariesCommandHandler : IRequestHandler<ImportDictionariesCommand, Unit>
+public class ImportDictionariesCommandHandler : IRequestHandler<ImportDictionariesCommand, Guid>
 {
     private readonly HttpClient _httpClient;
     private readonly IEducationLevelRepository _educationLevel;
     private readonly IFacultyRepository _faculty;
     private readonly IDocumentTypeRepository _documentType;
     private readonly IProgramRepository _program;
+    private readonly ImportTaskTracker _importTaskTracker;
 
     private readonly string _url;
     private readonly string _authHeaderValue;
 
     public ImportDictionariesCommandHandler(HttpClient httpClient,
         IConfiguration configuration, IEducationLevelRepository educationLevel,
-        IFacultyRepository faculty, IDocumentTypeRepository documentType, IProgramRepository program)
+        IFacultyRepository faculty, IDocumentTypeRepository documentType, IProgramRepository program,
+        ImportTaskTracker importTaskTracker)
     {
         _httpClient = httpClient;
         _educationLevel = educationLevel;
         _faculty = faculty;
         _documentType = documentType;
         _program = program;
+        _importTaskTracker = importTaskTracker;
         _url = configuration.GetSection("ExternalSystem:BaseURL").Get<string>()!;
         _authHeaderValue =
             Convert.ToBase64String(System.Text.Encoding.ASCII.GetBytes(
@@ -38,28 +39,34 @@ public class ImportDictionariesCommandHandler : IRequestHandler<ImportDictionari
     }
 
 
-    public async Task<Unit> Handle(ImportDictionariesCommand request, CancellationToken cancellationToken)
+    public async Task<Guid> Handle(ImportDictionariesCommand request, CancellationToken cancellationToken)
     {
+        Task importTask;
         switch (request.DictionaryType)
         {
             case DictionaryType.EducationLevel:
-                await ImportEducationLevel();
+                importTask = ImportEducationLevel();
                 break;
             case DictionaryType.Faculty:
-                await ImportFaculty();
+                importTask = ImportFaculty();
                 break;
             case DictionaryType.DocumentType:
-                await ImportDocumentType();
+                importTask = ImportDocumentType();
                 break;
             case DictionaryType.Program:
-                await ImportProgram();
+                importTask = ImportProgram();
                 break;
             case DictionaryType.All:
-                await ImportAll();
+                importTask = ImportAll();
                 break;
+            default:
+                throw new ArgumentException("Invalid dictionary type");
         }
 
-        return Unit.Value;
+        var taskId = Guid.NewGuid();
+        _importTaskTracker.AddTask(taskId, importTask);
+        await importTask; //todo: make it async
+        return  taskId;
     }
 
     private async Task ImportEducationLevel()
@@ -200,7 +207,7 @@ public class ImportDictionariesCommandHandler : IRequestHandler<ImportDictionari
                 var toDelete =
                     await _documentType.GetEntitiesToDelete(jsonDocumentTypes!.Select(e =>
                         Guid.Parse(e.Value<string>("id")!)));
-                
+
                 if (toDelete.Count > 0)
                 {
                     await _documentType.SoftDeleteEntities(toDelete);
@@ -218,14 +225,17 @@ public class ImportDictionariesCommandHandler : IRequestHandler<ImportDictionari
                     var existingDocumentType =
                         await _documentType.GetByExternalId(newDocumentType.ExternalId);
 
-                    if (await _documentType.CheckIfChanged(existingDocumentType, newDocumentType, jsonDocumentType["nextEducationLevels"]!.ToObject<List<JObject>>()))
+                    if (await _documentType.CheckIfChanged(existingDocumentType, newDocumentType,
+                            jsonDocumentType["nextEducationLevels"]!.ToObject<List<JObject>>()))
                     {
-                        await _documentType.UpdateAsync(existingDocumentType, newDocumentType, jsonDocumentType.Value<List<JObject>>("nextEducationLevels")!);
+                        await _documentType.UpdateAsync(existingDocumentType, newDocumentType,
+                            jsonDocumentType.Value<List<JObject>>("nextEducationLevels")!);
                     }
                 }
                 else
                 {
-                    await _documentType.CreateAsync(newDocumentType, jsonDocumentType["nextEducationLevels"]!.ToObject<List<JObject>>());
+                    await _documentType.CreateAsync(newDocumentType,
+                        jsonDocumentType["nextEducationLevels"]!.ToObject<List<JObject>>());
                 }
             }
         }

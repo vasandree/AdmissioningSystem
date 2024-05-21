@@ -29,9 +29,9 @@ public class DictionaryController : ControllerBase
     [HttpPost]
     /*[Authorize]*/
     [Route("status")]
-    public async Task<IActionResult> CheckImportStatus([Required] int requestId)
+    public async Task<IActionResult> CheckImportStatus([Required][FromQuery] Guid requestId)
     {
         //todo: add role checker   
-        return Ok(await _meditor.Send(new CheckImportStatusCommand()));
+        return Ok(await _meditor.Send(new CheckImportStatusCommand(requestId)));
     }
 }

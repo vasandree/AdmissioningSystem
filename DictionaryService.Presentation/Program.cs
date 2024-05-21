@@ -1,11 +1,14 @@
 using Common.Configurator;
 using DictionaryService.Application.Configurators;
+using DictionaryService.Domain.Configurator;
 using DictionaryService.Infrastructure.Configurators;
 using DictionaryService.Persistence.Configurators;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.ConfigureAuth();
+
+builder.ConfigureDictionaryServiceDomain();
 
 builder.ConfigureDictionaryServiceInfrastructure();
 

@@ -1,8 +1,8 @@
-using DictionaryService.Domain.Enums;
+using System.Text.Json.Serialization;
 
 namespace DictionaryService.Application.DTOs;
 
 public class ImportStatusDto
 {
-    public ImportStatus Status { get; set; }
+    public TaskStatus Status { get; set; }
 }
