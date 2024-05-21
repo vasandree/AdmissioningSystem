@@ -44,6 +44,11 @@ public class MiddlewareService
             context.Response.StatusCode = StatusCodes.Status404NotFound;
             await context.Response.WriteAsJsonAsync(new { message = exception.Message });
         }
+        catch (SmtpServerException exception)
+        {
+            context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+            await context.Response.WriteAsJsonAsync(new { message = exception.Message });
+        }
         catch (ExternalSystemException exception)
         {
             context.Response.StatusCode = StatusCodes.Status500InternalServerError;

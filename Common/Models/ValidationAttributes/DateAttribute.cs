@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace UserApi.Application.Dtos.CustomValidationAttributes;
+namespace Common.Models.ValidationAttributes;
 
 public class DateAttribute : ValidationAttribute
 {

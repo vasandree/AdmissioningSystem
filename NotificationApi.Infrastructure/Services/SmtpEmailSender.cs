@@ -39,4 +39,4 @@ public class SmtpEmailSender : IEmailSender
             return true;
         }
     }
-}
+} 
