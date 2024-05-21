@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\AdmissionService.Application\AdmissionService.Application.csproj" />
+      <ProjectReference Include="..\AdmissionService.Infrastructure\AdmissionService.Infrastructure.csproj" />
+    </ItemGroup>
+
+</Project>
