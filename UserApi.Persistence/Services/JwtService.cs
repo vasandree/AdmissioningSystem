@@ -17,11 +17,12 @@ public class JwtService : IJwtService
         _config = config;
     }
 
-    public string GenerateTokenString(string email)
+    public string GenerateTokenString(string email, Guid id)
     {
         var claims = new List<Claim>
         {
             new Claim(ClaimTypes.Name,email),
+            new Claim("UserId", id.ToString())
         };
 
         var staticKey = _config.GetSection("Jwt:Key").Value;

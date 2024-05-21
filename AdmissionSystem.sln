@@ -22,17 +22,17 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotificationApi.Application
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotificationApi.Infrastructure", "NotificationApi.Infrastructure\NotificationApi.Infrastructure.csproj", "{84737063-858A-452F-81F2-525F4038D26E}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DictionaryService", "DictionaryService", "{948DC15C-D543-4853-929A-FCB4CB379115}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DocumentService", "DocumentService", "{D4983446-7A54-41B0-86AB-6960D1B7179D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DictionaryService.Persistence", "DictionaryService.Persistence\DictionaryService.Persistence.csproj", "{E424B4B9-A59A-41DE-AEE2-7039A7722AE4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocumentService.Presentation", "DocumentService.Presentation\DocumentService.Presentation.csproj", "{BF89D857-3475-472D-88CD-6E194C8ABFE2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DictionaryService.Domain", "DictionaryService.Domain\DictionaryService.Domain.csproj", "{54F70FD7-0313-4666-83BA-81886B062256}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocumentService.Domain", "DocumentService.Domain\DocumentService.Domain.csproj", "{71173CA1-68CD-4759-96FD-81CC3ED80515}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DictionaryService.Infrastructure", "DictionaryService.Infrastructure\DictionaryService.Infrastructure.csproj", "{6DA9D88E-FEBA-4D87-8D35-FBEFAF66A46A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocumentService.Infrastructure", "DocumentService.Infrastructure\DocumentService.Infrastructure.csproj", "{0BD30FB5-48F6-484E-8AA9-5B2CBCC112FF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DictionaryService.Application", "DictionaryService.Application\DictionaryService.Application.csproj", "{BF6F578C-EB71-47BD-867C-4C533CE8E36C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocumentService.Persistence", "DocumentService.Persistence\DocumentService.Persistence.csproj", "{CE7A4E84-C8E4-4A29-BB08-9BBA39833A0C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DictionaryService.Presentation", "DictionaryService.Presentation\DictionaryService.Presentation.csproj", "{279305B6-5F11-4B79-84CF-0C45AF1DA5BC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocumentService.Application", "DocumentService.Application\DocumentService.Application.csproj", "{E7C9FAAA-D8FE-4961-94F0-6C68A9934FF0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

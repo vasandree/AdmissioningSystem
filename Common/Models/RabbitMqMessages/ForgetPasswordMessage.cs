@@ -1,4 +1,4 @@
-namespace Common.Models;
+namespace Common.Models.RabbitMqMessages;
 
 public class ForgetPasswordMessage
 {

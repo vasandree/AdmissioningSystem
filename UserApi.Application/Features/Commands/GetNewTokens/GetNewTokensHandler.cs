@@ -43,7 +43,7 @@ public class GetNewTokensHandler : IRequestHandler<GetNewTokensCommand, TokenRes
         
         return new TokenResponseDto
         {
-            AcccessToken = _jwt.GenerateTokenString(user.Email!),
+            AcccessToken = _jwt.GenerateTokenString(user.Email!, user.Id),
             RefreshToken = newRefreshToken
         };
     }
