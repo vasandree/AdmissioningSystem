@@ -1,3 +1,4 @@
+using Common.Repository;
 using DictionaryService.Domain.Entities;
 using Newtonsoft.Json.Linq;
 
@@ -10,5 +11,6 @@ public interface IDictionaryRepository<T> : IGenericRepository<T> where T : Dict
     Task<T> GetById(Guid id);
 
     new Task<List<T>> GetAllAsync();
-    
+
+    public Task<bool> CheckIfNotEmpty();
 }

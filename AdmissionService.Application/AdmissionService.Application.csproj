@@ -7,10 +7,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Configurator\" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\AdmissionService.Domain\AdmissionService.Domain.csproj" />
     </ItemGroup>
 

@@ -1,4 +1,5 @@
 using AdmissionService.Domain.Entities;
+using Common.Repository;
 
 namespace AdmissionService.Application.Contracts.Persistence;
 

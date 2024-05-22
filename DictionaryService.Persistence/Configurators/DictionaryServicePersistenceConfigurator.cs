@@ -1,3 +1,4 @@
+using Common.Repository;
 using DictionaryService.Application.Contracts.Persistence;
 using DictionaryService.Persistence.Helpers.Converters;
 using DictionaryService.Persistence.Helpers.Update;

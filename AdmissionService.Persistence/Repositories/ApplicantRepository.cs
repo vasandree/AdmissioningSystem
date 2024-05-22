@@ -1,6 +1,7 @@
 using AdmissionService.Application.Contracts.Persistence;
 using AdmissionService.Domain.Entities;
 using AdmissionService.Infrastructure;
+using Common.Repository;
 using Microsoft.EntityFrameworkCore;
 
 namespace AdmissionService.Persistence.Repositories;

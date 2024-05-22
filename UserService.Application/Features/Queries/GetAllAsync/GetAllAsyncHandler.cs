@@ -1,3 +1,4 @@
+using Common.Repository;
 using MediatR;
 using UserService.Application.Contracts.Persistence;
 

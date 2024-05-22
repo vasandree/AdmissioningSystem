@@ -1,3 +1,4 @@
+using Common.Repository;
 using Microsoft.AspNetCore.Identity;
 using UserService.Application.Contracts.Persistence;
 using UserApi.Domain.DbEntities;
@@ -9,7 +10,7 @@ public class UserRepository : GenericRepository<ApplicationUser>, IUserRepositor
 {
     private readonly UserManager<ApplicationUser> _userManager;
 
-    public UserRepository(UserDbContext context, UserManager<ApplicationUser> userManager, IGenericRepository<ApplicationUser> genericRepository) : base(context)
+    public UserRepository(UserDbContext context, UserManager<ApplicationUser> userManager) : base(context)
     {
         _userManager = userManager;
     }

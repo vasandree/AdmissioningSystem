@@ -1,3 +1,4 @@
+using Common.Repository;
 using DocumentService.Domain.Entities;
 
 namespace DocumentService.Application.Contracts.Persistence;

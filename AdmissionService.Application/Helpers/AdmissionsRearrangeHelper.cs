@@ -1,6 +1,5 @@
 using AdmissionService.Application.Contracts.Persistence;
 using AdmissionService.Domain.Entities;
-using Microsoft.Extensions.Configuration;
 
 namespace AdmissionService.Application.Helpers;
 

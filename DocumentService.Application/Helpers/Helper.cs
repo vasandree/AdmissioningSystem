@@ -1,5 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-using System.Net;
 using Common.Consts.DocumentService;
 using Common.Exceptions;
 using DocumentService.Application.Contracts.Persistence;

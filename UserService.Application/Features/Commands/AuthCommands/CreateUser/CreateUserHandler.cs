@@ -1,4 +1,5 @@
 using AutoMapper;
+using Common.Repository;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using UserApi.Domain.DbEntities;
@@ -14,15 +15,15 @@ public class CreateUserHandler : IRequestHandler<CreateUserCommand, TokenRespons
     private readonly IMapper _mapper;
     private readonly IJwtService _jwt;
     private readonly IConfiguration _configuration;
-    private readonly IGenericRepository<RefreshToken> _generic;
+    private readonly ITokenRepository _token;
 
-    public CreateUserHandler(IUserRepository repository, IMapper mapper, IJwtService jwt, IConfiguration configuration, IGenericRepository<RefreshToken> generic)
+    public CreateUserHandler(IUserRepository repository, IMapper mapper, IJwtService jwt, IConfiguration configuration, ITokenRepository token)
     {
         _repository = repository;
         _mapper = mapper;
         _jwt = jwt;
         _configuration = configuration;
-        _generic = generic;
+        _token = token;
     }
 
     public async Task<TokenResponseDto> Handle(CreateUserCommand request, CancellationToken cancellationToken)
@@ -41,7 +42,7 @@ public class CreateUserHandler : IRequestHandler<CreateUserCommand, TokenRespons
             User = user
         };
         await _repository.CreateUser(user, request.NewUser.Password);
-        await _generic.CreateAsync(refreshTokenEntity);
+        await _token.CreateAsync(refreshTokenEntity);
         
         return new TokenResponseDto
         {

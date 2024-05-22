@@ -1,30 +1,43 @@
 using Common.Exceptions;
 using MediatR;
-using UserApi.Domain.DbEntities;
 using UserService.Application.Contracts.Persistence;
 
 namespace UserService.Application.Features.Commands.AuthCommands.Revoke;
 
 public class RevokeHandler : IRequestHandler<RevokeCommand, Unit>
 {
-    private readonly IGenericRepository<RefreshToken> _repository;
+    private readonly ITokenRepository _repository;
+    private readonly IJwtService _jwt;
 
-    public RevokeHandler(IGenericRepository<RefreshToken> repository)
+    public RevokeHandler(ITokenRepository repository, IJwtService jwt)
     {
         _repository = repository;
+        _jwt = jwt;
     }
 
 
     public async Task<Unit> Handle(RevokeCommand request, CancellationToken cancellationToken)
     {
-        var tokens = await _repository.Find(x => x.Token == request.RevokeTokenDto.RefreshToken);
-        if (tokens[0] == null) throw new BadRequest("Provided refresh token does not exist");
-
-        var token = tokens[0];
-        if (token.UserId != request.UserId) throw new BadRequest("Provided token does not belong to logged user");
-
-        await _repository.DeleteAsync(token);
+        var principal = _jwt.GetTokenPrincipal(request.RevokeTokenDto.AccessToken);
         
+        if (principal == null)
+            throw new Unauthorized();
+        
+        if(Guid.Parse(principal.FindFirst("UserId")!.Value) != request.UserId)
+            throw new Forbidden("Access token does not belong to the specified user.");
+        
+        if (!_repository.CheckIfExists(request.RevokeTokenDto.RefreshToken) || await _repository.CheckIfExpired(request.RevokeTokenDto.RefreshToken) )
+            throw new NotFound("Provided refresh token does not exist");
+        
+        if (!await _repository.CheckIfItBelongsToUser(request.RevokeTokenDto.RefreshToken, request.UserId))
+            throw new Forbidden("Provided token does not belong to this user");
+
+        var token = await _repository.GetToken(request.RevokeTokenDto.RefreshToken);
+
+        //todo: expire access token
+        
+        await _repository.DeleteAsync(token);
+
         return Unit.Value;
     }
 }

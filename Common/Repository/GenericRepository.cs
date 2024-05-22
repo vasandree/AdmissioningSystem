@@ -1,20 +1,21 @@
 using System.Linq.Expressions;
-using DocumentService.Application.Contracts.Persistence;
-using DocumentService.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
+namespace Common.Repository;
 
-namespace DocumentService.Persistence.Repositories;
-
-public class GenericRepository<T> : IGenericRepository<T> where T: class
+public class GenericRepository<T> : IGenericRepository<T> where T : class
 {
-    private readonly DocumentsDbContext _context;
+    private readonly DbContext _context;
     private readonly DbSet<T> _dbSet;
 
-    public GenericRepository(DocumentsDbContext context)
+    public GenericRepository(DbContext context)
     {
         _context = context;
         _dbSet = context.Set<T>();
+    }
+    public async Task<IReadOnlyList<T>> GetAllAsync()
+    {
+        return await _dbSet.AsNoTracking().ToListAsync();
     }
 
     public async Task<IReadOnlyList<T>> Find(Expression<Func<T, bool>> expression)
@@ -39,5 +40,4 @@ public class GenericRepository<T> : IGenericRepository<T> where T: class
         _dbSet.Add(entity);
         await _context.SaveChangesAsync();
     }
-    
 }

@@ -1,6 +1,6 @@
 using System.Linq.Expressions;
 
-namespace UserService.Application.Contracts.Persistence;
+namespace Common.Repository;
 
 public interface IGenericRepository<T> where T : class
 {

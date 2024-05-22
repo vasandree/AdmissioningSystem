@@ -6,7 +6,6 @@ using UserService.Application.Features.Commands.AuthCommands.CreateUser;
 using UserService.Application.Features.Commands.AuthCommands.GetNewTokens;
 using UserService.Application.Features.Commands.AuthCommands.LoginUser;
 using UserService.Application.Features.Commands.AuthCommands.Revoke;
-using UserService.Application.Features.Commands.AuthCommands.RevokeAllTokens;
 
 namespace UserApi.Controllers;
 
@@ -48,16 +47,10 @@ public class AuthController : ControllerBase
 
     [HttpDelete, Authorize]
     [Route("revoke")]
-    public async Task<IActionResult> Revoke([FromBody] RevokeTokenDto revokeTokenDto)
+    public async Task<IActionResult> Revoke([FromBody] RefreshTokenDto revokeTokenDto)
     {
         return Ok(await _mediator.Send(new RevokeCommand(Guid.Parse(User.FindFirst("UserId")!.Value!),
             revokeTokenDto)));
     }
-
-    [HttpDelete, Authorize]
-    [Route("revoke_all_tokens")]
-    public async Task<IActionResult> RevokeAllTokens()
-    {
-        return Ok(await _mediator.Send(new RevokeAllTokensCommand(Guid.Parse(User.FindFirst("UserId")!.Value!))));
-    }
+    
 }

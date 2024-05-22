@@ -1,5 +1,5 @@
+using Common.Repository;
 using DocumentService.Application.Contracts.Persistence;
-using DocumentService.Domain.Entities;
 using DocumentService.Persistence.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;

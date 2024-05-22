@@ -1,3 +1,4 @@
+using Common.Repository;
 using Microsoft.EntityFrameworkCore;
 using UserService.Application.Contracts.Persistence;
 using UserApi.Domain.DbEntities;

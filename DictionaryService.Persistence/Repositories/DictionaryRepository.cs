@@ -1,3 +1,4 @@
+using Common.Repository;
 using DictionaryService.Application.Contracts.Persistence;
 using DictionaryService.Domain.Entities;
 using DictionaryService.Infrastructure;
@@ -13,6 +14,11 @@ public class DictionaryRepository<T> : GenericRepository<T>, IDictionaryReposito
     public DictionaryRepository(DictionaryDbContext context) : base(context)
     {
         _context = context;
+    }
+    
+    public async Task<bool> CheckIfNotEmpty()
+    {
+        return await _context.Set<T>().AnyAsync();
     }
 
 

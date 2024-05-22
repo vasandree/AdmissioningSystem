@@ -1,4 +1,5 @@
 using Common.Exceptions;
+using Common.Repository;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using UserApi.Domain.DbEntities;
@@ -9,17 +10,16 @@ namespace UserService.Application.Features.Commands.AuthCommands.GetNewTokens;
 
 public class GetNewTokensHandler : IRequestHandler<GetNewTokensCommand, TokenResponseDto>
 {
-    private readonly IUserRepository _user;
     private readonly IJwtService _jwt;
     private readonly IConfiguration _configuration;
-    private readonly IGenericRepository<RefreshToken> _generic;
-
-    public GetNewTokensHandler(IUserRepository repository, IJwtService jwt, IConfiguration configuration, IGenericRepository<RefreshToken> generic)
+    private readonly ITokenRepository _repository;
+    private readonly IUserRepository _user;
+    public GetNewTokensHandler(IUserRepository repository, IJwtService jwt, IConfiguration configuration, ITokenRepository repository1, IUserRepository user)
     {
-        _user = repository;
         _jwt = jwt;
         _configuration = configuration;
-        _generic = generic;
+        _repository = repository1;
+        _user = user;
     }
 
 
@@ -30,21 +30,26 @@ public class GetNewTokensHandler : IRequestHandler<GetNewTokensCommand, TokenRes
         if (principal == null)
             throw new Unauthorized();
         
-       
-        var token = (await _generic.Find(x => x.Token == request.RefreshTokenDto.RefreshToken))[0];
-        if (token == null) throw new BadRequest("Provided refresh token does not exist");
+        if(Guid.Parse(principal.FindFirst("UserId")!.Value) != request.UserId)
+            throw new Forbidden("Access token does not belong to the specified user.");
         
-        var user = await _user.GetById(Guid.Parse(principal.FindFirst("UserId").Value));
-        if (token.UserId != user.Id) throw new BadRequest("Provided refresh token doesn't belong to this user");
+        if (!_repository.CheckIfExists(request.RefreshTokenDto.RefreshToken) || await _repository.CheckIfExpired(request.RefreshTokenDto.RefreshToken) )
+            throw new NotFound("Provided refresh token does not exist");
         
-        if (user is null || token.Token != request.RefreshTokenDto.RefreshToken ||
-            token.ExpiryDate < DateTime.UtcNow) 
-            throw new Unauthorized();
+        if (!await _repository.CheckIfItBelongsToUser(request.RefreshTokenDto.RefreshToken, request.UserId))
+            throw new Forbidden("Provided token does not belong to this user");
 
-        await _generic.DeleteAsync(token);
+        var token = await _repository.GetToken(request.RefreshTokenDto.RefreshToken);
+
+        //todo: expire access token
+        
+        await _repository.DeleteAsync(token);
 
         var newRefreshToken = _jwt.GenerateRefreshTokenString();
-        await _generic.CreateAsync(new RefreshToken
+
+        var user = await _user.GetById(request.UserId);
+        
+        await _repository.CreateAsync(new RefreshToken
         {
             UserId = user.Id,
             Token = newRefreshToken,

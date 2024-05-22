@@ -1,4 +1,5 @@
 using Common.Exceptions;
+using Common.Repository;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using UserApi.Domain.DbEntities;
@@ -12,14 +13,14 @@ public class LoginUserHandler : IRequestHandler<LoginUserCommand, TokenResponseD
     private readonly IUserRepository _user;
     private readonly IJwtService _jwt;
     private readonly IConfiguration _configuration;
-    private readonly IGenericRepository<RefreshToken> _generic;
+    private readonly ITokenRepository _token;
 
-    public LoginUserHandler(IUserRepository repository, IJwtService jwt, IConfiguration configuration, IGenericRepository<RefreshToken> generic)
+    public LoginUserHandler(IUserRepository repository, IJwtService jwt, IConfiguration configuration, ITokenRepository token)
     {
         _user = repository;
         _jwt = jwt;
         _configuration = configuration;
-        _generic = generic;
+        _token = token;
     }
 
 
@@ -41,7 +42,7 @@ public class LoginUserHandler : IRequestHandler<LoginUserCommand, TokenResponseD
             User = user
         };
 
-        await _generic.CreateAsync(refreshTokenEntity);
+        await _token.CreateAsync(refreshTokenEntity);
         
         return new TokenResponseDto()
         {

@@ -1,5 +1,6 @@
 using AdmissionService.Application.Contracts.Persistence;
 using AdmissionService.Persistence.Repositories;
+using Common.Repository;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 

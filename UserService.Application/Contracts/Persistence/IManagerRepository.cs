@@ -1,3 +1,4 @@
+using Common.Repository;
 using UserApi.Domain.DbEntities;
 
 namespace UserService.Application.Contracts.Persistence;

@@ -1,3 +1,4 @@
+using Common.Repository;
 using DictionaryService.Application.Contracts.Persistence;
 using DictionaryService.Domain.Entities;
 using DictionaryService.Infrastructure;
