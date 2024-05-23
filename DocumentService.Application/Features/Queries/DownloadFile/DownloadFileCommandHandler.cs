@@ -36,14 +36,14 @@ public class DownloadFileCommandHandler : IRequestHandler<DownloadFileCommand, (
     private async Task<(byte[], string, string)> DownloadPassport(Guid userId)
     {
         var passportEntity = await _passport.GetByUserId(userId);
-        if (passportEntity != null) return  _helper.ConvertToFile(passportEntity!.File);
+        if (passportEntity != null && passportEntity.File != null) return  _helper.ConvertToFile(passportEntity!.File);
         throw new BadRequest("No passport was added to download");
     }
     
     private async Task<(byte[], string, string)> DownloadEducationDocument(Guid userId)
     {
         var educationDocumentEntity = await _educationDocument.GetByUserId(userId);
-        if (educationDocumentEntity != null) return _helper.ConvertToFile(educationDocumentEntity!.File);
+        if (educationDocumentEntity != null && educationDocumentEntity.File != null) return _helper.ConvertToFile(educationDocumentEntity!.File);
         throw new BadRequest("No education document was added to download");
     }
 }

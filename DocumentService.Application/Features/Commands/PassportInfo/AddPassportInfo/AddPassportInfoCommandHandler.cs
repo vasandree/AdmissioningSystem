@@ -32,6 +32,13 @@ public class AddPassportInfoCommandHandler : IRequestHandler<AddPassportInfoComm
 
     private async Task CreateNewPassportEntity(PassportInfoRequest passportInfoRequest, Guid userId)
     {
+        var document = (Passport)await _passport.GetByUserId(userId);
+        if (!document.IsDeleted || document.SeriesAndNumber != null || document.DateOfBirth != null || document.IssueDate != null || 
+            document.IssuedBy != null)
+        {
+            throw new Conflict("You have already added education document info");
+        }
+        
         await _passport.CreateAsync(new Passport
         {
             Id = Guid.NewGuid(),
@@ -52,7 +59,7 @@ public class AddPassportInfoCommandHandler : IRequestHandler<AddPassportInfoComm
         if (existingPassport.IssueDate != null || existingPassport.IssuedBy != null || 
             existingPassport.SeriesAndNumber != null || existingPassport.DateOfBirth != null)
         {
-            throw new BadRequest("You have already added your passport info");
+            throw new Conflict("You have already added your passport info");
         }
         
         existingPassport.SeriesAndNumber = passportInfoRequest.SeriesAndNumber;

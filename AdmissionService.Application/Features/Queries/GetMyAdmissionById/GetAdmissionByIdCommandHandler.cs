@@ -1,5 +1,6 @@
 using AdmissionService.Application.Contracts.Persistence;
 using AdmissionService.Application.Dtos.Responses;
+using AdmissionService.Application.RPC;
 using AutoMapper;
 using Common.Models.Exceptions;
 using MediatR;
@@ -11,17 +12,19 @@ public class GetAdmissionByIdCommandHandler : IRequestHandler<GetAdmissionByIdCo
     private readonly IAdmissionRepository _admission;
     private readonly IApplicantRepository _applicant;
     private readonly IMapper _mapper;
+    private readonly RpcRequestsSender _rpc;
 
     public GetAdmissionByIdCommandHandler(IAdmissionRepository admission, IApplicantRepository applicant,
-        IMapper mapper)
+        IMapper mapper, RpcRequestsSender rpc)
     {
         _admission = admission;
         _applicant = applicant;
         _mapper = mapper;
+        _rpc = rpc;
     }
 
     public async Task<AdmissionDto> Handle(GetAdmissionByIdCommand request, CancellationToken cancellationToken)
-    {
+    {//todo: check
         if (!await _applicant.CheckIfApplicantExists(request.UserId))
             throw new BadRequest("Applicant does not have any admissions yet");
 
@@ -32,7 +35,13 @@ public class GetAdmissionByIdCommandHandler : IRequestHandler<GetAdmissionByIdCo
                 request.AdmissionRequestDto.AdmissionId))
             throw new BadRequest("Applicant does not have provided admission");
 
-        var admission = _admission.GetById(request.AdmissionRequestDto.AdmissionId);
-        return _mapper.Map<AdmissionDto>(admission);
+        var admission = await _admission.GetById(request.AdmissionRequestDto.AdmissionId);
+        if (admission.IsDeleted) throw new NotFound("Provided admission was not found");
+        
+        var dto = _mapper.Map<AdmissionDto>(admission);
+
+        dto.Program = await _rpc.GetProgram(admission.ProgramId!);
+        
+        return dto;
     }
 }

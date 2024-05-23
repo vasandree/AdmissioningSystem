@@ -43,7 +43,7 @@ public class EditDocumentCommandHandler : IRequestHandler<EditDocumentCommand, U
             throw new BadRequest("You didn't upload the passport");
         }
 
-        var fileEntity = await _helper.AddFile(file);
+        var fileEntity = await _helper.AddFile(file, DocumentType.Passport);
 
         var passportEntity = await _passport.GetByUserId(id);
         await _helper.UpdateFile(passportEntity!, fileEntity);
@@ -58,7 +58,7 @@ public class EditDocumentCommandHandler : IRequestHandler<EditDocumentCommand, U
             throw new BadRequest("You didn't upload the education document");
         }
 
-        var fileEntity = await _helper.AddFile(file);
+        var fileEntity = await _helper.AddFile(file, DocumentType.EducationDocument);
 
         var educationDocumentEntity = await _educationDocument.GetByUserId(id);
         await _helper.UpdateFile(educationDocumentEntity!, fileEntity);

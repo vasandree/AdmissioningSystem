@@ -29,7 +29,7 @@ public class RegisterUserDto
 
     public string? Nationality { get; set; }
     
-    [Date]
+    [DateNotInFuture]
     public DateTime? BirthDate { get; set; }
 
 }

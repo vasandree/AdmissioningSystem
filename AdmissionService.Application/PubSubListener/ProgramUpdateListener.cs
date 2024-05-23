@@ -32,7 +32,7 @@ public class ProgramUpdateListener : BackgroundService
             var email = await _bus.Rpc.RequestAsync<GetUserEmailRequest, GetUserEmailResponse>(
                 new GetUserEmailRequest(admission.ApplicantId));
             _bus.PubSub.Publish(new DeletedToEmailMessage(email.Email,
-                $"Your admission ${admission.AdmissionId} for program {admission.Program} was updated." +
+                $"Your admission ${admission.AdmissionId} for program {admission.ProgramId} was updated." +
                 $"Because chosen program was updated in system"));
         }
     }

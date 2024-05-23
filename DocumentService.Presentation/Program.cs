@@ -15,9 +15,13 @@ builder.ConfigureSwagger();
 
 builder.ConfigureServiceBus();
 
+builder.AddRPCHandlers();
+
 builder.ConfigureAuth();
 
 var app = builder.Build();
+
+app.UseRPCHandlers();
 
 if (app.Environment.IsDevelopment())
 {

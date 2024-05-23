@@ -43,18 +43,20 @@ public class DeleteDocumentCommandHandler : IRequestHandler<DeleteDocumentComman
 
         var passportEntity = (Passport)(await _passport.GetByUserId(id))!;
 
+        if (passportEntity.File == null)
+            throw new BadRequest("There is no passport to delete");
+        
         if (passportEntity.IssueDate != null || passportEntity.IssuedBy != null ||
             passportEntity.SeriesAndNumber != null || passportEntity.DateOfBirth != null)
         {
-            passportEntity.File = null;
-            await _passport.UpdateAsync(passportEntity);
+            await _helper.DeleteFile(passportEntity!.File.Id);
         }
         else
         {
+            await _helper.DeleteFile(passportEntity!.File.Id);
             await _passport.DeleteAsync(passportEntity);
         }
 
-        await _helper.DeleteFile(passportEntity!.File.Id);
 
         return Unit.Value;
     }
@@ -68,17 +70,18 @@ public class DeleteDocumentCommandHandler : IRequestHandler<DeleteDocumentComman
 
         var educationDocumentEntity = (EducationDocument)(await _educationDocument.GetByUserId(id))!;
 
+        if (educationDocumentEntity.File == null)
+            throw new BadRequest("There is no education document to delete");
+
         if (educationDocumentEntity.EducationDocumentTypeId != null || educationDocumentEntity.Name != null)
         {
-            educationDocumentEntity.File = null;
+            await _helper.DeleteFile(educationDocumentEntity!.File.Id);
         }
         else
         {
+            await _helper.DeleteFile(educationDocumentEntity!.File.Id);
             await _educationDocument.DeleteAsync(educationDocumentEntity);
-
         }
-        
-        await _helper.DeleteFile(educationDocumentEntity!.File.Id);
 
         return Unit.Value;
     }

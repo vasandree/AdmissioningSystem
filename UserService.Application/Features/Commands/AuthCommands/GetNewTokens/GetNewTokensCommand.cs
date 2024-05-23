@@ -4,4 +4,4 @@ using UserService.Application.Dtos.Responses;
 
 namespace UserService.Application.Features.Commands.AuthCommands.GetNewTokens;
 
-public record GetNewTokensCommand(RefreshTokenDto RefreshTokenDto, Guid UserId) :  IRequest<TokenResponseDto>;
+public record GetNewTokensCommand(RefreshTokenDto RefreshTokenDto) :  IRequest<TokenResponseDto>;

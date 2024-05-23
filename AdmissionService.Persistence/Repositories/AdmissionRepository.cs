@@ -1,3 +1,4 @@
+using System.Xml.Linq;
 using AdmissionService.Application.Contracts.Persistence;
 using AdmissionService.Domain.Entities;
 using AdmissionService.Infrastructure;
@@ -69,10 +70,35 @@ public class AdmissionRepository : GenericRepository<Admission>, IAdmissionRepos
         return false;
     }
 
+    public async Task<bool> CheckIfEducationStageIsAvailable(Guid userId, ProgramDto programDto,
+        EducationDocumentTypeDto educationDocumentTypeDto)
+    {
+        var nextAvailableLevelsIds = educationDocumentTypeDto.NextEducationLevels?.Select(x => x.Id).ToList();
+
+        if (nextAvailableLevelsIds == null)
+        {
+            return programDto.EducationLevel.Id == educationDocumentTypeDto.EducationLevel.Id;
+        }
+        
+        var chosenLevelsIds = await _context.Admissions
+            .Where(x => x.ApplicantId == userId && !x.IsDeleted)
+            .Select(x => x.EducationLevelId)
+            .Distinct()
+            .ToListAsync();
+
+        if (nextAvailableLevelsIds.Contains(programDto.EducationLevel.Id) && programDto.EducationLevel.Id != educationDocumentTypeDto.EducationLevel.Id)
+            return true;
+
+        if (!nextAvailableLevelsIds.Contains(programDto.EducationLevel.Id) && programDto.EducationLevel.Id == educationDocumentTypeDto.EducationLevel.Id)
+            return true;
+
+        return false;
+    }
+
 
     public async Task<List<Admission>> GetApplicantsAdmissions(Guid userId)
     {
-        return await _context.Admissions.Where(x => x.ApplicantId == userId)
+        return await _context.Admissions.Where(x => x.ApplicantId == userId && !x.IsDeleted)
             .OrderBy(x => x.Priority)
             .ToListAsync();
     }

@@ -11,6 +11,8 @@ builder.ConfigureAdmissionServicePersistence();
 
 builder.ConfigureAdmissionServiceApplication();
 
+builder.ConfigureServiceBus();
+
 builder.ConfigureSwagger();
 
 builder.ConfigureAuth();

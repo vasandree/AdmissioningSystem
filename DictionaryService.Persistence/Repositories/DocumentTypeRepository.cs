@@ -22,7 +22,13 @@ public class DocumentTypeRepository : DictionaryRepository<DocumentType>, IDocum
         _converter = converter;
     }
 
-
+    public new async Task<DocumentType> GetById(Guid id)
+    {
+        return await _context.DocumentTypes
+            .Include(x => x.EducationLevel)
+            .FirstOrDefaultAsync(x => x.Id == id && !x.IsDeleted)!;
+    }
+    
     public async Task<bool> CheckExistenceByExternalId(Guid externalId)
     {
         return await _context.DocumentTypes.AnyAsync(x => x.ExternalId == externalId);

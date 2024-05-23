@@ -30,7 +30,7 @@ public class ProgramDeletionListener : BackgroundService
         foreach (var admission in admissionsToDelete)
         {
             var email = await _bus.Rpc.RequestAsync<GetUserEmailRequest, GetUserEmailResponse>(new GetUserEmailRequest(admission.ApplicantId));
-            _bus.PubSub.Publish(new DeletedToEmailMessage(email.Email, $"Your admission ${admission.AdmissionId} for program {admission.Program} was deleted." +
+            _bus.PubSub.Publish(new DeletedToEmailMessage(email.Email, $"Your admission ${admission.AdmissionId} for program {admission.ProgramId} was deleted." +
                                                                        $"Because chosen program was removed from system"));
         }
     }

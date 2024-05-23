@@ -1,4 +1,5 @@
 using AdmissionService.Application.Dtos.Requests;
+using AdmissionService.Application.Features.Commands.CreateNewAdmission;
 using AdmissionService.Application.Features.Commands.DeleteAdmission;
 using AdmissionService.Application.Features.Commands.EditPriority;
 using AdmissionService.Application.Features.Queries.GetAllMyAdmissions;
@@ -30,6 +31,13 @@ public class AdmissionController : ControllerBase
     {
         return Ok(await _mediator.Send(new GetAdmissionByIdCommand(Guid.Parse(User.FindFirst("UserId")!.Value!),
             admissionRequestDto)));
+    }
+
+    [HttpPost, Authorize, Route("admission")]
+    public async Task<IActionResult> CreateNewAdmission([FromBody] CreateAdmissionRequest createAdmissionRequest)
+    {
+        return Ok(await _mediator.Send(new CreateNewAdmissionCommand(Guid.Parse(User.FindFirst("UserId")!.Value!),
+            createAdmissionRequest)));
     }
 
     [HttpPut, Authorize, Route("admission/priority")]

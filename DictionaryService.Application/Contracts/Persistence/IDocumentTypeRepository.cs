@@ -5,6 +5,8 @@ namespace DictionaryService.Application.Contracts.Persistence;
 
 public interface IDocumentTypeRepository : IDictionaryRepository<DocumentType>
 {
+    new Task<DocumentType> GetById(Guid id);
+    
     Task<bool> CheckExistenceByExternalId(Guid externalId);
     
     Task<bool> CheckExistenceById(Guid externalId);

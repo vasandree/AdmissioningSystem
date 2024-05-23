@@ -9,7 +9,7 @@ public class Applicant
     public Guid ApplicantId { get; set; }
 
     [Required]
-    public EducationDocumentTypeDto EducationDocument { get; set; }
+    public Guid EducationDocumentId { get; set; }
     
     public ICollection<Admission>? Admissions { get; set; }
 }

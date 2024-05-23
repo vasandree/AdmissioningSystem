@@ -1,6 +1,7 @@
 using System.Reflection;
 using AdmissionService.Application.Helpers;
 using AdmissionService.Application.MappingProfiles;
+using AdmissionService.Application.RPC;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -12,6 +13,8 @@ public static class AdmissionServiceApplicationConfigurator
     {
         builder.Services.AddMediatR(config => config.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
         builder.Services.AddAutoMapper(typeof(MappingProfile));
-        builder.Services.AddTransient<AdmissionsRearrangeHelper>();
+        builder.Services.AddScoped<AdmissionsRearrangeHelper>();
+
+        builder.Services.AddScoped<RpcRequestsSender>();
     }
 }

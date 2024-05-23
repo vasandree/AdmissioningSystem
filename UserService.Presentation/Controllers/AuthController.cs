@@ -36,13 +36,12 @@ public class AuthController : ControllerBase
         return Ok(await _mediator.Send(new LoginUserCommand(loginUserDto)));
     }
 
-    [HttpPost, Authorize]
+    [HttpPost]
     [Route("refresh")]
     public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenDto refreshTokenDto)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
-        return Ok(await _mediator.Send(new GetNewTokensCommand(refreshTokenDto,
-            Guid.Parse(User.FindFirst("UserId")!.Value!))));
+        return Ok(await _mediator.Send(new GetNewTokensCommand(refreshTokenDto)));
     }
 
     [HttpDelete, Authorize]

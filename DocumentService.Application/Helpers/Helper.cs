@@ -3,6 +3,7 @@ using Common.Models.Consts.DocumentService;
 using Common.Models.Exceptions;
 using DocumentService.Application.Contracts.Persistence;
 using DocumentService.Domain.Entities;
+using DocumentService.Domain.Enums;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.StaticFiles;
 
@@ -19,7 +20,7 @@ public class Helper
         _documentRepository = documentRepository;
     }
 
-    public async Task<DbFile> AddFile(IFormFile file)
+    public async Task<DbFile> AddFile(IFormFile file, DocumentType documentType)
     {
         using (var memoryStream = new MemoryStream())
         {
@@ -47,7 +48,7 @@ public class Helper
             var fileEntity = new DbFile()
             {
                 Id = id,
-                FileName = $"Passport_{id}{fileExtension}",
+                FileName = $"{documentType.ToString()}_{id}{fileExtension}",
                 FileContent = memoryStream.ToArray()
             };
 
@@ -59,6 +60,7 @@ public class Helper
 
     public async Task UpdateFile(Document document, DbFile newFile)
     {
+        if (document.File == null) throw new BadRequest("You haven't uploaded file yet");
         var oldFile = await _fileRepository.GetById(document.File!.Id);
         document.File = newFile;
         await _documentRepository.UpdateAsync(document);

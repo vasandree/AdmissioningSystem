@@ -3,9 +3,7 @@ using Common.Configurators.ConfigClasses;
 using DocumentService.Application.AutoMapper;
 using DocumentService.Application.Helpers;
 using DocumentService.Application.PubSub;
-using EasyNetQ;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DocumentService.Application.Configurators;

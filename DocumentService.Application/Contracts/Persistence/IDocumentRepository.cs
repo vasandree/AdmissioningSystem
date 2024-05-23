@@ -7,7 +7,7 @@ public interface IDocumentRepository<T> : IGenericRepository<T> where T: Documen
 {
     Task<bool> CheckExistence(Guid userId);
 
-    Task<Document?> GetByUserId(Guid userId);
+    Task<Document> GetByUserId(Guid userId);
 
     Task SoftDelete(EducationDocument document);
 

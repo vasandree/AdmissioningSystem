@@ -9,13 +9,13 @@ public class PassportInfoRequest
     public string SeriesAndNumber { get; set; }
     
     [Required]
+    [DateNotInFuture]
     public DateTime BirthDate { get; set; }
     
     [Required]
-    [Date]
+    [DateNotInFuture]
     public DateTime IssueDate { get; set; }
     
     [Required]
-    [Date]
     public string IssuedBy { get; set; }
 }

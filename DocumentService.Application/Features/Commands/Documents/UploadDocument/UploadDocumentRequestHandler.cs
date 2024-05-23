@@ -44,7 +44,7 @@ public class UploadDocumentRequestHandler : IRequestHandler<UploadDocumentReques
             throw new BadRequest("You have already added file");
         }
         
-        var file = await _helper.AddFile(passport);
+        var file = await _helper.AddFile(passport, DocumentType.Passport);
         
         if (existingPassport == null)
         {
@@ -69,7 +69,7 @@ public class UploadDocumentRequestHandler : IRequestHandler<UploadDocumentReques
         return Unit.Value;
     }
 
-    private async Task<Unit> UploadEducationDocument(Guid id, IFormFile passport)
+    private async Task<Unit> UploadEducationDocument(Guid id, IFormFile newFile)
     {
         var existingEducationDocument = (EducationDocument) await _educationDocument.GetByUserId(id);
         
@@ -78,7 +78,7 @@ public class UploadDocumentRequestHandler : IRequestHandler<UploadDocumentReques
             throw new BadRequest("You have already uploaded file");
         }
 
-        var file = await _helper.AddFile(passport);
+        var file = await _helper.AddFile(newFile,DocumentType.EducationDocument );
         if (existingEducationDocument == null)
         {
             var educationDocument = new EducationDocument()

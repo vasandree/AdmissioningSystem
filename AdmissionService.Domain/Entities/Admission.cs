@@ -1,7 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using AdmissionService.Domain.Enums;
-using Common.Models.Models.Dtos;
 
 namespace AdmissionService.Domain.Entities;
 
@@ -23,7 +22,7 @@ public class Admission
     public Guid ProgramId { get; set; }
     
     [Required]
-    public ProgramDto Program { get; set; }
+    public Guid EducationLevelId { get; set; }
     
     public Applicant Applicant { get; set; }
     

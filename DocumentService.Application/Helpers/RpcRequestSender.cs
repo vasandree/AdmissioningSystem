@@ -18,4 +18,10 @@ public class RpcRequestSender
         return await _bus.Rpc.RequestAsync<EducationDocumentTypeCheckRequest, EducationDocumentTypeCheckResponse>(
             new EducationDocumentTypeCheckRequest(documentId));
     }
+
+    public async Task<GetDocumentTypeDtoResponse> GetDocumentTypeDto(Guid documentId)
+    {
+        return await _bus.Rpc.RequestAsync<GetDocumentTypeDtoRequest, GetDocumentTypeDtoResponse>(
+            new GetDocumentTypeDtoRequest(documentId));
+    }
 }

@@ -15,4 +15,8 @@
       <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.1" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Common.Models\Common.Models.csproj" />
+    </ItemGroup>
+
 </Project>

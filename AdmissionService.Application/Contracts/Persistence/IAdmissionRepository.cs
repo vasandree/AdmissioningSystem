@@ -22,6 +22,9 @@ public interface IAdmissionRepository : IGenericRepository<Admission>
     public bool CheckIfEducationLevelIsAvailable(ProgramDto programDto,
         EducationDocumentTypeDto educationDocumentTypeDto);
 
+    public Task<bool> CheckIfEducationStageIsAvailable(Guid userId, ProgramDto programDto,
+        EducationDocumentTypeDto educationDocumentTypeDto);
+    
     public Task<List<Admission>> GetApplicantsAdmissions(Guid userId);
     Task<List<Admission>> GetAdmissionsByProgramIds(List<Guid> programsToDelete);
 

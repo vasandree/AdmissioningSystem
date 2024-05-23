@@ -35,7 +35,7 @@ public class DictionaryRepository<T> : GenericRepository<T>, IDictionaryReposito
 
     public async Task<T> GetById(Guid id)
     {
-        return (await _context.Set<T>().FirstOrDefaultAsync(x => x.Id == id))!;
+        return (await _context.Set<T>().FirstOrDefaultAsync(x => x.Id == id && !x.IsDeleted))!;
     }
 
     public new async Task<List<T>> GetAllAsync()
