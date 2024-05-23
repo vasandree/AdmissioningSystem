@@ -25,7 +25,7 @@ public class DeleteAdmissionCommandHandler : IRequestHandler<DeleteAdmissionComm
         
         if (!await _admission.CheckIfAdmissionExists(request.AdmissionRequestDto.AdmissionId))
             throw new BadRequest("Provided admission does not exist");
-        
+        //todo: check
         if (!await _admission.CheckIfAdmissionBelongsToApplicant(request.UserId,
                 request.AdmissionRequestDto.AdmissionId))
             throw new BadRequest("Applicant does not have provided admission");
