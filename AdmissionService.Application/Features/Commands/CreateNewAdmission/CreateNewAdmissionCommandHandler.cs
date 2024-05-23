@@ -2,8 +2,8 @@ using AdmissionService.Application.Contracts.Persistence;
 using AdmissionService.Application.Helpers;
 using AdmissionService.Domain.Entities;
 using AdmissionService.Domain.Enums;
-using Common.Exceptions;
-using Common.Models.Dtos;
+using Common.Models.Exceptions;
+using Common.Models.Models.Dtos;
 using MediatR;
 
 namespace AdmissionService.Application.Features.Commands.CreateNewAdmission;

@@ -1,4 +1,4 @@
-using Common.Repository;
+using Common.Services.Repository;
 using DocumentService.Application.Contracts.Persistence;
 using DocumentService.Domain.Entities;
 using DocumentService.Infrastructure;
@@ -9,22 +9,39 @@ namespace DocumentService.Persistence.Repositories;
 public class DocumentRepository<T> : GenericRepository<T>, IDocumentRepository<T> where T : Document
 {
     private readonly DbSet<T> _dbSet;
+    private readonly DocumentsDbContext _context;
 
     public DocumentRepository(DocumentsDbContext context) : base(context)
     {
+        _context = context;
         _dbSet = context.Set<T>();
     }
 
 
-    public async Task<bool> CheckExistence(Guid userId)
+    public Task<bool> CheckExistence(Guid userId)
     {
-        var entity = await _dbSet.FirstOrDefaultAsync(x => x.UserId == userId);
-        if (entity == null) return false;
-        return true;
+        return Task.FromResult(_dbSet.Any(x => x.UserId == userId && !x.IsDeleted));
     }
 
     public async Task<Document?> GetByUserId(Guid userId)
     {
         return await _dbSet.Include(p => p.File).FirstOrDefaultAsync(x => x.UserId == userId);
+    }
+
+    public async Task SoftDelete(EducationDocument document)
+    {
+        document.IsDeleted = true;
+        _context.Entry(document).State = EntityState.Modified;
+        await _context.SaveChangesAsync();
+        
+    }
+
+    public async Task<List<EducationDocument>> GetIdsToDelete(List<Guid> typeIds)
+    {
+        var documentIds = await _context.EducationDocuments
+            .Where(doc => typeIds.Contains(doc.EducationDocumentTypeId ?? Guid.Empty) && !doc.IsDeleted)
+            .ToListAsync();
+
+        return documentIds;
     }
 }

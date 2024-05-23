@@ -8,13 +8,18 @@
 
     <ItemGroup>
       <PackageReference Include="AutoMapper" Version="13.0.1" />
+      <PackageReference Include="EasyNetQ" Version="7.8.0" />
+      <PackageReference Include="EasyNetQ.Serialization.NewtonsoftJson" Version="7.8.0" />
+      <PackageReference Include="EasyNetQ.Serialization.SystemTextJson" Version="7.8.0" />
       <PackageReference Include="MediatR" Version="12.2.0" />
       <PackageReference Include="MediatR.Contracts" Version="2.0.1" />
       <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Common\Common.csproj" />
+      <ProjectReference Include="..\Common.Configurators\Common.Configurators.csproj" />
+      <ProjectReference Include="..\Common.ServiceBus\Common.ServiceBus.csproj" />
+      <ProjectReference Include="..\Common.Services\Common.Services.csproj" />
       <ProjectReference Include="..\DictionaryService.Domain\DictionaryService.Domain.csproj" />
       <ProjectReference Include="..\DictionaryService.Infrastructure\DictionaryService.Infrastructure.csproj" />
     </ItemGroup>

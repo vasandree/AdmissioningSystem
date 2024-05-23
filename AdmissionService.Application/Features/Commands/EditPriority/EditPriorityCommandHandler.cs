@@ -1,6 +1,6 @@
 using AdmissionService.Application.Contracts.Persistence;
 using AdmissionService.Application.Helpers;
-using Common.Exceptions;
+using Common.Models.Exceptions;
 using MediatR;
 
 namespace AdmissionService.Application.Features.Commands.EditPriority;

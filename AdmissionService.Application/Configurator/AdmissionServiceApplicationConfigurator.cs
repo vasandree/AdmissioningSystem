@@ -4,7 +4,7 @@ using AdmissionService.Application.MappingProfiles;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace AdmissionService.Application.Contracts;
+namespace AdmissionService.Application.Configurator;
 
 public static class AdmissionServiceApplicationConfigurator
 {

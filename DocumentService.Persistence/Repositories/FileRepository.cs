@@ -1,4 +1,4 @@
-using Common.Repository;
+using Common.Services.Repository;
 using DocumentService.Application.Contracts.Persistence;
 using DocumentService.Domain.Entities;
 using DocumentService.Infrastructure;

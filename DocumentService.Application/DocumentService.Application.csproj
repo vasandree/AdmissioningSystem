@@ -8,12 +8,17 @@
 
     <ItemGroup>
       <PackageReference Include="AutoMapper" Version="13.0.1" />
+      <PackageReference Include="EasyNetQ" Version="7.8.0" />
+      <PackageReference Include="EasyNetQ.Serialization.NewtonsoftJson" Version="7.8.0" />
+      <PackageReference Include="EasyNetQ.Serialization.SystemTextJson" Version="7.8.0" />
       <PackageReference Include="MediatR" Version="12.2.0" />
       <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Common\Common.csproj" />
+      <ProjectReference Include="..\Common.Configurators\Common.Configurators.csproj" />
+      <ProjectReference Include="..\Common.ServiceBus\Common.ServiceBus.csproj" />
+      <ProjectReference Include="..\Common.Services\Common.Services.csproj" />
       <ProjectReference Include="..\DocumentService.Domain\DocumentService.Domain.csproj" />
       <ProjectReference Include="..\DocumentService.Infrastructure\DocumentService.Infrastructure.csproj" />
     </ItemGroup>

@@ -1,7 +1,6 @@
 using System.ComponentModel.DataAnnotations;
-using Common.Models.ValidationAttributes;
+using Common.Models.Models.ValidationAttributes;
 using UserApi.Domain.Enums;
-using UserService.Application.Dtos.CustomValidationAttributes;
 
 namespace UserService.Application.Dtos.Requests;
 

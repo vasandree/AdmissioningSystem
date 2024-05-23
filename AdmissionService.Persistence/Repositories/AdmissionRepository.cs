@@ -1,8 +1,8 @@
 using AdmissionService.Application.Contracts.Persistence;
 using AdmissionService.Domain.Entities;
 using AdmissionService.Infrastructure;
-using Common.Models.Dtos;
-using Common.Repository;
+using Common.Models.Models.Dtos;
+using Common.Services.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
@@ -75,5 +75,19 @@ public class AdmissionRepository : GenericRepository<Admission>, IAdmissionRepos
         return await _context.Admissions.Where(x => x.ApplicantId == userId)
             .OrderBy(x => x.Priority)
             .ToListAsync();
+    }
+
+    public async Task<List<Admission>> GetAdmissionsByProgramIds(List<Guid> programsToDelete)
+    {
+        return await _context.Admissions
+            .Where(admission => programsToDelete
+                .Contains(admission.ProgramId) && !admission.IsDeleted)
+            .ToListAsync();
+
+    }
+
+    public async Task<List<Admission>> GetAdmissionsByProgramId(Guid programId)
+    {
+        return await _context.Admissions.Where(admission => admission.ProgramId == programId).ToListAsync();
     }
 }

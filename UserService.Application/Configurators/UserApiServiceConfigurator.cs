@@ -1,5 +1,5 @@
 using System.Reflection;
-using Common.ConfigClasses;
+using Common.Configurators.ConfigClasses;
 using EasyNetQ;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
@@ -14,12 +14,5 @@ public static class UserApiServiceConfigurator
         builder.Services.AddMediatR(config => config.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
         builder.Services.AddAutoMapper(typeof(MappingProfile));
         
-        var rabbitMqConfig = builder.Configuration.GetSection("RabbitMQ").Get<RabbitMQConfig>()!;
-        var connectionString =
-            $"host={rabbitMqConfig.Host};port={rabbitMqConfig.Port};username={rabbitMqConfig.UserName};password={rabbitMqConfig.Password}";
-        var bus = RabbitHutch.CreateBus(connectionString); 
-        bus.Advanced.QueueDeclare("email_queue");
-        builder.Services.AddSingleton<IBus>(bus);
-
     }
 }

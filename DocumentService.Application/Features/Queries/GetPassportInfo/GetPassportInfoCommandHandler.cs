@@ -1,5 +1,5 @@
 using AutoMapper;
-using Common.Exceptions;
+using Common.Models.Exceptions;
 using DocumentService.Application.Contracts.Persistence;
 using DocumentService.Application.Dtos.Responses;
 using DocumentService.Domain.Entities;

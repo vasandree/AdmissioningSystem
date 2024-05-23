@@ -1,4 +1,4 @@
-using Common.Repository;
+using Common.Services.Repository;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using UserService.Application.Contracts.Persistence;

@@ -1,4 +1,4 @@
-using Common.Repository;
+using Common.Services.Repository;
 using DictionaryService.Application.Contracts.Persistence;
 using DictionaryService.Domain.Entities;
 using DictionaryService.Infrastructure;
@@ -9,7 +9,7 @@ namespace DictionaryService.Persistence.Repositories;
 public class NextEducationLevelRepository : GenericRepository<NextEducationLevel>, INextEducationLevelRepository
 {
     private readonly DictionaryDbContext _context;
-    
+
     public NextEducationLevelRepository(DictionaryDbContext context) : base(context)
     {
         _context = context;
@@ -46,8 +46,23 @@ public class NextEducationLevelRepository : GenericRepository<NextEducationLevel
 
     public async Task<List<NextEducationLevel?>> GetNextEducationLevelsOfDocumentType(Guid documentTypeId)
     {
-        return  await _context.NextEducationLevels
+        return await _context.NextEducationLevels
             .Where(nel => nel.DocumentTypeId == documentTypeId)
             .ToListAsync()!;
+    }
+
+    public async Task<List<DocumentType>> GetDocumentTypesByEducationLevel(Guid educationLevelId)
+    {
+        var documentTypeIds = await _context.NextEducationLevels
+            .Where(nel => nel.EducationLevelId == educationLevelId)
+            .GroupBy(nel => nel.DocumentTypeId)
+            .Select(group => group.Key)
+            .ToListAsync();
+
+        var documentTypes = await _context.DocumentTypes
+            .Where(dt => documentTypeIds.Contains(dt.Id) && !dt.IsDeleted)
+            .ToListAsync();
+
+        return documentTypes;
     }
 }

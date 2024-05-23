@@ -1,10 +1,10 @@
+using Common.Models.Exceptions;
 using DocumentService.Application.Contracts.Persistence;
 using DocumentService.Application.Helpers;
 using DocumentService.Domain.Entities;
 using DocumentService.Domain.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
-using BadRequest = Common.Exceptions.BadRequest;
 
 namespace DocumentService.Application.Features.Commands.Documents.EditDocument;
 

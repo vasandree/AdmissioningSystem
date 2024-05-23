@@ -1,7 +1,7 @@
-using AdmissionService.Application.Contracts;
+using AdmissionService.Application.Configurator;
 using AdmissionService.Infrastructure.Configurator;
 using AdmissionService.Persistence.Configurator;
-using Common.Configurator;
+using Common.Configurators.Configurator;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using AdmissionService.Application.Dtos.CustomValidationAttributes;
-using Common.Models.Dtos;
+using Common.Models.Models.Dtos;
 
 namespace AdmissionService.Application.Dtos.Responses;
 

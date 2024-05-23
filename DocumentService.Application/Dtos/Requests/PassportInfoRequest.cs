@@ -1,5 +1,5 @@
 using System.ComponentModel.DataAnnotations;
-using Common.Models.ValidationAttributes;
+using Common.Models.Models.ValidationAttributes;
 
 namespace DocumentService.Application.Dtos.Requests;
 

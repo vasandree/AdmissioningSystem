@@ -1,4 +1,4 @@
-using Common.Exceptions;
+using Common.Models.Exceptions;
 using DocumentService.Application.Contracts.Persistence;
 using DocumentService.Domain.Entities;
 using MediatR;

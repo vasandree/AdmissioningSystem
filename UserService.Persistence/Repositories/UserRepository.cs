@@ -1,4 +1,4 @@
-using Common.Repository;
+using Common.Services.Repository;
 using Microsoft.AspNetCore.Identity;
 using UserService.Application.Contracts.Persistence;
 using UserApi.Domain.DbEntities;

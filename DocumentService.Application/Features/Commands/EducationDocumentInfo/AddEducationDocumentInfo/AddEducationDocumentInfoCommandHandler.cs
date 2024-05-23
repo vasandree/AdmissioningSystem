@@ -1,6 +1,7 @@
-using Common.Models.Dtos;
+using Common.Models.Exceptions;
 using DocumentService.Application.Contracts.Persistence;
 using DocumentService.Application.Dtos.Requests;
+using DocumentService.Application.Helpers;
 using DocumentService.Domain.Entities;
 using DocumentService.Domain.Enums;
 using MediatR;
@@ -10,10 +11,12 @@ namespace DocumentService.Application.Features.Commands.EducationDocumentInfo.Ad
 public class AddEducationDocumentInfoCommandHandler : IRequestHandler<AddEducationDocumentInfoCommand, Unit>
 {
     private readonly IDocumentRepository<EducationDocument> _educationDocument;
+    private readonly RpcRequestSender _rpc;
 
-    public AddEducationDocumentInfoCommandHandler(IDocumentRepository<EducationDocument> educationDocument)
+    public AddEducationDocumentInfoCommandHandler(IDocumentRepository<EducationDocument> educationDocument, RpcRequestSender rpc)
     {
         _educationDocument = educationDocument;
+        _rpc = rpc;
     }
 
     public async Task<Unit> Handle(AddEducationDocumentInfoCommand request, CancellationToken cancellationToken)
@@ -33,8 +36,11 @@ public class AddEducationDocumentInfoCommandHandler : IRequestHandler<AddEducati
 
     private async Task CreateNewEntity(Guid userId, EducationDocumentRequest educationDocumentRequest)
     {
-        //TODO: check if educationDocumentRequest.EducationDocumentTypeId exists
-        EducationDocumentTypeDto? educationDocumentType = null;
+        var documentExists = await _rpc.CheckIfDocumentTypeExists(educationDocumentRequest.EducationDocumentTypeId);
+
+        if (documentExists.Exists == false)
+            throw new BadRequest(
+                $"DocumentType with {educationDocumentRequest.EducationDocumentTypeId} does not exist");
         
         await _educationDocument.CreateAsync(new EducationDocument
         {
@@ -42,7 +48,7 @@ public class AddEducationDocumentInfoCommandHandler : IRequestHandler<AddEducati
             DocumentType = DocumentType.Passport,
             UserId = userId,
             File = null,
-            EducationDocumentType = educationDocumentType,
+            EducationDocumentTypeId = educationDocumentRequest.EducationDocumentTypeId,
             Name = educationDocumentRequest.Name
         });
     }
@@ -51,10 +57,12 @@ public class AddEducationDocumentInfoCommandHandler : IRequestHandler<AddEducati
     {
         var educationDocument = (EducationDocument)(await _educationDocument.GetByUserId(userId))!;
         
-        //TODO: check if educationDocumentRequest.EducationDocumentTypeId exists
-        EducationDocumentTypeDto? educationDocumentType = null;
+        var documentExists = await _rpc.CheckIfDocumentTypeExists(educationDocumentRequest.EducationDocumentTypeId);
+        if (documentExists.Exists == false)
+            throw new BadRequest(
+                $"DocumentType with {educationDocumentRequest.EducationDocumentTypeId} does not exist");
 
-        educationDocument.EducationDocumentType = educationDocumentType;
+        educationDocument.EducationDocumentTypeId = educationDocumentRequest.EducationDocumentTypeId;
         educationDocument.Name = educationDocumentRequest.Name;
     }
 }

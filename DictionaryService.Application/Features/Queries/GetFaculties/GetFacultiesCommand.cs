@@ -1,4 +1,4 @@
-using Common.Models.Dtos.PagedDtos;
+using Common.Models.Models.Dtos.PagedDtos;
 using MediatR;
 
 namespace DictionaryService.Application.Features.Queries.GetFaculties;

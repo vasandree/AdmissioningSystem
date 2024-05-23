@@ -8,10 +8,12 @@
 
     <ItemGroup>
       <ProjectReference Include="..\AdmissionService.Domain\AdmissionService.Domain.csproj" />
+      <ProjectReference Include="..\Common.ServiceBus\Common.ServiceBus.csproj" />
     </ItemGroup>
 
     <ItemGroup>
       <PackageReference Include="AutoMapper" Version="13.0.1" />
+      <PackageReference Include="EasyNetQ" Version="7.8.0" />
       <PackageReference Include="MediatR" Version="12.2.0" />
       <PackageReference Include="MediatR.Contracts" Version="2.0.1" />
     </ItemGroup>

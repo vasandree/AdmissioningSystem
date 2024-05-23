@@ -22,58 +22,6 @@ namespace DocumentService.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Common.Models.Dtos.EducationDocumentTypeDto", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreateTime")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("EducationLevelId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("ExternalId")
-                        .HasColumnType("uuid");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EducationLevelId");
-
-                    b.ToTable("EducationDocumentTypeDto");
-                });
-
-            modelBuilder.Entity("Common.Models.Dtos.EducationLevelDto", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("EducationDocumentTypeDtoId")
-                        .HasColumnType("uuid");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EducationDocumentTypeDtoId");
-
-                    b.ToTable("EducationLevelDto");
-                });
-
             modelBuilder.Entity("DocumentService.Domain.Entities.DbFile", b =>
                 {
                     b.Property<Guid>("Id")
@@ -108,6 +56,9 @@ namespace DocumentService.Infrastructure.Migrations
                     b.Property<Guid?>("FileId")
                         .HasColumnType("uuid");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
@@ -115,8 +66,6 @@ namespace DocumentService.Infrastructure.Migrations
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("EducationDocumentTypeId");
 
                     b.HasIndex("FileId");
 
@@ -138,6 +87,9 @@ namespace DocumentService.Infrastructure.Migrations
                     b.Property<Guid?>("FileId")
                         .HasColumnType("uuid");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
                     b.Property<DateTime?>("IssueDate")
                         .HasColumnType("timestamp with time zone");
 
@@ -157,35 +109,11 @@ namespace DocumentService.Infrastructure.Migrations
                     b.ToTable("Passports");
                 });
 
-            modelBuilder.Entity("Common.Models.Dtos.EducationDocumentTypeDto", b =>
-                {
-                    b.HasOne("Common.Models.Dtos.EducationLevelDto", "EducationLevel")
-                        .WithMany()
-                        .HasForeignKey("EducationLevelId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("EducationLevel");
-                });
-
-            modelBuilder.Entity("Common.Models.Dtos.EducationLevelDto", b =>
-                {
-                    b.HasOne("Common.Models.Dtos.EducationDocumentTypeDto", null)
-                        .WithMany("NextEducationLevels")
-                        .HasForeignKey("EducationDocumentTypeDtoId");
-                });
-
             modelBuilder.Entity("DocumentService.Domain.Entities.EducationDocument", b =>
                 {
-                    b.HasOne("Common.Models.Dtos.EducationDocumentTypeDto", "EducationDocumentType")
-                        .WithMany()
-                        .HasForeignKey("EducationDocumentTypeId");
-
                     b.HasOne("DocumentService.Domain.Entities.DbFile", "File")
                         .WithMany()
                         .HasForeignKey("FileId");
-
-                    b.Navigation("EducationDocumentType");
 
                     b.Navigation("File");
                 });
@@ -197,11 +125,6 @@ namespace DocumentService.Infrastructure.Migrations
                         .HasForeignKey("FileId");
 
                     b.Navigation("File");
-                });
-
-            modelBuilder.Entity("Common.Models.Dtos.EducationDocumentTypeDto", b =>
-                {
-                    b.Navigation("NextEducationLevels");
                 });
 #pragma warning restore 612, 618
         }

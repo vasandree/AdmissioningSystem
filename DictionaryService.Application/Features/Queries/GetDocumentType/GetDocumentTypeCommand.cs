@@ -1,4 +1,4 @@
-using Common.Models.Dtos;
+using Common.Models.Models.Dtos;
 using MediatR;
 
 namespace DictionaryService.Application.Features.Queries.GetDocumentType;

@@ -1,5 +1,5 @@
 using System.Collections.Concurrent;
-using Common.Exceptions;
+using Common.Models.Exceptions;
 
 namespace DictionaryService.Application;
 

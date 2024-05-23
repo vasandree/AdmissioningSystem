@@ -1,11 +1,11 @@
 using AutoMapper;
-using Common.Repository;
+using Common.Models.Exceptions;
+using Common.Services.Repository;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using UserApi.Domain.DbEntities;
 using UserService.Application.Contracts.Persistence;
 using UserService.Application.Dtos.Responses;
-using Conflict = Common.Exceptions.Conflict;
 
 namespace UserService.Application.Features.Commands.AuthCommands.CreateUser;
 

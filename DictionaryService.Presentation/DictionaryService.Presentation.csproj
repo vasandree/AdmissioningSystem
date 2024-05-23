@@ -18,6 +18,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Common.ServiceBus\Common.ServiceBus.csproj" />
       <ProjectReference Include="..\DictionaryService.Application\DictionaryService.Application.csproj" />
       <ProjectReference Include="..\DictionaryService.Domain\DictionaryService.Domain.csproj" />
       <ProjectReference Include="..\DictionaryService.Persistence\DictionaryService.Persistence.csproj" />

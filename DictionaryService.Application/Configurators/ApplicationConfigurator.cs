@@ -1,5 +1,6 @@
 using System.Reflection;
 using DictionaryService.Application.MappingProfiles;
+using DictionaryService.Application.PubSub;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -14,5 +15,7 @@ public static class ApplicationConfigurator
         builder.Services.AddAutoMapper(typeof(MappingProfile));
 
         builder.Services.AddSingleton<ImportTaskTracker>();
+        builder.Services.AddSingleton<PubSubSender>();
+
     }
 }

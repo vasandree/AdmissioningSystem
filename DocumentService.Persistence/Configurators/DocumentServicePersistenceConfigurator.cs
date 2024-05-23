@@ -1,4 +1,4 @@
-using Common.Repository;
+using Common.Services.Repository;
 using DocumentService.Application.Contracts.Persistence;
 using DocumentService.Persistence.Repositories;
 using Microsoft.AspNetCore.Builder;

@@ -1,4 +1,4 @@
-using Common.Configurator;
+using Common.Configurators.Configurator;
 using UserService.Application.Configurators;
 using UserService.Infrastructure.Configurators;
 using UserService.Persistence.Configurators;
@@ -17,9 +17,15 @@ builder.ConfigureRepositories();
 
 builder.ConfigureSwagger();
 
+builder.ConfigureServiceBus();
+
+builder.AddRPCHandlers();
+
 var app = builder.Build();
 
 app.ConfigureUserDb();
+
+app.UseRPCHandlers();
 
 if (app.Environment.IsDevelopment())
 {

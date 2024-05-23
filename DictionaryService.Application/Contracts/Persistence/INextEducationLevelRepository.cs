@@ -1,4 +1,4 @@
-using Common.Repository;
+using Common.Services.Repository;
 using DictionaryService.Domain.Entities;
 
 namespace DictionaryService.Application.Contracts.Persistence;
@@ -12,4 +12,5 @@ public interface INextEducationLevelRepository : IGenericRepository<NextEducatio
     Task<List<EducationLevel>> GetEducationLevels(Guid documentTypeId);
 
     Task<List<NextEducationLevel?>> GetNextEducationLevelsOfDocumentType(Guid documentTypeId);
+    Task<List<DocumentType>> GetDocumentTypesByEducationLevel(Guid id);
 }

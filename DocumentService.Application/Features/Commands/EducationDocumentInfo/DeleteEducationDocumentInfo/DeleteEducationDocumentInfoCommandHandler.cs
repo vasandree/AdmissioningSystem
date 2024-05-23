@@ -1,4 +1,4 @@
-using Common.Exceptions;
+using Common.Models.Exceptions;
 using DocumentService.Application.Contracts.Persistence;
 using DocumentService.Domain.Entities;
 using MediatR;
@@ -30,7 +30,7 @@ public class DeleteEducationDocumentInfoCommandHandler : IRequestHandler<DeleteE
         else
         {
             educationDocument.Name = null;
-            educationDocument.EducationDocumentType = null;
+            educationDocument.EducationDocumentTypeId = null;
 
             await _educationDocument.UpdateAsync(educationDocument);
         }

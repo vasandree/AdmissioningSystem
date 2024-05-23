@@ -1,6 +1,7 @@
+using System.Collections;
 using AdmissionService.Domain.Entities;
-using Common.Models.Dtos;
-using Common.Repository;
+using Common.Models.Models.Dtos;
+using Common.Services.Repository;
 
 namespace AdmissionService.Application.Contracts.Persistence;
 
@@ -22,4 +23,7 @@ public interface IAdmissionRepository : IGenericRepository<Admission>
         EducationDocumentTypeDto educationDocumentTypeDto);
 
     public Task<List<Admission>> GetApplicantsAdmissions(Guid userId);
+    Task<List<Admission>> GetAdmissionsByProgramIds(List<Guid> programsToDelete);
+
+    Task<List<Admission>> GetAdmissionsByProgramId(Guid programId);
 }

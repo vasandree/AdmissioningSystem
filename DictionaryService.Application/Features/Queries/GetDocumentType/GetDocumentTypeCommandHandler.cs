@@ -1,5 +1,5 @@
 using AutoMapper;
-using Common.Models.Dtos;
+using Common.Models.Models.Dtos;
 using DictionaryService.Application.Contracts.Persistence;
 using MediatR;
 

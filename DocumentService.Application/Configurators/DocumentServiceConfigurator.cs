@@ -1,7 +1,11 @@
 using System.Reflection;
+using Common.Configurators.ConfigClasses;
 using DocumentService.Application.AutoMapper;
 using DocumentService.Application.Helpers;
+using DocumentService.Application.PubSub;
+using EasyNetQ;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DocumentService.Application.Configurators;
@@ -13,6 +17,9 @@ public static class DocumentServiceConfigurator
         builder.Services.AddMediatR(config => config.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
         builder.Services.AddAutoMapper(typeof(MappingProfile));
 
-        builder.Services.AddTransient<Helper>();
+        builder.Services.AddScoped<Helper>();
+        
+        builder.Services.AddScoped<RpcRequestSender>();
+        builder.Services.AddScoped<DocumentDeleteListener>();
     }
 }

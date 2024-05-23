@@ -1,10 +1,11 @@
-using Common.Models.Dtos;
+using Common.Models.Models.Dtos;
 
 namespace DocumentService.Domain.Entities;
 
 public class EducationDocument : Document
 {
-    public EducationDocumentTypeDto? EducationDocumentType { get; set; }
+    public Guid? EducationDocumentTypeId { get; set; }
     
     public string? Name { get; set; }
+    
 }

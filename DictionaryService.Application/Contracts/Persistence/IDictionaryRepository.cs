@@ -1,4 +1,4 @@
-using Common.Repository;
+using Common.Services.Repository;
 using DictionaryService.Domain.Entities;
 using Newtonsoft.Json.Linq;
 

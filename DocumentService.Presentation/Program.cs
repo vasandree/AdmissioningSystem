@@ -1,4 +1,4 @@
-using Common.Configurator;
+using Common.Configurators.Configurator;
 using DocumentService.Infrastructure.Configurators;
 using DocumentService.Persistence.Configurators;
 using DocumentService.Application.Configurators;
@@ -12,6 +12,8 @@ builder.ConfigureDocumentServicePersistence();
 builder.ConfigureDocumentServiceApplication();
 
 builder.ConfigureSwagger();
+
+builder.ConfigureServiceBus();
 
 builder.ConfigureAuth();
 

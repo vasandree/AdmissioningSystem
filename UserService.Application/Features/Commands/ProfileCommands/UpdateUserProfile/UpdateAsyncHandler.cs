@@ -1,4 +1,4 @@
-using Common.Exceptions;
+using Common.Models.Exceptions;
 using MediatR;
 using UserApi.Domain.DbEntities;
 using UserService.Application.Contracts.Persistence;

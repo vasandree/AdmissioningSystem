@@ -1,7 +1,7 @@
 using AdmissionService.Application.Contracts.Persistence;
 using AdmissionService.Application.Dtos.Responses;
 using AutoMapper;
-using Common.Exceptions;
+using Common.Models.Exceptions;
 using MediatR;
 
 namespace AdmissionService.Application.Features.Queries.GetMyAdmissionById;

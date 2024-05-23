@@ -1,5 +1,5 @@
 using System.ComponentModel.DataAnnotations;
-using Common.Models.Dtos;
+using Common.Models.Models.Dtos;
 
 namespace DocumentService.Application.Dtos.Responses;
 

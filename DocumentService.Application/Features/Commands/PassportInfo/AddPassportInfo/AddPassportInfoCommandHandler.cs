@@ -1,4 +1,4 @@
-using Common.Exceptions;
+using Common.Models.Exceptions;
 using DocumentService.Application.Contracts.Persistence;
 using DocumentService.Application.Dtos.Requests;
 using DocumentService.Domain.Entities;

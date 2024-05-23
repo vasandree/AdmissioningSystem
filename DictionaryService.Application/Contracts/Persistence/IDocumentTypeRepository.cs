@@ -6,6 +6,8 @@ namespace DictionaryService.Application.Contracts.Persistence;
 public interface IDocumentTypeRepository : IDictionaryRepository<DocumentType>
 {
     Task<bool> CheckExistenceByExternalId(Guid externalId);
+    
+    Task<bool> CheckExistenceById(Guid externalId);
 
     Task<List<DocumentType>> GetEntitiesToDelete(IEnumerable<Guid> newIds);
 
@@ -23,4 +25,6 @@ public interface IDocumentTypeRepository : IDictionaryRepository<DocumentType>
     new Task<List<DocumentType>> GetAllAsync();
 
     Task<DocumentType> Convert(JObject jsonDocumentType);
+    
+    
 }

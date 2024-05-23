@@ -1,4 +1,4 @@
-using Common.ConfigClasses;
+using Common.Configurators.ConfigClasses;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;

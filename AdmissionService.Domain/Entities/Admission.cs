@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using AdmissionService.Domain.Enums;
-using Common.Models.Dtos;
+using Common.Models.Models.Dtos;
 
 namespace AdmissionService.Domain.Entities;
 
@@ -28,4 +28,6 @@ public class Admission
     public Applicant Applicant { get; set; }
     
     public Guid? ManagerId { get; set; }
+
+    public bool IsDeleted { get; set; }
 }

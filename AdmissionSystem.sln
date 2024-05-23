@@ -10,7 +10,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserService.Presentation", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UserService", "UserService", "{AA599E5C-03E5-4D16-AC01-C975BCA3A200}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{F20B8D31-BB50-4BD5-8E89-E4E42D75FFD4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Services", "Common.Services\Common.Services.csproj", "{F20B8D31-BB50-4BD5-8E89-E4E42D75FFD4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserService.Application", "UserService.Application\UserService.Application.csproj", "{4623A43C-AFDD-482F-A4EF-CC91DC3813F2}"
 EndProject
@@ -57,6 +57,12 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocumentService.Presentation", "DocumentService.Presentation\DocumentService.Presentation.csproj", "{31B653AB-45B3-4A1F-BC15-45360EA53782}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DocumentService", "DocumentService", "{78377A63-1E04-4146-A2B5-4FCAE7691D5D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Configurators", "Common.Configurators\Common.Configurators.csproj", "{ADF5E65B-78EB-4B77-A5EA-DBE1445C1399}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.ServiceBus", "Common.ServiceBus\Common.ServiceBus.csproj", "{27E6E598-4CEE-4E57-8AA8-93B1AEA8C93E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Models", "Common.Models\Common.Models.csproj", "{957F8CE3-011D-461B-ADDC-54C2B3ABE8F0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -150,6 +156,18 @@ Global
 		{AD9E56E2-49AF-4264-8045-BE80EEF9B262}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9C75000A-CB9C-4941-8195-5F11B32E5CDA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9C75000A-CB9C-4941-8195-5F11B32E5CDA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ADF5E65B-78EB-4B77-A5EA-DBE1445C1399}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ADF5E65B-78EB-4B77-A5EA-DBE1445C1399}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ADF5E65B-78EB-4B77-A5EA-DBE1445C1399}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ADF5E65B-78EB-4B77-A5EA-DBE1445C1399}.Release|Any CPU.Build.0 = Release|Any CPU
+		{27E6E598-4CEE-4E57-8AA8-93B1AEA8C93E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{27E6E598-4CEE-4E57-8AA8-93B1AEA8C93E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{27E6E598-4CEE-4E57-8AA8-93B1AEA8C93E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{27E6E598-4CEE-4E57-8AA8-93B1AEA8C93E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{957F8CE3-011D-461B-ADDC-54C2B3ABE8F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{957F8CE3-011D-461B-ADDC-54C2B3ABE8F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{957F8CE3-011D-461B-ADDC-54C2B3ABE8F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{957F8CE3-011D-461B-ADDC-54C2B3ABE8F0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{B2D6D552-5529-4ACC-8CAE-ABDF8D5C631F} = {AA599E5C-03E5-4D16-AC01-C975BCA3A200}

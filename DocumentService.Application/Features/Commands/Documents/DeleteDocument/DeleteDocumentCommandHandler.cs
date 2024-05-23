@@ -1,4 +1,4 @@
-using Common.Exceptions;
+using Common.Models.Exceptions;
 using DocumentService.Application.Contracts.Persistence;
 using DocumentService.Application.Helpers;
 using DocumentService.Domain.Entities;
@@ -68,7 +68,7 @@ public class DeleteDocumentCommandHandler : IRequestHandler<DeleteDocumentComman
 
         var educationDocumentEntity = (EducationDocument)(await _educationDocument.GetByUserId(id))!;
 
-        if (educationDocumentEntity.EducationDocumentType != null || educationDocumentEntity.Name != null)
+        if (educationDocumentEntity.EducationDocumentTypeId != null || educationDocumentEntity.Name != null)
         {
             educationDocumentEntity.File = null;
         }

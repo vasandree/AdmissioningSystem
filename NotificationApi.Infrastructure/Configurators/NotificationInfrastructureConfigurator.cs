@@ -1,9 +1,10 @@
-using Common.ConfigClasses;
+using Common.Configurators.ConfigClasses;
 using EasyNetQ;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NotificationApi.Application.Contracts;
+using NotificationApi.Infrastructure.PubSubListeners;
 using NotificationApi.Infrastructure.Services;
 
 namespace NotificationApi.Infrastructure.Configurators;
@@ -23,6 +24,6 @@ public static class NotificationInfrastructureConfigurator
         builder.Services.Configure<EmailConfig>(builder.Configuration.GetSection("EmailSettings"));
         builder.Services.AddSingleton<IEmailSender, SmtpEmailSender>();
         
-        builder.Services.AddHostedService<NotificationService>();
+        builder.Services.AddHostedService<ResetPasswordCodeListener>();
     }
 }

@@ -25,7 +25,7 @@ namespace DocumentService.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Common.Models.Dtos.EducationDocumentTypeDto", b =>
+            modelBuilder.Entity("Common.Services.Models.Dtos.EducationDocumentTypeDto", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -54,7 +54,7 @@ namespace DocumentService.Infrastructure.Migrations
                     b.ToTable("EducationDocumentTypeDto");
                 });
 
-            modelBuilder.Entity("Common.Models.Dtos.EducationLevelDto", b =>
+            modelBuilder.Entity("Common.Services.Models.Dtos.EducationLevelDto", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -160,9 +160,9 @@ namespace DocumentService.Infrastructure.Migrations
                     b.ToTable("Passports");
                 });
 
-            modelBuilder.Entity("Common.Models.Dtos.EducationDocumentTypeDto", b =>
+            modelBuilder.Entity("Common.Services.Models.Dtos.EducationDocumentTypeDto", b =>
                 {
-                    b.HasOne("Common.Models.Dtos.EducationLevelDto", "EducationLevel")
+                    b.HasOne("Common.Services.Models.Dtos.EducationLevelDto", "EducationLevel")
                         .WithMany()
                         .HasForeignKey("EducationLevelId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -171,16 +171,16 @@ namespace DocumentService.Infrastructure.Migrations
                     b.Navigation("EducationLevel");
                 });
 
-            modelBuilder.Entity("Common.Models.Dtos.EducationLevelDto", b =>
+            modelBuilder.Entity("Common.Services.Models.Dtos.EducationLevelDto", b =>
                 {
-                    b.HasOne("Common.Models.Dtos.EducationDocumentTypeDto", null)
+                    b.HasOne("Common.Services.Models.Dtos.EducationDocumentTypeDto", null)
                         .WithMany("NextEducationLevels")
                         .HasForeignKey("EducationDocumentTypeDtoId");
                 });
 
             modelBuilder.Entity("DocumentService.Domain.Entities.EducationDocument", b =>
                 {
-                    b.HasOne("Common.Models.Dtos.EducationDocumentTypeDto", "EducationDocumentType")
+                    b.HasOne("Common.Services.Models.Dtos.EducationDocumentTypeDto", "EducationDocumentType")
                         .WithMany()
                         .HasForeignKey("EducationDocumentTypeId");
 
@@ -202,7 +202,7 @@ namespace DocumentService.Infrastructure.Migrations
                     b.Navigation("File");
                 });
 
-            modelBuilder.Entity("Common.Models.Dtos.EducationDocumentTypeDto", b =>
+            modelBuilder.Entity("Common.Services.Models.Dtos.EducationDocumentTypeDto", b =>
                 {
                     b.Navigation("NextEducationLevels");
                 });

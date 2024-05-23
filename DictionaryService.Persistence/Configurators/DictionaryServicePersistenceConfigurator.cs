@@ -1,5 +1,6 @@
-using Common.Repository;
+using Common.Services.Repository;
 using DictionaryService.Application.Contracts.Persistence;
+using DictionaryService.Persistence.Helpers;
 using DictionaryService.Persistence.Helpers.Converters;
 using DictionaryService.Persistence.Helpers.Update;
 using DictionaryService.Persistence.Repositories;
@@ -29,6 +30,8 @@ public static class DictionaryServicePersistenceConfigurator
         builder.Services.AddScoped<EducationLevelUpdate>();
         builder.Services.AddScoped<FacultyUpdate>(); 
         builder.Services.AddScoped<ProgramUpdate>();
+
+        builder.Services.AddScoped<RpcRequestSender>();
 
     }
 }

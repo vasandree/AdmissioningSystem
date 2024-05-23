@@ -1,5 +1,5 @@
 using AutoMapper;
-using Common.Exceptions;
+using Common.Models.Exceptions;
 using DocumentService.Application.Contracts.Persistence;
 using DocumentService.Application.Dtos.Responses;
 using DocumentService.Domain.Entities;
@@ -27,7 +27,7 @@ public class GetEducationDocumentInfoCommandHandler : IRequestHandler<GetEducati
 
         var educationDocument = (EducationDocument)(await _educationDocument.GetByUserId(request.UserId))!;
 
-        if (educationDocument.Name == null || educationDocument.EducationDocumentType == null)
+        if (educationDocument.Name == null || educationDocument.EducationDocumentTypeId == null)
         {
             throw new BadRequest("Education Document info for this user does not exist");
 

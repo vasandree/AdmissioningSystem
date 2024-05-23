@@ -15,7 +15,9 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Common\Common.csproj" />
+      <ProjectReference Include="..\Common.Configurators\Common.Configurators.csproj" />
+      <ProjectReference Include="..\Common.ServiceBus\Common.ServiceBus.csproj" />
+      <ProjectReference Include="..\Common.Services\Common.Services.csproj" />
       <ProjectReference Include="..\UserService.Domain\UserService.Domain.csproj" />
     </ItemGroup>
 

@@ -1,4 +1,4 @@
-using Common.Models.Dtos.PagedDtos;
+using Common.Models.Models.Dtos.PagedDtos;
 using MediatR;
 
 namespace AdmissionService.Application.Features.Queries.GetPrograms;

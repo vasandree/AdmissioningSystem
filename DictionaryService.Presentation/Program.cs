@@ -1,4 +1,4 @@
-using Common.Configurator;
+using Common.Configurators.Configurator;
 using DictionaryService.Application.Configurators;
 using DictionaryService.Domain.Configurator;
 using DictionaryService.Infrastructure.Configurators;
@@ -16,9 +16,15 @@ builder.ConfigureDictionaryServicePersistence();
 
 builder.ConfigureDictionaryApplicationService();
 
+builder.ConfigureServiceBus();
+
+builder.AddRPCHandlers();
+
 builder.ConfigureSwagger();
 
 var app = builder.Build();
+
+app.UseRPCHandlers();
 
 if (app.Environment.IsDevelopment())
 {

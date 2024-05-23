@@ -17,4 +17,6 @@ public abstract class Document
     
     [ForeignKey("FileId")]
     public DbFile? File { get; set; }
+    
+    public bool IsDeleted { get; set; }
 }

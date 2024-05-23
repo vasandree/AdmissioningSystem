@@ -1,5 +1,4 @@
-using Common.Models;
-using Common.Models.RabbitMqMessages;
+using Common.ServiceBus.RabbitMqMessages.Publish;
 using EasyNetQ;
 using MediatR;
 using UserService.Application.Contracts.Persistence;

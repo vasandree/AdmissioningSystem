@@ -7,6 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Common.ServiceBus\Common.ServiceBus.csproj" />
       <ProjectReference Include="..\NotificationApi.Application\NotificationApi.Application.csproj" />
     </ItemGroup>
 

@@ -1,8 +1,8 @@
 using AutoMapper;
-using Common.Exceptions;
-using Common.Models;
-using Common.Models.Dtos;
-using Common.Models.Dtos.PagedDtos;
+using Common.Models.Exceptions;
+using Common.Models.Models;
+using Common.Models.Models.Dtos;
+using Common.Models.Models.Dtos.PagedDtos;
 using DictionaryService.Application.Contracts.Persistence;
 using DictionaryService.Domain.Dictionaries;
 using DictionaryService.Domain.Entities;

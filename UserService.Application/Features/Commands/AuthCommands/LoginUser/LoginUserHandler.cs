@@ -1,5 +1,5 @@
-using Common.Exceptions;
-using Common.Repository;
+
+using Common.Models.Exceptions;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using UserApi.Domain.DbEntities;

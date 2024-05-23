@@ -1,4 +1,4 @@
-using Common.Repository;
+using Common.Services.Repository;
 using Microsoft.EntityFrameworkCore;
 using UserApi.Domain.DbEntities;
 using UserService.Application.Contracts.Persistence;

@@ -1,5 +1,7 @@
-using Common.Exceptions;
+using Common.Models.Exceptions;
 using DictionaryService.Application.Contracts.Persistence;
+using DictionaryService.Application.PubSub;
+using DictionaryService.Domain.Entities;
 using DictionaryService.Domain.Enums;
 using MediatR;
 using Microsoft.Extensions.Configuration;
@@ -16,6 +18,8 @@ public class ImportDictionariesCommandHandler : IRequestHandler<ImportDictionari
     private readonly IDocumentTypeRepository _documentType;
     private readonly IProgramRepository _program;
     private readonly ImportTaskTracker _importTaskTracker;
+    private readonly INextEducationLevelRepository _nextEducationLevel;
+    private readonly PubSubSender _pubSub;
 
     private readonly string _url;
     private readonly string _authHeaderValue;
@@ -23,7 +27,7 @@ public class ImportDictionariesCommandHandler : IRequestHandler<ImportDictionari
     public ImportDictionariesCommandHandler(HttpClient httpClient,
         IConfiguration configuration, IEducationLevelRepository educationLevel,
         IFacultyRepository faculty, IDocumentTypeRepository documentType, IProgramRepository program,
-        ImportTaskTracker importTaskTracker)
+        ImportTaskTracker importTaskTracker, PubSubSender pubSub, INextEducationLevelRepository nextEducationLevel)
     {
         _httpClient = httpClient;
         _educationLevel = educationLevel;
@@ -31,6 +35,8 @@ public class ImportDictionariesCommandHandler : IRequestHandler<ImportDictionari
         _documentType = documentType;
         _program = program;
         _importTaskTracker = importTaskTracker;
+        _pubSub = pubSub;
+        _nextEducationLevel = nextEducationLevel;
         _url = configuration.GetSection("ExternalSystem:BaseURL").Get<string>()!;
         _authHeaderValue =
             Convert.ToBase64String(System.Text.Encoding.ASCII.GetBytes(
@@ -93,6 +99,7 @@ public class ImportDictionariesCommandHandler : IRequestHandler<ImportDictionari
                     if (documentTypesToDelete.Count > 0)
                     {
                         await _documentType.SoftDeleteEntities(documentTypesToDelete!);
+                        _pubSub.SoftDeleteDocuments(documentTypesToDelete!);
                     }
 
 
@@ -100,9 +107,8 @@ public class ImportDictionariesCommandHandler : IRequestHandler<ImportDictionari
                     if (programsToDelete.Count > 0)
                     {
                         await _program.SoftDeleteEntities(programsToDelete!);
+                        _pubSub.SoftDeletePrograms(programsToDelete!);
                     }
-
-                    //todo: send emails
                 }
             }
 
@@ -118,6 +124,10 @@ public class ImportDictionariesCommandHandler : IRequestHandler<ImportDictionari
                     if (_educationLevel.CheckIfChanged(existingEducationLevel, newEducationLevel))
                     {
                         await _educationLevel.UpdateAsync(existingEducationLevel, newEducationLevel);
+                        
+                        _pubSub.UpdateDocumentTypesByEducationLevel(await DocumentTypesToUpdateByEducationLevel(existingEducationLevel));
+                        
+                        _pubSub.UpdatePrograms(await ProgramsToUpdateDyEducationLevel(existingEducationLevel));
                     }
                 }
                 else
@@ -158,10 +168,8 @@ public class ImportDictionariesCommandHandler : IRequestHandler<ImportDictionari
                 if (programsToDelete.Count > 0)
                 {
                     await _program.SoftDeleteEntities(programsToDelete!);
+                    _pubSub.SoftDeletePrograms(programsToDelete!);
                 }
-
-
-                //todo: send emails
             }
 
             foreach (var jsonFaculty in jsonFaculties!)
@@ -176,6 +184,8 @@ public class ImportDictionariesCommandHandler : IRequestHandler<ImportDictionari
                     if (_faculty.CheckIfChanged(existingFaculty, newFaculty))
                     {
                         await _faculty.UpdateAsync(existingFaculty, newFaculty);
+                        
+                        _pubSub.UpdatePrograms(await ProgramsToUpdateByFaculty(existingFaculty));
                     }
                 }
                 else
@@ -211,7 +221,7 @@ public class ImportDictionariesCommandHandler : IRequestHandler<ImportDictionari
                 if (toDelete.Count > 0)
                 {
                     await _documentType.SoftDeleteEntities(toDelete);
-                    //todo: delete documents
+                   _pubSub.SoftDeleteDocuments(toDelete);
                 }
             }
 
@@ -230,6 +240,7 @@ public class ImportDictionariesCommandHandler : IRequestHandler<ImportDictionari
                     {
                         await _documentType.UpdateAsync(existingDocumentType, newDocumentType,
                             jsonDocumentType.Value<List<JObject>>("nextEducationLevels")!);
+                        _pubSub.UpdateDocumentType(existingDocumentType);
                     }
                 }
                 else
@@ -283,8 +294,7 @@ public class ImportDictionariesCommandHandler : IRequestHandler<ImportDictionari
             if (toDelete.Count > 0)
             {
                 await _program.SoftDeleteEntities(toDelete);
-
-                //todo: send emails
+                _pubSub.SoftDeletePrograms(toDelete!);
             }
         }
 
@@ -294,12 +304,13 @@ public class ImportDictionariesCommandHandler : IRequestHandler<ImportDictionari
 
             if (await _program.CheckExistenceByExternalId(newProgram.ExternalId))
             {
-                var existingDocumentType =
+                var existingProgram =
                     await _program.GetByExternalId(newProgram.ExternalId);
 
-                if (_program.CheckIfChanged(existingDocumentType, newProgram))
+                if (_program.CheckIfChanged(existingProgram, newProgram))
                 {
-                    await _program.UpdateAsync(existingDocumentType, newProgram);
+                    await _program.UpdateAsync(existingProgram, newProgram);
+                    _pubSub.UpdateProgram(existingProgram);
                 }
             }
             else
@@ -316,5 +327,31 @@ public class ImportDictionariesCommandHandler : IRequestHandler<ImportDictionari
         await ImportDocumentType();
         await ImportFaculty();
         await ImportProgram();
+    }
+    
+    private async Task<List<Guid>> DocumentTypesToUpdateByEducationLevel(EducationLevel existingEducationLevel)
+    {
+        var documentTypesToUpdate =
+            await _documentType.Find(x => x.EducationLevelId == existingEducationLevel.Id && !x.IsDeleted);
+
+        var documentTypesToUpdateFromNextEducationLevel =
+            await _nextEducationLevel.GetDocumentTypesByEducationLevel(existingEducationLevel.Id);
+
+        var documentTypes = documentTypesToUpdate.Concat(documentTypesToUpdateFromNextEducationLevel)
+            .GroupBy(dt => dt.Id)
+            .Select(group => group.Key)
+            .ToList();
+
+        return documentTypes;
+    }
+
+    private async Task<IReadOnlyList<Program>> ProgramsToUpdateDyEducationLevel(EducationLevel educationLevel)
+    {
+        return await _program.Find(x => x.EducationLevel == educationLevel && !x.IsDeleted);
+    }
+
+    private async Task<IReadOnlyList<Program>> ProgramsToUpdateByFaculty(Faculty faculty)
+    {
+        return await _program.Find(x => x.Faculty == faculty && !x.IsDeleted);
     }
 }
