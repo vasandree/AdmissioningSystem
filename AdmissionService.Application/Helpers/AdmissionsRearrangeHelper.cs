@@ -35,7 +35,7 @@ public class AdmissionsRearrangeHelper
         else if (newPriority > oldPriority)
         {
             var admissionsToUpdate =
-                admissions.Where(a => a.Priority < newPriority && a.Priority <= oldPriority).ToList();
+                admissions.Where(a => a.Priority <= newPriority && a.Priority > oldPriority).ToList();
 
             await IncreasePriorities(admissionsToUpdate);
         }

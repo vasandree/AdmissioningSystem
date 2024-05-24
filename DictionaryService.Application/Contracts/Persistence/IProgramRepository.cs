@@ -5,7 +5,10 @@ namespace DictionaryService.Application.Contracts.Persistence;
 
 public interface IProgramRepository : IDictionaryRepository<Program>
 {
+    new Task<Program> GetById(Guid id);
     Task<bool> CheckExistenceByExternalId(Guid externalId);
+
+    Task<bool> CheckExistenceById(Guid id);
 
     Task<List<Program>> GetEntitiesToDelete(IEnumerable<Guid> newIds);
 
@@ -15,7 +18,7 @@ public interface IProgramRepository : IDictionaryRepository<Program>
 
     Task UpdateAsync(Program program, Program newProgram);
 
-    Task<List<Program?>> GetEntitiesToDeleteByEducationLevel(List<EducationLevel> deletedEducationLevel);
+    Task<List<Program?>> GetEntitiesToDeleteByEducationLevel(List<EducationLevel?> deletedEducationLevel);
 
     Task<List<Program?>> GetEntitiesToDeleteByFaculty(List<Faculty> deletedFaculties);
     

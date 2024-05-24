@@ -7,7 +7,7 @@ public interface IEducationLevelRepository : IDictionaryRepository<EducationLeve
 {
     Task<bool> CheckExistenceByExternalId(int externalId);
 
-    Task<List<EducationLevel>> GetEntitiesToDelete(IEnumerable<int> newIds);
+    Task<List<EducationLevel?>> GetEntitiesToDelete(IEnumerable<int> newIds);
 
     Task<EducationLevel> GetByExternalId(int externalId);
 

@@ -5,11 +5,9 @@ namespace DictionaryService.Application.Contracts.Persistence;
 
 public interface IDocumentTypeRepository : IDictionaryRepository<DocumentType>
 {
-    new Task<DocumentType> GetById(Guid id);
-    
     Task<bool> CheckExistenceByExternalId(Guid externalId);
     
-    Task<bool> CheckExistenceById(Guid externalId);
+    Task<bool> CheckExistenceById(Guid id);
 
     Task<List<DocumentType>> GetEntitiesToDelete(IEnumerable<Guid> newIds);
 
@@ -22,7 +20,7 @@ public interface IDocumentTypeRepository : IDictionaryRepository<DocumentType>
 
     Task UpdateAsync(DocumentType documentType, DocumentType newDocumentType, List<JObject> jsonNewNextEducationLevels);
 
-    Task<List<DocumentType?>> GetEntitiesToDeleteByEducationLevel(List<EducationLevel> deletedEducationLevel);
+    Task<List<DocumentType?>> GetEntitiesToDeleteByEducationLevel(List<EducationLevel?> deletedEducationLevel);
 
     new Task<List<DocumentType>> GetAllAsync();
 

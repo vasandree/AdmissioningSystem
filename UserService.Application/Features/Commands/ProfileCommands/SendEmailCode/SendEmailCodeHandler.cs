@@ -20,7 +20,7 @@ public class SendEmailCodeHandler : IRequestHandler<SendEmailCode, Unit>
     {
         try
         {
-            var user = await _repository.GetByEmail(request.Email);
+            var user = await _repository.GetById(request.Id);
             if (user == null)
             {
                 throw new Exception("User not found.");
@@ -32,10 +32,10 @@ public class SendEmailCodeHandler : IRequestHandler<SendEmailCode, Unit>
 
             var notificationMessage = new ForgetPasswordMessage
             {
-                Email = request.Email,
+                Email = user.Email!,
                 ConfirmCode = confirmCode
             };
-            await _bus.PubSub.PublishAsync(notificationMessage, cancellationToken: cancellationToken);
+             _bus.PubSub.Publish(notificationMessage, cancellationToken: cancellationToken);
 
             return Unit.Value;
         }

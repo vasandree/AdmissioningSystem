@@ -4,6 +4,7 @@ namespace Common.Models.Models.Dtos;
 
 public class EducationDocumentTypeDto
 {
+
     [Required] public Guid Id { get; set; }
 
 

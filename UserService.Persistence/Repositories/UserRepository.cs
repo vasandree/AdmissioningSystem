@@ -56,4 +56,14 @@ public class UserRepository : GenericRepository<ApplicationUser>, IUserRepositor
         var token = await _userManager.GeneratePasswordResetTokenAsync(user);
         await _userManager.ResetPasswordAsync(user, token, newPassword);
     }
+
+    public async Task AddRole(ApplicationUser user, string role)
+    {
+        await _userManager.AddToRoleAsync(user, role);
+    }
+
+    public async Task DeleteRole(ApplicationUser user, string role)
+    {
+        await _userManager.RemoveFromRoleAsync(user, role);
+    }
 }

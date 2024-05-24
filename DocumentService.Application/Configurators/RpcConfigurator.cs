@@ -1,5 +1,5 @@
 using DocumentService.Application.Helpers;
-using DocumentService.Application.RpcHandler;
+using DocumentService.Application.RPC.RpcHandler;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 

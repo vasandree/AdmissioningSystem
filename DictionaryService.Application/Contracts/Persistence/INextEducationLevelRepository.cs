@@ -9,7 +9,7 @@ public interface INextEducationLevelRepository : IGenericRepository<NextEducatio
 
     Task<NextEducationLevel> GetByExternalIds(Guid documentTypeExternalId, int educationLevelExternalId);
 
-    Task<List<EducationLevel>> GetEducationLevels(Guid documentTypeId);
+    Task<List<EducationLevel?>> GetEducationLevels(Guid documentTypeId);
 
     Task<List<NextEducationLevel?>> GetNextEducationLevelsOfDocumentType(Guid documentTypeId);
     Task<List<DocumentType>> GetDocumentTypesByEducationLevel(Guid id);

@@ -14,6 +14,14 @@ public class ProgramRepository : DictionaryRepository<Program>, IProgramReposito
     private readonly ProgramUpdate _update;
     private readonly ProgramConverter _converter;
 
+
+    public new async Task<Program> GetById(Guid id)
+    {
+        return  await _context.Programs
+            .Include(x => x.EducationLevel)
+            .Include(x => x.Faculty)
+            .FirstOrDefaultAsync(x => x.Id == id)!;
+    }
     public ProgramRepository(DictionaryDbContext context, ProgramUpdate update, ProgramConverter converter) :
         base(context)
     {
@@ -25,6 +33,11 @@ public class ProgramRepository : DictionaryRepository<Program>, IProgramReposito
     public async Task<bool> CheckExistenceByExternalId(Guid externalId)
     {
         return await _context.Programs.AnyAsync(x => x.ExternalId == externalId);
+    }
+
+    public async Task<bool> CheckExistenceById(Guid id)
+    {
+        return await _context.Programs.AnyAsync(x => x.Id == id);
     }
 
     public async Task<List<Program>> GetEntitiesToDelete(IEnumerable<Guid> newIds)
@@ -57,7 +70,7 @@ public class ProgramRepository : DictionaryRepository<Program>, IProgramReposito
     }
     
 
-    public async Task<List<Program?>> GetEntitiesToDeleteByEducationLevel(List<EducationLevel> deletedEducationLevel)
+    public async Task<List<Program?>> GetEntitiesToDeleteByEducationLevel(List<EducationLevel?> deletedEducationLevel)
     {
         return await _context.Programs
             .Where(docType => deletedEducationLevel.Any(eduLevel => eduLevel == docType.EducationLevel))

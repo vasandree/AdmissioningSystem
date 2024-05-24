@@ -29,4 +29,5 @@ public interface IAdmissionRepository : IGenericRepository<Admission>
     Task<List<Admission>> GetAdmissionsByProgramIds(List<Guid> programsToDelete);
 
     Task<List<Admission>> GetAdmissionsByProgramId(Guid programId);
+    bool CheckIfProgramIsChosen(Guid userId, Guid programId);
 }

@@ -3,4 +3,4 @@ using MediatR;
 
 namespace AdmissionService.Application.Features.Commands.DeleteAdmission;
 
-public record DeleteAdmissionCommand(Guid UserId, AdmissionRequestDto AdmissionRequestDto) : IRequest<Unit>;
+public record DeleteAdmissionCommand(Guid UserId, Guid AdmissionId) : IRequest<Unit>;

@@ -24,21 +24,21 @@ public class EditPriorityCommandHandler : IRequestHandler<EditPriorityCommand, U
         if (!await _applicant.CheckIfApplicantExists(request.UserId))
             throw new BadRequest("Applicant does not have any admissions");
 
-        if (!await _admission.CheckIfAdmissionExists(request.ChangeAdmissionPriorityDto.AdmissionId))
+        if (!await _admission.CheckIfAdmissionExists(request.AdmissionId))
             throw new BadRequest("Provided admission does not exist");
 
-        if (!_admission.CheckIfNewPriorityIsAvailable(request.UserId, request.ChangeAdmissionPriorityDto.Priority))
+        if (!_admission.CheckIfNewPriorityIsAvailable(request.UserId, request.Priority))
             throw new BadRequest("New priority is out of range of applicant's admissions");
 
         if (!await _admission.CheckIfAdmissionBelongsToApplicant(request.UserId,
-                request.ChangeAdmissionPriorityDto.AdmissionId))
+                request.AdmissionId))
             throw new BadRequest("Applicant does not have provided admission");
         
-        var admission = await _admission.GetById(request.ChangeAdmissionPriorityDto.AdmissionId);
+        var admission = await _admission.GetById(request.AdmissionId);
 
-        await _helper.RearrangeAdmissions(request.UserId, admission.Priority, request.ChangeAdmissionPriorityDto.Priority);
+        await _helper.RearrangeAdmissions(request.UserId, admission.Priority, request.Priority);
 
-        admission.Priority = request.ChangeAdmissionPriorityDto.Priority;
+        admission.Priority = request.Priority;
 
         await _admission.UpdateAsync(admission);
 

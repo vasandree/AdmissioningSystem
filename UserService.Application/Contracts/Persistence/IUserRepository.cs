@@ -14,4 +14,8 @@ public interface IUserRepository : IGenericRepository<ApplicationUser>
     Task<bool> CheckPassword(ApplicationUser user, string password);
 
     Task ResetPassword(ApplicationUser user, string newPassword);
+
+    Task AddRole(ApplicationUser user, string role);
+
+    Task DeleteRole(ApplicationUser user, string role);
 }

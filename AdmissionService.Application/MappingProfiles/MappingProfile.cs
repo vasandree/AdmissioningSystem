@@ -9,5 +9,7 @@ public class MappingProfile : Profile
     public MappingProfile()
     {
         CreateMap<Admission, AdmissionDto>();
+        CreateMap<Admission, AdmissionListDto>();
+
     }
 }

@@ -8,17 +8,11 @@ public static class RpcConfigurator
 {
     public static void AddRPCHandlers(this WebApplicationBuilder builder)
     {
-        builder.Services.AddSingleton<PermissionRpcHandler>();
-        builder.Services.AddSingleton<GetUserInfoRpcHandler>();
+        builder.Services.AddSingleton<UserServiceRpcHandler>();
     }
 
     public static void UseRPCHandlers(this WebApplication app)
     {
-        var permission = app.Services.GetRequiredService<PermissionRpcHandler>();
-        permission.CreateRequestListeners();
-
-        var info = app.Services.GetRequiredService<GetUserInfoRpcHandler>();
-        info.CreateRequestListeners();
-        
+        app.Services.GetRequiredService<UserServiceRpcHandler>().CreateRequestListeners();
     }
 }

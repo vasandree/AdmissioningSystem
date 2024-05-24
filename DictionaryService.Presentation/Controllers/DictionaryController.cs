@@ -1,7 +1,5 @@
 using System.ComponentModel.DataAnnotations;
 using Common.Models.Exceptions;
-using Common.ServiceBus.RabbitMqMessages.Request;
-using Common.ServiceBus.RabbitMqMessages.Response;
 using DictionaryService.Application.Features.Commands.CheckImportStatus;
 using DictionaryService.Application.Features.Commands.ImportDictionaries;
 using DictionaryService.Domain.Enums;
@@ -51,7 +49,6 @@ public class DictionaryController : ControllerBase
         {
             return Ok(await _meditor.Send(new CheckImportStatusCommand(requestId)));
         }
-
         throw new Forbidden("You don't have permission to perform this action.");
     }
 }

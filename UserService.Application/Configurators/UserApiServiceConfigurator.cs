@@ -4,6 +4,7 @@ using EasyNetQ;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using UserService.Application.PubSub;
 
 namespace UserService.Application.Configurators;
 
@@ -13,6 +14,7 @@ public static class UserApiServiceConfigurator
     {
         builder.Services.AddMediatR(config => config.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
         builder.Services.AddAutoMapper(typeof(MappingProfile));
-        
+
+        builder.Services.AddHostedService<UpdateRoleListener>();
     }
 }

@@ -3,6 +3,7 @@ using Common.Configurators.ConfigClasses;
 using DocumentService.Application.AutoMapper;
 using DocumentService.Application.Helpers;
 using DocumentService.Application.PubSub;
+using DocumentService.Application.RPC;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -18,6 +19,7 @@ public static class DocumentServiceConfigurator
         builder.Services.AddScoped<Helper>();
         
         builder.Services.AddScoped<RpcRequestSender>();
-        builder.Services.AddScoped<DocumentDeleteListener>();
+        builder.Services.AddHostedService<DocumentDeleteListener>();
+        builder.Services.AddHostedService<DocumentUpdateListener>();
     }
 }

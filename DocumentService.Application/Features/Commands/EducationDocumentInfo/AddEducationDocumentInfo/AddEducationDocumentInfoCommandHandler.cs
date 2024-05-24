@@ -2,6 +2,7 @@ using Common.Models.Exceptions;
 using DocumentService.Application.Contracts.Persistence;
 using DocumentService.Application.Dtos.Requests;
 using DocumentService.Application.Helpers;
+using DocumentService.Application.RPC;
 using DocumentService.Domain.Entities;
 using DocumentService.Domain.Enums;
 using MediatR;

@@ -29,7 +29,7 @@ public class NextEducationLevelRepository : GenericRepository<NextEducationLevel
             x.DocumentTypeExternalId == documentTypeExternalId)!;
     }
 
-    public async Task<List<EducationLevel>> GetEducationLevels(Guid documentTypeId)
+    public async Task<List<EducationLevel?>> GetEducationLevels(Guid documentTypeId)
     {
         var nextEducationLevels = await _context.NextEducationLevels
             .Where(nel => nel.DocumentTypeId == documentTypeId)

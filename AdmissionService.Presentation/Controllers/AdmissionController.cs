@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using AdmissionService.Application.Dtos.Requests;
 using AdmissionService.Application.Features.Commands.CreateNewAdmission;
 using AdmissionService.Application.Features.Commands.DeleteAdmission;
@@ -26,11 +27,11 @@ public class AdmissionController : ControllerBase
         return Ok(await _mediator.Send(new GetAllMyAdmissionsCommand(Guid.Parse(User.FindFirst("UserId")!.Value!))));
     }
 
-    [HttpGet, Authorize, Route("admission")]
-    public async Task<IActionResult> GetMyAdmission([FromBody] AdmissionRequestDto admissionRequestDto)
+    [HttpGet, Authorize, Route("admission/{admissionId}")]
+    public async Task<IActionResult> GetMyAdmission([Required]Guid admissionId)
     {
         return Ok(await _mediator.Send(new GetAdmissionByIdCommand(Guid.Parse(User.FindFirst("UserId")!.Value!),
-            admissionRequestDto)));
+            admissionId)));
     }
 
     [HttpPost, Authorize, Route("admission")]
@@ -40,18 +41,17 @@ public class AdmissionController : ControllerBase
             createAdmissionRequest)));
     }
 
-    [HttpPut, Authorize, Route("admission/priority")]
-    public async Task<IActionResult> ChangeAdmissionPriority(
-        [FromBody] ChangeAdmissionPriorityDto changeAdmissionPriority)
+    [HttpPut, Authorize, Route("admission/{admissionId}/priority")]
+    public async Task<IActionResult> ChangeAdmissionPriority([Required] Guid admissionId, [Required]int priority)
     {
         return Ok(await _mediator.Send(new EditPriorityCommand(Guid.Parse(User.FindFirst("UserId")!.Value!),
-            changeAdmissionPriority)));
+            admissionId, priority)));
     }
 
     [HttpDelete, Authorize, Route("admission")]
-    public async Task<IActionResult> DeleteAdmission([FromBody] AdmissionRequestDto admissionRequestDto)
+    public async Task<IActionResult> DeleteAdmission([Required] Guid admissionId)
     {
         return Ok(await _mediator.Send(new DeleteAdmissionCommand(Guid.Parse(User.FindFirst("UserId")!.Value!),
-            admissionRequestDto)));
+            admissionId)));
     }
 }

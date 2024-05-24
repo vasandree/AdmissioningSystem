@@ -1,5 +1,6 @@
 using AdmissionService.Application.Contracts.Persistence;
 using AdmissionService.Application.Helpers;
+using AdmissionService.Application.PubSub.Senders;
 using AdmissionService.Application.RPC;
 using AdmissionService.Domain.Entities;
 using AdmissionService.Domain.Enums;
@@ -14,14 +15,16 @@ public class CreateNewAdmissionCommandHandler : IRequestHandler<CreateNewAdmissi
     private readonly IApplicantRepository _applicant;
     private readonly AdmissionsRearrangeHelper _helper;
     private readonly RpcRequestsSender _rpc;
+    private readonly PubSubSender _pubSub;
 
     public CreateNewAdmissionCommandHandler(IAdmissionRepository admission, IApplicantRepository applicant,
-        AdmissionsRearrangeHelper helper, RpcRequestsSender rpc)
+        AdmissionsRearrangeHelper helper, RpcRequestsSender rpc, PubSubSender pubSub)
     {
         _admission = admission;
         _applicant = applicant;
         _helper = helper;
         _rpc = rpc;
+        _pubSub = pubSub;
     }
 
     public async Task<Unit> Handle(CreateNewAdmissionCommand request, CancellationToken cancellationToken)
@@ -29,6 +32,9 @@ public class CreateNewAdmissionCommandHandler : IRequestHandler<CreateNewAdmissi
         if (!await _admission.CheckIfAdmissionIsAvailable(request.UserId))
             throw new BadRequest("You added the maximum number of programs");
 
+        if (_admission.CheckIfProgramIsChosen(request.UserId, request.CreateAdmissionRequest.ProgramId))
+            throw new BadRequest("You have already created an admission for this program");
+        
         var educationDocId = await _rpc.CheckIfApplicantHasDocument(request.UserId);
 
         if (educationDocId == null)
@@ -54,7 +60,7 @@ public class CreateNewAdmissionCommandHandler : IRequestHandler<CreateNewAdmissi
             throw new BadRequest("Education Level of this program is not available for you." +
                                  "Because you chose previous level of education in other admissions");
 
-        if (!await _admission.CheckIfPriorityAvailable(request.UserId, request.CreateAdmissionRequest.Priority))
+        if (await _admission.CheckIfPriorityAvailable(request.UserId, request.CreateAdmissionRequest.Priority) == false)
         {
             await _helper.RearrangeAdmissionsByAddingNewOne(request.UserId, request.CreateAdmissionRequest.Priority);
         }
@@ -90,7 +96,8 @@ public class CreateNewAdmissionCommandHandler : IRequestHandler<CreateNewAdmissi
             ManagerId = null
         });
 
-        //todo: add role "Applicant"
+        if(!await _applicant.CheckIfApplicantExists(applicant.ApplicantId))
+            _pubSub.UpdateApplicantRole(applicant.ApplicantId);
 
         return Unit.Value;
     }

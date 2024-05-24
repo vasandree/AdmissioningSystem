@@ -25,4 +25,9 @@ public class ApplicantRepository : GenericRepository<Applicant>, IApplicantRepos
     {
         return await _context.Applicants.FirstOrDefaultAsync(x => x.ApplicantId == id)!;
     }
+
+    public async Task<bool> CheckIfApplicantHasAdmissions(Guid applicantId)
+    {
+        return await _context.Admissions.AnyAsync(x => x.ApplicantId == applicantId);
+    }
 }

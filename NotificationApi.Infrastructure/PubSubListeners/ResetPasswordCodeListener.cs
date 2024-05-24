@@ -21,7 +21,7 @@ public class ResetPasswordCodeListener : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        await _bus.PubSub.SubscribeAsync<ForgetPasswordMessage>("email_notification_subscription_id", SendForgetPassword, cancellationToken: stoppingToken);
+        _bus.PubSub.Subscribe<ForgetPasswordMessage>("email_notification_subscription_id",  SendForgetPassword);
     }
 
     private async Task SendForgetPassword(ForgetPasswordMessage message)

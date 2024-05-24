@@ -50,12 +50,15 @@ public class GetProgramsCommandHandler : IRequestHandler<GetProgramsCommand, Pro
         
         var totalProgramsCount = await programs.CountAsync();
         var totalPages = (int)Math.Ceiling((double)totalProgramsCount / request.Size);
-        if (totalPages < request.Page)
-            throw new BadRequest("Invalid value for attribute page");
+        if (totalPages < request.Page && request.Page > 1)
+            throw new NotFound("Invalid value for attribute page");
 
-        var resultPrograms = await programs.Skip(request.Size * (request.Page - 1))
+        if (totalPages < request.Page && request.Page == 1)
+            throw new NotFound("No programs were found");
+        
+        var resultPrograms =  programs.Skip(request.Size * (request.Page - 1))
             .Take(request.Size)
-            .ToListAsync();
+            .ToList();
 
         var programDtos = resultPrograms.Select(x => _mapper.Map<ProgramDto>(x)).ToList();
 

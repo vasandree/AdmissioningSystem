@@ -1,6 +1,7 @@
 using AutoMapper;
 using Common.Models.Models.Dtos;
 using DictionaryService.Application.Contracts.Persistence;
+using DictionaryService.Domain.Entities;
 using MediatR;
 
 namespace DictionaryService.Application.Features.Queries.GetDocumentType;

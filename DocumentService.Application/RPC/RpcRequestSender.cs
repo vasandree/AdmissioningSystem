@@ -2,7 +2,7 @@ using Common.ServiceBus.RabbitMqMessages.Request;
 using Common.ServiceBus.RabbitMqMessages.Response;
 using EasyNetQ;
 
-namespace DocumentService.Application.Helpers;
+namespace DocumentService.Application.RPC;
 
 public class RpcRequestSender
 {

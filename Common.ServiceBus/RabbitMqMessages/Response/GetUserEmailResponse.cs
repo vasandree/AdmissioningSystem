@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Common.ServiceBus.RabbitMqMessages.Response;
 
-public class GetUserEmailResponse(string email)
+public class GetUserEmailResponse(string email, Exception? exception = null) : BaseResponse(exception)
 {
-    [Required] public string Email { get; set; } = email;
+    public string Email { get; set; } = email;
 }

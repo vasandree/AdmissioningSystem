@@ -50,7 +50,7 @@ public class ProfileController : ControllerBase
     [Route("forget-password-email")]
     public async Task<IActionResult> SendForgetPassword()
     {
-        return Ok(await _mediator.Send(new SendEmailCode(User.FindFirst(ClaimTypes.Email)!.ToString())));
+        return Ok(await _mediator.Send(new SendEmailCode(Guid.Parse(User.FindFirst("UserId")!.Value!))));
     }
 
     [HttpPut, Authorize]

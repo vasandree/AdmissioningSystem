@@ -27,7 +27,7 @@ public class EducationLevelRepository : DictionaryRepository<EducationLevel>, IE
         return await _context.EducationLevels.AnyAsync(x => x.ExternalId == externalId);
     }
 
-    public async Task<List<EducationLevel>> GetEntitiesToDelete(IEnumerable<int> newIds)
+    public async Task<List<EducationLevel?>> GetEntitiesToDelete(IEnumerable<int> newIds)
     {
         var oldIds = await _context.EducationLevels.Select(x => x.ExternalId).ToListAsync();
 
@@ -41,7 +41,7 @@ public class EducationLevelRepository : DictionaryRepository<EducationLevel>, IE
         return await _context.EducationLevels.FirstOrDefaultAsync(x => x.ExternalId == externalId)!;
     }
 
-    public new async Task CreateAsync(EducationLevel educationLevel)
+    public new async Task CreateAsync(EducationLevel? educationLevel)
     {
         await _context.EducationLevels.AddAsync(educationLevel);
         await _context.SaveChangesAsync();

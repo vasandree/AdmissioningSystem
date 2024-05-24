@@ -28,15 +28,15 @@ public class GetAdmissionByIdCommandHandler : IRequestHandler<GetAdmissionByIdCo
         if (!await _applicant.CheckIfApplicantExists(request.UserId))
             throw new BadRequest("Applicant does not have any admissions yet");
 
-        if (!await _admission.CheckIfAdmissionExists(request.AdmissionRequestDto.AdmissionId))
+        if (!await _admission.CheckIfAdmissionExists(request.AdmissionId))
             throw new BadRequest("Provided admission does not exist");
 
         if (!await _admission.CheckIfAdmissionBelongsToApplicant(request.UserId,
-                request.AdmissionRequestDto.AdmissionId))
+                request.AdmissionId))
             throw new BadRequest("Applicant does not have provided admission");
 
-        var admission = await _admission.GetById(request.AdmissionRequestDto.AdmissionId);
-        if (admission.IsDeleted) throw new NotFound("Provided admission was not found");
+        var admission = await _admission.GetById(request.AdmissionId);
+        if (admission.IsDeleted) throw new NotFound("Provided admission was  deleted");
         
         var dto = _mapper.Map<AdmissionDto>(admission);
 

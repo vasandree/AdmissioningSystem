@@ -1,6 +1,8 @@
 using System.Reflection;
 using AdmissionService.Application.Helpers;
 using AdmissionService.Application.MappingProfiles;
+using AdmissionService.Application.PubSub.Listeners;
+using AdmissionService.Application.PubSub.Senders;
 using AdmissionService.Application.RPC;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,5 +18,9 @@ public static class AdmissionServiceApplicationConfigurator
         builder.Services.AddScoped<AdmissionsRearrangeHelper>();
 
         builder.Services.AddScoped<RpcRequestsSender>();
+        builder.Services.AddScoped<PubSubSender>();
+
+        builder.Services.AddHostedService<ProgramDeletionListener>();
+        builder.Services.AddHostedService<ProgramUpdateListener>();
     }
 }

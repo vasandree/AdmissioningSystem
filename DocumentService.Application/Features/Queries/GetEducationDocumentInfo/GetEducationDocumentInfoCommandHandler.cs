@@ -3,6 +3,7 @@ using Common.Models.Exceptions;
 using DocumentService.Application.Contracts.Persistence;
 using DocumentService.Application.Dtos.Responses;
 using DocumentService.Application.Helpers;
+using DocumentService.Application.RPC;
 using DocumentService.Domain.Entities;
 using MediatR;
 

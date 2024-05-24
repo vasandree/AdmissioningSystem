@@ -29,15 +29,15 @@ public class AdmissionRepository : GenericRepository<Admission>, IAdmissionRepos
     public async Task<bool> CheckIfPriorityAvailable(Guid userId, int priority)
     {
         var admissions = await _context.Admissions.Where(x => x.ApplicantId == userId).ToListAsync();
-        return admissions.Count == 0 || admissions.Any(x => x.Priority != priority);
+        return admissions.Count == 0 && priority == 0;
     }
 
     public bool CheckIfNewPriorityIsAvailable(Guid userId, int priority)
     {
-        var admissionsAmount =  _context.Admissions.Count(x => x.ApplicantId == userId);
-        return priority <= admissionsAmount;
+        var admissionsAmount = _context.Admissions.Count(x => x.ApplicantId == userId);
+        return priority < admissionsAmount;
     }
-    
+
     public async Task<bool> CheckIfAdmissionExists(Guid admissionId)
     {
         return await _context.Admissions.AnyAsync(x => x.AdmissionId == admissionId);
@@ -79,17 +79,19 @@ public class AdmissionRepository : GenericRepository<Admission>, IAdmissionRepos
         {
             return programDto.EducationLevel.Id == educationDocumentTypeDto.EducationLevel.Id;
         }
-        
+
         var chosenLevelsIds = await _context.Admissions
             .Where(x => x.ApplicantId == userId && !x.IsDeleted)
             .Select(x => x.EducationLevelId)
             .Distinct()
             .ToListAsync();
 
-        if (nextAvailableLevelsIds.Contains(programDto.EducationLevel.Id) && programDto.EducationLevel.Id != educationDocumentTypeDto.EducationLevel.Id)
+        if (nextAvailableLevelsIds.Contains(programDto.EducationLevel.Id) &&
+            programDto.EducationLevel.Id != educationDocumentTypeDto.EducationLevel.Id)
             return true;
 
-        if (!nextAvailableLevelsIds.Contains(programDto.EducationLevel.Id) && programDto.EducationLevel.Id == educationDocumentTypeDto.EducationLevel.Id)
+        if (!nextAvailableLevelsIds.Contains(programDto.EducationLevel.Id) &&
+            programDto.EducationLevel.Id == educationDocumentTypeDto.EducationLevel.Id)
             return true;
 
         return false;
@@ -98,9 +100,12 @@ public class AdmissionRepository : GenericRepository<Admission>, IAdmissionRepos
 
     public async Task<List<Admission>> GetApplicantsAdmissions(Guid userId)
     {
-        return await _context.Admissions.Where(x => x.ApplicantId == userId && !x.IsDeleted)
+        var admissions = await _context.Admissions
+            .Where(x => x.ApplicantId == userId && !x.IsDeleted)
             .OrderBy(x => x.Priority)
             .ToListAsync();
+        
+        return admissions; 
     }
 
     public async Task<List<Admission>> GetAdmissionsByProgramIds(List<Guid> programsToDelete)
@@ -109,11 +114,15 @@ public class AdmissionRepository : GenericRepository<Admission>, IAdmissionRepos
             .Where(admission => programsToDelete
                 .Contains(admission.ProgramId) && !admission.IsDeleted)
             .ToListAsync();
-
     }
 
     public async Task<List<Admission>> GetAdmissionsByProgramId(Guid programId)
     {
         return await _context.Admissions.Where(admission => admission.ProgramId == programId).ToListAsync();
+    }
+
+    public bool CheckIfProgramIsChosen(Guid userId, Guid programId)
+    {
+        return _context.Admissions.Any(x => x.ApplicantId == userId && x.ProgramId == programId);
     }
 }

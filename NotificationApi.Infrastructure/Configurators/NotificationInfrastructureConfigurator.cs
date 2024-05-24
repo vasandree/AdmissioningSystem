@@ -25,5 +25,6 @@ public static class NotificationInfrastructureConfigurator
         builder.Services.AddSingleton<IEmailSender, SmtpEmailSender>();
         
         builder.Services.AddHostedService<ResetPasswordCodeListener>();
+        builder.Services.AddHostedService<DeletionListener>();
     }
 }
