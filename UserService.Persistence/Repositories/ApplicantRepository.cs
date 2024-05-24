@@ -15,7 +15,7 @@ public class ApplicantRepository : GenericRepository<ApplicantEntity>, IApplican
         _context = context;
     }
 
-    public Task<ApplicantEntity?> GetById(Guid id)
+    public Task<ApplicantEntity?> GetByUserId(Guid id)
     {
         return _context.Applicants.FirstOrDefaultAsync(x => x.UserId == id);
     }

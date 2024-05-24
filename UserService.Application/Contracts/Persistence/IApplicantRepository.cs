@@ -5,6 +5,6 @@ namespace UserService.Application.Contracts.Persistence;
 
 public interface IApplicantRepository : IGenericRepository<ApplicantEntity>
 {
-    Task<ApplicantEntity?> GetById(Guid id);
+    Task<ApplicantEntity?> GetByUserId(Guid id);
     
 }

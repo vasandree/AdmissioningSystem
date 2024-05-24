@@ -36,9 +36,14 @@ public class DeleteAdmissionCommandHandler : IRequestHandler<DeleteAdmissionComm
         var admission = await _admission.GetById(request.AdmissionId);
         await _admission.DeleteAsync(admission);
         await _helper.RearrangeAdmissionsByDeletion(request.UserId, admission.Priority);
-        
-        if(!await _applicant.CheckIfApplicantHasAdmissions(request.UserId))
+
+        if (!await _applicant.CheckIfApplicantHasAdmissions(request.UserId))
+        {
             _pubSub.UpdateApplicantRole(request.UserId);
+            var applicant = await _applicant.GetById(request.UserId);
+            await _applicant.DeleteAsync(applicant);
+        }
+           
         //todo: check
         
         return Unit.Value;

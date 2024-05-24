@@ -59,16 +59,17 @@ public class CreateNewAdmissionCommandHandler : IRequestHandler<CreateNewAdmissi
         if (!await _admission.CheckIfEducationStageIsAvailable(request.UserId, program, educationDoc))
             throw new BadRequest("Education Level of this program is not available for you." +
                                  "Because you chose previous level of education in other admissions");
+        if (await _applicant.CheckIfApplicantExists(request.UserId))
+        {
+            if (!_admission.CheckIfNewPriorityIsAvailable(request.UserId, request.CreateAdmissionRequest.Priority))
+                throw new BadRequest("New priority is out of range of applicant's admissions");
 
-        if (!_admission.CheckIfNewPriorityIsAvailable(request.UserId, request.CreateAdmissionRequest.Priority))
-            throw new BadRequest("New priority is out of range of applicant's admissions");
-
+        }
         
         if (await _admission.CheckIfPriorityAvailable(request.UserId, request.CreateAdmissionRequest.Priority) == false)
         {
             await _helper.RearrangeAdmissionsByAddingNewOne(request.UserId, request.CreateAdmissionRequest.Priority);
         }
-
 
         Applicant applicant;
         if (await _applicant.CheckIfApplicantExists(request.UserId))
@@ -82,11 +83,12 @@ public class CreateNewAdmissionCommandHandler : IRequestHandler<CreateNewAdmissi
                 ApplicantId = request.UserId,
                 EducationDocumentId = educationDoc.Id
             };
-
+            
+            _pubSub.UpdateApplicantRole(applicant.ApplicantId);
             await _applicant.CreateAsync(applicant);
         }
-
-
+           
+        
         await _admission.CreateAsync(new Admission
         {
             AdmissionId = Guid.NewGuid(),
@@ -99,10 +101,7 @@ public class CreateNewAdmissionCommandHandler : IRequestHandler<CreateNewAdmissi
             IsDeleted = false,
             ManagerId = null
         });
-
-        if(!await _applicant.CheckIfApplicantExists(applicant.ApplicantId))
-            _pubSub.UpdateApplicantRole(applicant.ApplicantId);
-
+        
         return Unit.Value;
     }
 }

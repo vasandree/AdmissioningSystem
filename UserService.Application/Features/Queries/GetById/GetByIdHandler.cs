@@ -41,7 +41,7 @@ public class GetByIdHandler<T> : IRequestHandler<GetByIdQuery<T>, T> where T : c
             if (request.Id == Guid.Empty)
                 throw new ArgumentException("Id cannot be empty", nameof(request.Id));
 
-            return await _applicantRepository.GetById(request.Id) as T;
+            return await _applicantRepository.GetByUserId(request.Id) as T;
         }
 
         throw new NotSupportedException($"Type '{typeof(T).Name}' is not supported.");
