@@ -20,8 +20,9 @@ public class UpdateRoleListener : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        await _bus.PubSub.SubscribeAsync<UpdateUserRoleMessage>("update_role_subscription_id",
+         _bus.PubSub.Subscribe<UpdateUserRoleMessage>("update_role_subscription_id",
             UpdateUserRole);
+         //todo: check
     }
 
     private async Task UpdateUserRole(UpdateUserRoleMessage message)
@@ -40,10 +41,12 @@ public class UpdateRoleListener : BackgroundService
             if (existingRoles.Contains(message.Role))
             {
                 await repository.DeleteRole(user, message.Role);
+                await repository.UpdateAsync(user);
             }
             else
             {
                 await repository.AddRole(user, message.Role);
+                await repository.UpdateAsync(user);
             }
         }
     }

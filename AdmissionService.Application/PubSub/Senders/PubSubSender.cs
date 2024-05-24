@@ -15,5 +15,6 @@ public class PubSubSender
     public void UpdateApplicantRole(Guid userId)
     {
         _bus.PubSub.Publish(new UpdateUserRoleMessage(userId, "Applicant"));
+        //todo: check
     }
 }

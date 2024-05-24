@@ -60,6 +60,10 @@ public class CreateNewAdmissionCommandHandler : IRequestHandler<CreateNewAdmissi
             throw new BadRequest("Education Level of this program is not available for you." +
                                  "Because you chose previous level of education in other admissions");
 
+        if (!_admission.CheckIfNewPriorityIsAvailable(request.UserId, request.CreateAdmissionRequest.Priority))
+            throw new BadRequest("New priority is out of range of applicant's admissions");
+
+        
         if (await _admission.CheckIfPriorityAvailable(request.UserId, request.CreateAdmissionRequest.Priority) == false)
         {
             await _helper.RearrangeAdmissionsByAddingNewOne(request.UserId, request.CreateAdmissionRequest.Priority);

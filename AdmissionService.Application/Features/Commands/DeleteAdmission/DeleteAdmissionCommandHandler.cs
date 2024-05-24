@@ -39,6 +39,7 @@ public class DeleteAdmissionCommandHandler : IRequestHandler<DeleteAdmissionComm
         
         if(!await _applicant.CheckIfApplicantHasAdmissions(request.UserId))
             _pubSub.UpdateApplicantRole(request.UserId);
+        //todo: check
         
         return Unit.Value;
     }

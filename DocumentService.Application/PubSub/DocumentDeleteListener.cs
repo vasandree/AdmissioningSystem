@@ -4,6 +4,7 @@ using Common.ServiceBus.RabbitMqMessages.Response;
 using DocumentService.Application.Contracts.Persistence;
 using DocumentService.Domain.Entities;
 using EasyNetQ;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 namespace DocumentService.Application.PubSub;
@@ -12,29 +13,35 @@ public class DocumentDeleteListener : BackgroundService
 {
 
     private readonly IBus _bus;
-    private readonly IDocumentRepository<EducationDocument> _repository;
+    private readonly IServiceProvider _serviceProvider;
 
-    public DocumentDeleteListener(IBus bus, IDocumentRepository<EducationDocument> repository)
+    public DocumentDeleteListener(IBus bus, IServiceProvider serviceProvider)
     {
         _bus = bus;
-        _repository = repository;
+        _serviceProvider = serviceProvider;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        await _bus.PubSub.SubscribeAsync<DocumentsToDeleteMessage>("delete_documents_subscription_id",
+         _bus.PubSub.Subscribe<DocumentsToDeleteMessage>("delete_documents_subscription_id",
             SoftDeleteDocuments);
     }
 
     private async Task SoftDeleteDocuments(DocumentsToDeleteMessage message)
     {
-        var docsToDelete = await _repository.GetIdsToDelete(message.DocumentIdsToDelete);
-        foreach (var doc in docsToDelete)
+        using (var scope = _serviceProvider.CreateScope())
         {
-            await _repository.SoftDelete(doc);
-            var email = await _bus.Rpc.RequestAsync<GetUserEmailRequest, GetUserEmailResponse>(new GetUserEmailRequest(doc.UserId));
-            await _bus.PubSub.PublishAsync(new DeletedToEmailMessage(email.Email, $"Your education document with name {doc.Name} was deleted. \\n" +
-                                                                     $"Such education document type was removed from system"));
+            var repository = scope.ServiceProvider.GetRequiredService<IDocumentRepository<EducationDocument>>();
+            
+            var docsToDelete = await repository.GetIdsToDelete(message.DocumentIdsToDelete);
+            foreach (var doc in docsToDelete)
+            {
+                await repository.SoftDelete(doc);
+                var email = await _bus.Rpc.RequestAsync<GetUserEmailRequest, GetUserEmailResponse>(new GetUserEmailRequest(doc.UserId));
+                _bus.PubSub.Publish(new DeletedToEmailMessage(email.Email, $"Your education document with name {doc.Name} was deleted. \\n" +
+                    $"Such education document type was removed from system"));
+            }
         }
+        
     }
 }

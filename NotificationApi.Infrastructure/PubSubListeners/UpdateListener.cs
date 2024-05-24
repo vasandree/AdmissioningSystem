@@ -7,37 +7,37 @@ using NotificationApi.Application.Models;
 
 namespace NotificationApi.Infrastructure.PubSubListeners;
 
-public class DeletionListener : BackgroundService
+public class UpdateListener : BackgroundService
 {
+    
     private readonly IBus _bus;
     private readonly IEmailSender _sender;
 
-    public DeletionListener(IBus bus, IEmailSender sender)
+    public UpdateListener(IBus bus, IEmailSender sender)
     {
         _bus = bus;
         _sender = sender;
     }
-
-
+    
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        await _bus.PubSub.SubscribeAsync<DeletedToEmailMessage>("email_deletion_subscription_id", SendDeleted);
+        _bus.PubSub.Subscribe<UpdatedToEmailMessage>("email_notification_subscription_id",  SendUpdateEmail);
     } //todo: check
 
-    private async Task SendDeleted(DeletedToEmailMessage message)
+    private async Task SendUpdateEmail(UpdatedToEmailMessage message)
     {
         try
         {
             await _sender.SendEmail(new EmailMessage
             {
                 To = message.Email,
-                Subject = "Deletion",
+                Subject = "Information update",
                 Body = message.Message
             });
         }
         catch (Exception e)
         {
-            throw new SmtpServerException(e, message.Email, "notify about deletion");
+            throw new SmtpServerException(e, message.Email, "notify about info was updated");
         }
     }
 }

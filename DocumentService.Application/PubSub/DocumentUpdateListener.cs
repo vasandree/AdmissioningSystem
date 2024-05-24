@@ -4,6 +4,7 @@ using Common.ServiceBus.RabbitMqMessages.Response;
 using DocumentService.Application.Contracts.Persistence;
 using DocumentService.Domain.Entities;
 using EasyNetQ;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 namespace DocumentService.Application.PubSub;
@@ -11,29 +12,35 @@ namespace DocumentService.Application.PubSub;
 public class DocumentUpdateListener : BackgroundService
 {
     private readonly IBus _bus;
-    private readonly IDocumentRepository<EducationDocument> _repository;
-
-    public DocumentUpdateListener(IBus bus, IDocumentRepository<EducationDocument> repository)
+    private readonly IServiceProvider _serviceProvider;
+    public DocumentUpdateListener(IBus bus, IServiceProvider serviceProvider)
     {
         _bus = bus;
-        _repository = repository;
+        _serviceProvider = serviceProvider;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        await _bus.PubSub.SubscribeAsync<UpdateDocumentTypeMessage>("update_documents_subscription_id",
+         _bus.PubSub.Subscribe<UpdateDocumentTypeMessage>("update_documents_subscription_id",
             UpdateDocuments);
+         //todo: check
     }
 
     private async Task UpdateDocuments(UpdateDocumentTypeMessage message)
     {
-        var docs = await _repository.Find(x => x.EducationDocumentTypeId == message.EducationTypeId);
-        foreach (var doc in docs)
+        using (var scope = _serviceProvider.CreateScope())
         {
-            var email = await _bus.Rpc.RequestAsync<GetUserEmailRequest, GetUserEmailResponse>(new GetUserEmailRequest(doc.UserId));
-            await _bus.PubSub.PublishAsync(new UpdatedToEmailMessage(email.Email, $"Your education document with name {doc.Name} was deleted. \\n" +
-                $"Such education document type was removed from system"));
+            var repository = scope.ServiceProvider.GetRequiredService<IDocumentRepository<EducationDocument>>();
+            var docs = await repository.Find(x => x.EducationDocumentTypeId == message.EducationTypeId);
+            foreach (var doc in docs)
+            {
+                var email = await _bus.Rpc.RequestAsync<GetUserEmailRequest, GetUserEmailResponse>(new GetUserEmailRequest(doc.UserId));
+                //todo: check
+                _bus.PubSub.Publish(new UpdatedToEmailMessage(email.Email, $"Your education document with name {doc.Name} was deleted. \\n" +
+                    $"Such education document type was removed from system"));
 
+            }
         }
+        
     }
 }

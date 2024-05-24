@@ -1,4 +1,3 @@
-using System.Xml.Linq;
 using AdmissionService.Application.Contracts.Persistence;
 using AdmissionService.Domain.Entities;
 using AdmissionService.Infrastructure;
@@ -29,6 +28,7 @@ public class AdmissionRepository : GenericRepository<Admission>, IAdmissionRepos
     public async Task<bool> CheckIfPriorityAvailable(Guid userId, int priority)
     {
         var admissions = await _context.Admissions.Where(x => x.ApplicantId == userId).ToListAsync();
+
         return admissions.Count == 0 && priority == 0;
     }
 
@@ -104,8 +104,8 @@ public class AdmissionRepository : GenericRepository<Admission>, IAdmissionRepos
             .Where(x => x.ApplicantId == userId && !x.IsDeleted)
             .OrderBy(x => x.Priority)
             .ToListAsync();
-        
-        return admissions; 
+
+        return admissions;
     }
 
     public async Task<List<Admission>> GetAdmissionsByProgramIds(List<Guid> programsToDelete)

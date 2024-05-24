@@ -9,6 +9,8 @@ public interface IDocumentTypeRepository : IDictionaryRepository<DocumentType>
     
     Task<bool> CheckExistenceById(Guid id);
 
+    Task<bool> CheckIfNotDeleted(Guid id);
+
     Task<List<DocumentType>> GetEntitiesToDelete(IEnumerable<Guid> newIds);
 
     Task<DocumentType> GetByExternalId(Guid externalId);

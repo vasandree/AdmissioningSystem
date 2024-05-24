@@ -19,22 +19,26 @@ public class PubSubSender
     {
         var documentsToDeleteIds = documentsToDelete.Select(doc => doc.Id).ToList();
         _bus.PubSub.Publish(new DocumentsToDeleteMessage(documentsToDeleteIds));
+        //todo: check
     }
 
     public void SoftDeletePrograms(List<Program> programsToDelete)
     {
         var programsToDeleteIds = programsToDelete.Select(program => program.Id).ToList();
         _bus.PubSub.Publish(new ProgramsToDeleteMessage(programsToDeleteIds));
+        //todo: check
     }
 
     public void UpdateDocumentType(DocumentType existingDocumentType)
     {
         _bus.PubSub.Publish(new UpdateDocumentTypeMessage(existingDocumentType.Id));
+        //todo: check
     }
 
     public void UpdateProgram(Program existingProgram)
     {
         _bus.PubSub.Publish(new ProgramToUpdateMessage(existingProgram.Id));
+        //todo: check
     }
     
 
@@ -43,6 +47,7 @@ public class PubSubSender
         foreach (var doc in documentTypesIds)
         {
             _bus.PubSub.Publish(new UpdateDocumentTypeMessage(doc));
+            //todo: check
         }
     }
 
@@ -51,6 +56,7 @@ public class PubSubSender
         foreach (var program in programs)
         {
             _bus.PubSub.Publish(new ProgramToUpdateMessage(program.Id));
+            //todo: check
         }
     }
 }

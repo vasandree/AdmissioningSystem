@@ -25,6 +25,9 @@ public class GetDtosHandler : BaseRpcHandler
 
     public override void CreateRequestListeners()
     {
+        _bus.Rpc.RespondAsync<EducationDocumentTypeCheckRequest, EducationDocumentTypeCheckResponse>(async (request) =>
+            HandleException(await CheckDocumentType(request.DocumentTypeId)));
+        
         _bus.Rpc.RespondAsync<GetDocumentTypeDtoRequest, GetDocumentTypeDtoResponse>(async (request) =>
             HandleException(await GetDocumentType(request.DocumentTypeId)));
 
@@ -33,6 +36,22 @@ public class GetDtosHandler : BaseRpcHandler
 
         _bus.Rpc.RespondAsync<GetProgramDtoRequest, GetProgramDtoResponse>(async (request) =>
             HandleException(await GetProgramDto(request.ProgramId)));
+    }
+
+    private async Task<EducationDocumentTypeCheckResponse> CheckDocumentType(Guid documentTypeId)
+    {
+        using (var scope = _serviceProvider.CreateScope())
+        {
+            var repository = scope.ServiceProvider.GetRequiredService<IDocumentTypeRepository>();
+
+            if (!await repository.CheckExistenceById(documentTypeId))
+                return new EducationDocumentTypeCheckResponse(false, new NotFound("Provided document type does not exist"));
+
+            if (await repository.CheckIfNotDeleted(documentTypeId))
+                return new EducationDocumentTypeCheckResponse(false, new NotFound("Provided document wsa deleted"));
+
+            return new EducationDocumentTypeCheckResponse(true);
+        }
     }
 
 

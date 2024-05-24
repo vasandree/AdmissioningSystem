@@ -39,6 +39,13 @@ public class DocumentTypeRepository : DictionaryRepository<DocumentType>, IDocum
         return await _context.DocumentTypes.AnyAsync(x => x.Id == id);
     }
 
+    public async Task<bool> CheckIfNotDeleted(Guid id)
+    {
+        var doc = await _context.DocumentTypes.FirstOrDefaultAsync(x => x.Id == id);
+
+        return doc!.IsDeleted;
+    }
+
     public async Task<List<DocumentType>> GetEntitiesToDelete(IEnumerable<Guid> newIds)
     {
         var oldIds = await _context.DocumentTypes.Select(x => x.ExternalId).ToListAsync();

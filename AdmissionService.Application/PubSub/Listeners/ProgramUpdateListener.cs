@@ -23,6 +23,7 @@ public class ProgramUpdateListener : BackgroundService
     {
         await _bus.PubSub.SubscribeAsync<ProgramToUpdateMessage>("program_update_subscription_id",
             UpdateProgram);
+        //todo: check
     }
 
     private async Task UpdateProgram(ProgramToUpdateMessage message)
@@ -33,6 +34,7 @@ public class ProgramUpdateListener : BackgroundService
             var admissionsToUpdate = await repository.GetAdmissionsByProgramId(message.ProgramId);
             foreach (var admission in admissionsToUpdate)
             {
+                //todo: check
                 var email = await _bus.Rpc.RequestAsync<GetUserEmailRequest, GetUserEmailResponse>(
                     new GetUserEmailRequest(admission.ApplicantId));
                 _bus.PubSub.Publish(new DeletedToEmailMessage(email.Email,

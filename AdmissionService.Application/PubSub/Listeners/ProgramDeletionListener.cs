@@ -23,6 +23,7 @@ public class ProgramDeletionListener : BackgroundService
     {
         await _bus.PubSub.SubscribeAsync<ProgramsToDeleteMessage>("programs_deletion_subscriptio _id",
             SoftDeleteAdmissions);
+        //todo: check
     }
 
     private async Task SoftDeleteAdmissions(ProgramsToDeleteMessage message)
@@ -33,6 +34,7 @@ public class ProgramDeletionListener : BackgroundService
             var admissionsToDelete = await repository.GetAdmissionsByProgramIds(message.ProgramsToDelete);
             foreach (var admission in admissionsToDelete)
             {
+                //todo: check
                 var email = await _bus.Rpc.RequestAsync<GetUserEmailRequest, GetUserEmailResponse>(
                     new GetUserEmailRequest(admission.ApplicantId));
                 _bus.PubSub.Publish(new DeletedToEmailMessage(email.Email,
