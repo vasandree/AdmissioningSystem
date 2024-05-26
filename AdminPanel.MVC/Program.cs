@@ -2,29 +2,36 @@ using AdminPanel.Application.Configurators;
 using AdminPanel.Infrastructure.Configurators;
 using AdminPanel.Persistence.Configurators;
 using Common.Configurators.Configurator;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
-
-builder.Services.AddRazorPages()
-    .AddRazorRuntimeCompilation();
-
-
-builder.ConfigureAdminPanelDb();
-
-builder.ConfigureAdminPanelPersistence();
-
-builder.ConfigureIdentity();
-
-builder.ConfigureAdminPanelApplication();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+
+builder.Services.AddRazorPages(); 
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Account/Login";
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(60); 
+    });
+
+builder.ConfigureAdminPanelDb();
+
+builder.ConfigureIdentity();
+
+builder.ConfigureAdminPanelPersistence();
+
+builder.ConfigureAdminPanelApplication();
+
+builder.ConfigureSwagger();
+
 builder.ConfigureServiceBus();
 
 var app = builder.Build();
-
-app.ConfigureAdminPanelDb();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -34,12 +41,14 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+app.ConfigureAdminPanelDb();
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseAuthorization();
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(

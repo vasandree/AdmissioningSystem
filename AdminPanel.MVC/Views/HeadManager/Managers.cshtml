@@ -1,0 +1,27 @@
+@model IEnumerable<Common.Models.Models.Dtos.ManagerDto>
+
+@{
+    ViewData["Title"] = "Менеджеры";
+}
+
+<h2>Managers</h2>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>ФИО</th>
+        <th>Email</th>
+        <th>Факультет</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var manager in Model)
+    {
+        <tr>
+            <td>@manager.FullName</td>
+            <td>@manager.Email</td>
+            <td>@manager.Faculty?.Name  "N/A"</td>
+        </tr>
+    }
+    </tbody>
+</table>

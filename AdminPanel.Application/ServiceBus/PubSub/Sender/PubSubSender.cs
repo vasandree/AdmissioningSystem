@@ -91,4 +91,9 @@ public class PubSubSender
     {
         _bus.PubSub.Publish(new GetApplicantMessage(admissionId));
     }
+
+    public async Task EditPassword(Guid userId, string odPassword, string newPassword)
+    {
+        await _bus.PubSub.PublishAsync(new EditPasswordMessage(userId, odPassword, newPassword));
+    }
 }

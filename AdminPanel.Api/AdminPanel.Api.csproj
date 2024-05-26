@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="EasyNetQ" Version="7.8.0" />
+        <PackageReference Include="EasyNetQ.Serialization.NewtonsoftJson" Version="7.8.0" />
+        <PackageReference Include="MediatR" Version="12.2.0" />
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.4"/>
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\AdminPanel.Application\AdminPanel.Application.csproj" />
+      <ProjectReference Include="..\AdminPanel.Infrastructure\AdminPanel.Infrastructure.csproj" />
+      <ProjectReference Include="..\AdminPanel.Persistence\AdminPanel.Persistence.csproj" />
+    </ItemGroup>
+
+</Project>

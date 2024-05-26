@@ -116,8 +116,8 @@ public class RpcRequestSender
     public async Task<object?> GetEducationDocument(Guid applicantId)
     {
         var response =
-            await _bus.Rpc.RequestAsync<EducationDocumentRequest, EducationDocumentInfoResponse>(
-                new EducationDocumentRequest(applicantId));
+            await _bus.Rpc.RequestAsync<EducationDocRequest, EducationDocumentInfoResponse>(
+                new EducationDocRequest(applicantId));
 
         return response.EducationDocument;
     }
@@ -152,5 +152,19 @@ public class RpcRequestSender
             await _bus.Rpc.RequestAsync<GetFacultyRequest, GetFacultyResponse>(new GetFacultyRequest(facultyId));
 
         return response.Faculty;
+    }
+
+    public async Task<List<UserDto>> GetAllApplicants()
+    {
+        var response = await _bus.Rpc.RequestAsync<GetAllApplicantsRequest, GetAllApplicantsResponse>(new GetAllApplicantsRequest("Applicant"));
+
+        return response.Applicants;
+    }
+
+    public async Task<List<UserDto>> GetAllUsers()
+    {
+        var response = await _bus.Rpc.RequestAsync<GetAllUsersRequest, GetAllUsersResponse>(new GetAllUsersRequest());
+
+        return response.Users;
     }
 }

@@ -28,11 +28,18 @@
                             <a class="nav-link text-dark">Поступления</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark">Пользователи</a>
+                            <a asp-action="Applicants" asp-controller="Manager" class="nav-link text-dark">Абитуриенты</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark">Менеджеры</a>
+                            <a asp-action="Users" asp-controller="Admin" class="nav-link text-dark">Пользователи</a>
                         </li>
+                        @if (!User.IsInRole("HeadManager") || !User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item">
+                                <a asp-action="Managers" asp-controller="HeadManager" class="nav-link text-dark">Менеджеры</a>
+                            </li>
+                        }
+
 
                     </ul>
 
@@ -42,7 +49,7 @@
                             <a class="nav-link text-dark" asp-controller="Account" asp-action="Profile">Профиль</a>
                         </li>
                     </ul>
-                    
+
                     <ul class="navbar-nav ms-auto">
                         <li class="nav-item">
                             <a class="nav-link text-dark btn-danger" asp-controller="Account" asp-action="Logout">Выйти</a>

@@ -6,23 +6,21 @@ using MediatR;
 
 namespace AdminPanel.Application.Features.Queries.Managers.GetAllManagers;
 
-public class GetAllManagersCommandHandler : IRequestHandler<GetAllManagersCommand, Unit>
+public class GetAllManagersCommandHandler : IRequestHandler<GetAllManagersCommand, List<ManagerDto>>
 {
     private readonly IBaseManagerRepository _repository;
     private readonly IManagerRepository _manager;
-    private readonly IMapper _mapper;
     private readonly RpcRequestSender _rpc;
 
-    public GetAllManagersCommandHandler(IBaseManagerRepository repository, IMapper mapper, IManagerRepository manager,
+    public GetAllManagersCommandHandler(IBaseManagerRepository repository,  IManagerRepository manager,
         RpcRequestSender rpc)
     {
         _repository = repository;
-        _mapper = mapper;
         _manager = manager;
         _rpc = rpc;
     }
 
-    public async Task<Unit> Handle(GetAllManagersCommand request, CancellationToken cancellationToken)
+    public async Task<List<ManagerDto>> Handle(GetAllManagersCommand request, CancellationToken cancellationToken)
     {
         var managers = await _repository.GetAllAsync();
 
@@ -33,9 +31,9 @@ public class GetAllManagersCommandHandler : IRequestHandler<GetAllManagersComman
             {
                 Id = manager.Id,
                 FullName = manager.FullName,
-                Email = manager.FullName,
+                Email = manager!.Email,
             };
-            
+
             if (await _repository.CheckIfManager(manager))
             {
                 var facultyId = await _manager.GetFaculty(manager.Id);
@@ -45,6 +43,6 @@ public class GetAllManagersCommandHandler : IRequestHandler<GetAllManagersComman
             list.Add(dto);
         }
 
-        return Unit.Value;
+        return list;
     }
 }

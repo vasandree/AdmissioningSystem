@@ -1,4 +1,4 @@
-@model AdminPanel.MVC.Models.ProfileViewModel
+@model ProfileViewModel
 @{
     ViewBag.Title = "title";
     Layout = "_Layout";
@@ -57,7 +57,7 @@
             </div>
         }
         <div class="row justify-content-center mt-4 mt-10">
-            <a class="btn btn-success" asp-controller="Account" asp-action="PasswordChange">Сменить пароль</a>
+            <a class="btn btn-success" asp-controller="Account" asp-action="ChangePassword">Сменить пароль</a>
         </div>
     </div>
 </div>

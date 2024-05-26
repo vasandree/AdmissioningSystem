@@ -1,0 +1,27 @@
+@model Common.Models.Models.Dtos.PagedDtos.PagedUserDto
+
+<!-- Display the list of applicants -->
+@foreach (var applicant in Model.Users)
+{
+    <div>@applicant.FullName - @applicant.Email</div>
+}
+
+<!-- Pagination links -->
+<div>
+    @if (Model.Pagination.Current > 1)
+    {
+        <a asp-action="Applicants" asp-route-pageNumber="1" asp-route-pageSize="@Model.Pagination.Size">First</a>
+        <a asp-action="Applicants" asp-route-pageNumber="@(Model.Pagination.Current - 1)" asp-route-pageSize="@Model.Pagination.Size">Previous</a>
+    }
+    
+    @for (int i = 1; i <= Model.Pagination.Count; i++)
+    {
+        <a asp-action="Applicants" asp-route-pageNumber="@i" asp-route-pageSize="@Model.Pagination.Size">@i</a>
+    }
+    
+    @if (Model.Pagination.Current < Model.Pagination.Count)
+    {
+        <a asp-action="Applicants" asp-route-pageNumber="@(Model.Pagination.Current + 1)" asp-route-pageSize="@Model.Pagination.Size">Next</a>
+        <a asp-action="Applicants" asp-route-pageNumber="@Model.Pagination.Count" asp-route-pageSize="@Model.Pagination.Size">Last</a>
+    }
+</div>

@@ -32,7 +32,7 @@ public class RpcRequestHandler : BaseRpcHandler
         _bus.Rpc.RespondAsync<CheckDocumentExistenceRequest, CheckDocumentExistenceResponse>(async (request) =>
             HandleException(await CheckDocumentExistence(request)));
 
-        _bus.Rpc.RespondAsync<EducationDocumentRequest, EducationDocumentInfoResponse>(async (request) =>
+        _bus.Rpc.RespondAsync<EducationDocumentInfoRequest, EducationDocumentInfoResponse>(async (request) =>
             HandleException(await GetEducationDocument(request.ApplicantId)));
 
         _bus.Rpc.RespondAsync<GetFileRequest, GetFileResponse>(async (request) =>

@@ -1,4 +1,6 @@
+using AutoMapper;
 using Common.Models.Exceptions;
+using Common.Models.Models.Dtos;
 using Common.ServiceBus.RabbitMqMessages;
 using Common.ServiceBus.RabbitMqMessages.Request;
 using Common.ServiceBus.RabbitMqMessages.Response;
@@ -40,6 +42,42 @@ public class UserServiceRpcHandler : BaseRpcHandler
 
         _bus.Rpc.RespondAsync<GetUserInfoRequest, GetUserInfoResponse>(async (request) =>
             HandleException(await GetUserInfo(request)));
+
+        _bus.Rpc.RespondAsync<GetAllApplicantsRequest, GetAllApplicantsResponse>(async (request) =>
+            HandleException(await GetApplicants(request)));
+        
+        _bus.Rpc.RespondAsync<GetAllUsersRequest, GetAllUsersResponse>(async (request) =>
+            HandleException(await GetUsers(request)));
+    }
+
+    private async Task<GetAllUsersResponse> GetUsers(GetAllUsersRequest request)
+    {
+        using (var scope = _serviceProvider.CreateScope())
+        {
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+            var mapper = scope.ServiceProvider.GetRequiredService<IMapper>();
+
+            var applicants = await userManager.GetUsersInRoleAsync("Applicant");
+            var userDtos = mapper.Map<IEnumerable<UserDto>>(applicants);
+
+
+            return new GetAllUsersResponse(userDtos.ToList());
+        }    
+    }
+
+    private async Task<GetAllApplicantsResponse> GetApplicants(GetAllApplicantsRequest request)
+    {
+        using (var scope = _serviceProvider.CreateScope())
+        {
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+            var mapper = scope.ServiceProvider.GetRequiredService<IMapper>();
+
+            var applicants = await userManager.GetUsersInRoleAsync("Applicant");
+            var applicantDtos = mapper.Map<IEnumerable<UserDto>>(applicants);
+
+
+            return new GetAllApplicantsResponse(applicantDtos.ToList());
+        }
     }
 
     private async Task<GetUserInfoResponse> GetUserInfo(GetUserInfoRequest request)
@@ -60,7 +98,7 @@ public class UserServiceRpcHandler : BaseRpcHandler
 
             var users = await userRepository.Users.AsQueryable().Where(x => x.User.FullName.Contains(request.Name))
                 .Select(x => x.Id).ToListAsync();
-            
+
             return new GetApplicantIdsResponse(users);
         }
     }

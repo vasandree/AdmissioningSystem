@@ -29,7 +29,7 @@ public class GetAllMyAdmissionsCommandHandler : IRequestHandler<GetAllMyAdmissio
         {
             var dto = _mapper.Map<AdmissionDto>(admission);
             var program = await _rpc.GetProgram(admission.ProgramId);
-            
+            dto.Program = program!;
             resultDto.Add(dto);
         }
 

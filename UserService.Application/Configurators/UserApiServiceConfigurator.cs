@@ -19,6 +19,9 @@ public static class UserApiServiceConfigurator
         
         builder.Services.AddHostedService<UpdateRoleListener>();
         builder.Services.AddHostedService<UpdateUserInfoListener>();
+        builder.Services.AddHostedService<UpdatePasswordListener>();
+        builder.Services.AddHostedService<UpdateInfoListener>();
+        builder.Services.AddHostedService<AddApplicantRoleListener>();
         
     }
 }

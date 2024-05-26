@@ -1,9 +1,13 @@
 using System.Security.Claims;
+using AdminPanel.Application.Features.Commands.Account.EditPassword;
 using AdminPanel.Application.Features.Commands.Account.Login;
 using AdminPanel.Application.Features.Commands.Managers.EditManagerInfo;
 using AdminPanel.Application.Features.Queries.GetManagerProfile;
 using AdminPanel.MVC.Models;
+using Common.Models.Exceptions;
 using MediatR;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using UserService.Application.Dtos.Requests;
@@ -30,7 +34,7 @@ public class AccountController : Controller
 
     [HttpGet]
     [Authorize]
-    public IActionResult PasswordChange()
+    public IActionResult ChangePassword()
     {
         return View();
     }
@@ -63,13 +67,8 @@ public class AccountController : Controller
             return View(model);
         }
     }
-
-    [HttpPost]
-    public IActionResult Logout()
-    {
-        return Redirect("/");
-    }
-
+    
+    
     [HttpGet]
     public async Task<IActionResult> Profile()
     {
@@ -121,8 +120,40 @@ public class AccountController : Controller
 
 
     [HttpPost]
-    public Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+    public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
     {
-        throw new NotImplementedException();
+        if (!ModelState.IsValid)
+        {
+            return View("ChangePassword", model);
+        }
+        
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        
+        try
+        {
+            await _mediator.Send(new EditPasswordCommand(Guid.Parse(userId)!, model.CurrentPassword!, model.NewPassword!));
+            TempData["SuccessMessage"] = "Password changed successfully.";
+            return RedirectToAction("Profile");
+
+        }
+        catch (BadRequest ex)
+        {
+            Console.WriteLine(ex.Message);
+
+            ModelState.AddModelError(string.Empty, ex.Message);
+            return View(model);
+        }
+        
+    }
+    
+    [HttpPost]
+    [Authorize]
+    public async Task<IActionResult> Logout()
+    {
+        await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+        HttpContext.Response.Cookies.Delete(CookieAuthenticationDefaults.AuthenticationScheme);
+
+        return RedirectToAction("Index", "Home");
     }
 }

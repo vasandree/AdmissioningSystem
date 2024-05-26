@@ -14,7 +14,7 @@ public class PubSubSender
     
     public async Task UpdateApplicantRole(Guid userId)
     {
-        await _bus.PubSub.PublishAsync(new UpdateUserRoleMessage(userId, "Applicant"));
+        await _bus.PubSub.PublishAsync(new AddApplicantRoleMessage(userId));
     }
 
     public async Task Admission(Guid admissionId)
