@@ -11,20 +11,12 @@ namespace AdminPanel.Application.Features.Commands.Managers.EditManagerInfo;
 public class EditManagerInfoCommandHandler : IRequestHandler<EditManagerInfoCommand, Unit>
 {
     private readonly IBaseManagerRepository _repository;
-    private readonly UserManager<BaseManager> _userManager;
-    private readonly IManagerRepository _manager;
-    private readonly IHeadManagerRepository _headManager;
-    private readonly RpcRequestSender _rpc;
     private readonly PubSubSender _pubSub;
 
 
     public EditManagerInfoCommandHandler(IBaseManagerRepository repository, UserManager<BaseManager> userManager, IManagerRepository manager, IHeadManagerRepository headManager, RpcRequestSender rpc, PubSubSender pubSub)
     {
         _repository = repository;
-        _userManager = userManager;
-        _manager = manager;
-        _headManager = headManager;
-        _rpc = rpc;
         _pubSub = pubSub;
     }
 
@@ -35,11 +27,12 @@ public class EditManagerInfoCommandHandler : IRequestHandler<EditManagerInfoComm
 
         var manager = await _repository.GetById(request.ManagerToUpdate);
 
-        if (manager.FullName != request.FullName)
+        if (manager.FullName != request.FullName || request.Email != manager.Email)
         {
             manager.FullName = request.FullName;
+            manager.Email = request.Email;
             await _repository.UpdateAsync(manager);
-            _pubSub.UpdateUserInfo(request.ManagerToUpdate, manager.FullName);
+            await _pubSub.UpdateEmailAndFullName(request.ManagerToUpdate, manager.FullName, manager.Email);
         }
 
         return Unit.Value;

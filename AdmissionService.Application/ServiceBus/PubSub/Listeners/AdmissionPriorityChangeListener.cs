@@ -22,7 +22,7 @@ public class AdmissionPriorityChangeListener : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _bus.PubSub.Subscribe<UpdateAdmissionPriorityMessage>("priority_cahnge_subscription_id",
+        await _bus.PubSub.SubscribeAsync<UpdateAdmissionPriorityMessage>("priority_cahnge_subscription_id",
             UpdatePriority);
     }
 

@@ -50,7 +50,7 @@ public class TakeAdmissionCommandHandler : IRequestHandler<TakeAdmissionCommand,
             admission.ManagerId = request.ManagerId;
             await _admission.UpdateAsync(admission);
             
-            _pubSub.UpdateManager(admission.Id, request.ManagerId);
+            await _pubSub.UpdateManager(admission.Id, request.ManagerId);
 
             return Unit.Value;
         }
@@ -61,9 +61,9 @@ public class TakeAdmissionCommandHandler : IRequestHandler<TakeAdmissionCommand,
         admission.ManagerId = request.ManagerId;
         await _admission.UpdateAsync(admission);
             
-        _pubSub.UpdateManager(admission.Id, request.ManagerId);
+        await _pubSub.UpdateManager(admission.Id, request.ManagerId);
         
-        _pubSub.UpdateStatus(admission.Id, AdmissionStatus.UnderConsideration);
+        await _pubSub.UpdateStatus(admission.Id, AdmissionStatus.UnderConsideration);
          
         return Unit.Value;
     }

@@ -49,7 +49,7 @@ public class GiveAdmissionCommandHandler : IRequestHandler<GiveAdmissionCommand,
             admission.ManagerId = request.ManagerId;
             await _admission.UpdateAsync(admission);
             
-            _pubSub.UpdateManager(admission.Id, request.ManagerId);
+            await _pubSub.UpdateManager(admission.Id, request.ManagerId);
 
             return Unit.Value;
         }
@@ -60,7 +60,7 @@ public class GiveAdmissionCommandHandler : IRequestHandler<GiveAdmissionCommand,
         admission.ManagerId = request.ManagerId;
         await _admission.UpdateAsync(admission);
             
-        _pubSub.UpdateManager(admission.Id, request.ManagerId);
+        await _pubSub.UpdateManager(admission.Id, request.ManagerId);
 
         _pubSub.SendEmailToApplicant(admission.Id);
         

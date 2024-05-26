@@ -22,7 +22,7 @@ public class EmailToApplicantListener: BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _bus.PubSub.Subscribe<EmailToApplicantMessage>("manager_appointed_subscription_id", SendEmail);
+       await _bus.PubSub.SubscribeAsync<EmailToApplicantMessage>("manager_appointed_subscription_id", SendEmail);
     }
 
     private async Task SendEmail(EmailToApplicantMessage message)

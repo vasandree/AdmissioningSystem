@@ -19,7 +19,7 @@ public class UpdateUserInfoListener : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _bus.PubSub.Subscribe<UpdateUserInfoMessage>("update_info_subscription_id",
+        await _bus.PubSub.SubscribeAsync<UpdateUserInfoMessage>("update_info_subscription_id",
             UpdateUserInfo);
     }
 
@@ -32,8 +32,6 @@ public class UpdateUserInfoListener : BackgroundService
             var user = await repository.GetById(message.UserId);
 
             user.FullName = message.FullName;
-            user.Email = !string.IsNullOrEmpty(message.Email) ? message.Email : user.Email;
-            user.PasswordHash = !string.IsNullOrEmpty(message.PasswordHash) ? message.PasswordHash : user.PasswordHash;
             user.Gender = !string.IsNullOrEmpty(message.Gender.ToString()) ? message.Gender : user.Gender;
             user.BirthDate = !string.IsNullOrEmpty(message.BirthDate.ToString()) ? message.BirthDate : user.BirthDate;
             user.Nationality = !string.IsNullOrEmpty(message.Nationality) ? message.Nationality : user.Nationality;

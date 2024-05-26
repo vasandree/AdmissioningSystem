@@ -21,7 +21,7 @@ public class UpdateDocumentInfoListener : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _bus.PubSub.Subscribe<UpdateEducationDocMessage>("update_doc_subscription_id", UpdateDocumentInfo);
+        await _bus.PubSub.SubscribeAsync<UpdateEducationDocMessage>("update_doc_subscription_id", UpdateDocumentInfo);
     }
 
     private async Task UpdateDocumentInfo(UpdateEducationDocMessage message)

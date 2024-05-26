@@ -35,7 +35,7 @@ public class GetAllAdmissionsQueryHandler : IRequestHandler<GetAllAdmissionsQuer
                 var dto = _mapper.Map<ManagerDto>(manager);
                 if (await _baseManager.CheckIfManager(manager))
                 {
-                    dto.FacultyId = await _manager.GetFaculty(manager.Id);
+                    dto.Faculty = await _rpc.GetFaculty(await _manager.GetFaculty(manager.Id));
                 }
             }
         }

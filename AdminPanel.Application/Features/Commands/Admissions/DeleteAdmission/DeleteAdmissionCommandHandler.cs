@@ -32,7 +32,7 @@ public class DeleteAdmissionCommandHandler : IRequestHandler<DeleteAdmissionComm
 
         
         await _admission.DeleteAsync(admission);
-        _pubSub.DeleteAdmission(admission.Id);
+        await _pubSub.DeleteAdmission(admission.Id);
 
         return Unit.Value;
     }

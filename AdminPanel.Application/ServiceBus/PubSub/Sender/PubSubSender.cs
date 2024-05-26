@@ -17,62 +17,68 @@ public class PubSubSender
         _rpc = rpc;
     }
 
-    public void DeleteAdmission(Guid admissionId)
+    public async Task DeleteAdmission(Guid admissionId)
     {
-        _bus.PubSub.Publish(new DeleteAdmissionMessage(admissionId));
+        await _bus.PubSub.PublishAsync(new DeleteAdmissionMessage(admissionId));
     }
 
-    public void EditAdmissionPriority(Guid admissionId, int newPriority)
+    public async Task EditAdmissionPriority(Guid admissionId, int newPriority)
     {
-        _bus.PubSub.Publish(new UpdateAdmissionPriorityMessage(admissionId, newPriority));
+       await _bus.PubSub.PublishAsync(new UpdateAdmissionPriorityMessage(admissionId, newPriority));
     }
 
-    public void UpdateStatus(Guid admissionId, AdmissionStatus status)
+    public async Task UpdateStatus(Guid admissionId, AdmissionStatus status)
     {
-        _bus.PubSub.Publish(new UpdateAdmissionStatusMessage(admissionId, status));
+        await _bus.PubSub.PublishAsync(new UpdateAdmissionStatusMessage(admissionId, status));
     }
 
-    public void UpdateManager(Guid admissionId, Guid? managerId = null)
+    public async Task UpdateManager(Guid admissionId, Guid? managerId = null)
     {
-        _bus.PubSub.Publish(new UpdateManagerFromAdmissionMessage(admissionId, managerId));
+        await _bus.PubSub.PublishAsync(new UpdateManagerFromAdmissionMessage(admissionId, managerId));
     }
 
-    public void UpdateRole(Guid userId, string role, Guid? facultyId = null)
+    public async Task UpdateRole(Guid userId, string role, Guid? facultyId = null)
     {
-        _bus.PubSub.Publish(new UpdateUserRoleMessage(userId, role, facultyId));
+        await _bus.PubSub.PublishAsync(new UpdateUserRoleMessage(userId, role, facultyId));
     }
 
-    public void SendEmail(string email, string role, Guid? facultyId = null)
+    public async Task SendEmail(string email, string role, Guid? facultyId = null)
     {
-        _bus.PubSub.Publish(new ManagerAddedMessage(email, role, facultyId));
+        await _bus.PubSub.PublishAsync(new ManagerAddedMessage(email, role, facultyId));
     }
 
-    public void UpdateUserInfo(Guid userId, string fullName, string? email = null, string? passwordHash = null,
-        Gender? gender = null, string? nationality = null, DateTime? birthDate = null)
+    public async Task UpdateEmailAndFullName(Guid userId, string fullName, string email)
     {
-        _bus.PubSub.Publish(new UpdateUserInfoMessage(userId, fullName, email, passwordHash, gender, nationality,
+        await _bus.PubSub.PublishAsync(new UpdateEmailAndFullNameMessage(userId, fullName, email));
+    }
+    
+    
+    public async Task UpdateUserInfo(Guid userId, string fullName,
+        Gender? gender, string? nationality, DateTime? birthDate)
+    {
+       await _bus.PubSub.PublishAsync(new UpdateUserInfoMessage(userId, fullName,  gender, nationality,
             birthDate));
     }
 
-    public void EditUserEducationDocument(Guid userId, string newName)
+    public async Task EditUserEducationDocument(Guid userId, string newName)
     {
-        _bus.PubSub.Publish(new UpdateEducationDocMessage(userId, newName));
+        await _bus.PubSub.PublishAsync(new UpdateEducationDocMessage(userId, newName));
     }
 
-    public void EditUserPassport(Guid userId, string seriesAndNumber, string issuedBy, DateTime dateOfBirth,
+    public async Task EditUserPassport(Guid userId, string seriesAndNumber, string issuedBy, DateTime dateOfBirth,
         DateTime issueDate)
     {
-        _bus.PubSub.Publish(new UpdatePassportMessage(userId, seriesAndNumber, issuedBy, dateOfBirth, issueDate));
+        await _bus.PubSub.PublishAsync(new UpdatePassportMessage(userId, seriesAndNumber, issuedBy, dateOfBirth, issueDate));
     }
 
-    public void DeleteFile(Guid userId, DocumentType documentType)
+    public async Task DeleteFile(Guid userId, DocumentType documentType)
     {
-        _bus.PubSub.Publish(new DeleteFileMessage(userId, documentType));
+        await _bus.PubSub.PublishAsync(new DeleteFileMessage(userId, documentType));
     }
 
-    public void UploadFile(Guid userId, DocumentType documentType, IFormFile file)
+    public async Task UploadFile(Guid userId, DocumentType documentType, IFormFile file)
     {
-        _bus.PubSub.Publish(new UploadNewFileMessage(userId, documentType, file));
+        await _bus.PubSub.PublishAsync(new UploadNewFileMessage(userId, documentType, file));
     }
 
 

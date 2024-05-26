@@ -20,7 +20,7 @@ public class GetApplicantListener : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _bus.PubSub.Subscribe<GetApplicantMessage>("applicant_update_subscription_id",
+        await _bus.PubSub.SubscribeAsync<GetApplicantMessage>("applicant_update_subscription_id",
             UpdateStatus);
     }
 

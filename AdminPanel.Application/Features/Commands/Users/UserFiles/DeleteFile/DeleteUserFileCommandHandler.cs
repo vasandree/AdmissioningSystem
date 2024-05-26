@@ -42,7 +42,7 @@ public class DeleteUserFileCommandHandler : IRequestHandler<DeleteUserFileComman
 
         }
 
-        _pubSub.DeleteFile(request.UserId, request.DocumentType);
+        await _pubSub.DeleteFile(request.UserId, request.DocumentType);
 
         return Unit.Value;
     }

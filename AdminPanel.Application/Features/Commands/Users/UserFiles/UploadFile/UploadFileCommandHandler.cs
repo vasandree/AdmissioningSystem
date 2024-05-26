@@ -41,7 +41,7 @@ public class UploadFileCommandHandler : IRequestHandler<UploadFileCommand, Unit>
 
         }
 
-        _pubSub.UploadFile(request.UserId, request.DocumentType, request.File);
+        await _pubSub.UploadFile(request.UserId, request.DocumentType, request.File);
         
         return Unit.Value;
     }

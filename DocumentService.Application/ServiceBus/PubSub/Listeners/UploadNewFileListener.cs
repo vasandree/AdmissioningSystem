@@ -21,7 +21,7 @@ public class UploadNewFileListener : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _bus.PubSub.Subscribe<UploadNewFileMessage>("upload_file_subscription_id", UploadNewFile);
+        await _bus.PubSub.SubscribeAsync<UploadNewFileMessage>("upload_file_subscription_id", UploadNewFile);
     }
 
     private async Task UploadNewFile(UploadNewFileMessage message)

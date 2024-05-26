@@ -22,7 +22,7 @@ public class ManagerAddedListener : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _bus.PubSub.Subscribe<ManagerAddedMessage>("manager_added_subscription_id", SendEmail);
+        await _bus.PubSub.SubscribeAsync<ManagerAddedMessage>("manager_added_subscription_id", SendEmail);
     }
 
     private async Task SendEmail(ManagerAddedMessage message)

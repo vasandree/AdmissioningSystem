@@ -12,13 +12,13 @@ public class PubSubSender
         _bus = bus;
     }
     
-    public void UpdateApplicantRole(Guid userId)
+    public async Task UpdateApplicantRole(Guid userId)
     {
-        _bus.PubSub.Publish(new UpdateUserRoleMessage(userId, "Applicant"));
+        await _bus.PubSub.PublishAsync(new UpdateUserRoleMessage(userId, "Applicant"));
     }
 
-    public void Admission(Guid admissionId)
+    public async Task Admission(Guid admissionId)
     {
-        _bus.PubSub.Publish(new AdmissionMessage(admissionId));
+        await _bus.PubSub.PublishAsync(new AdmissionMessage(admissionId));
     }
 }

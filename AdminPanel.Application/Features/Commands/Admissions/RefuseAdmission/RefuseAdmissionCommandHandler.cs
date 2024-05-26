@@ -33,10 +33,10 @@ public class RefuseAdmissionCommandHandler : IRequestHandler<RefuseAdmissionComm
 
         await _admission.DeleteManager(request.AdmissionId);
         
-        _pubSub.UpdateManager(request.AdmissionId);
+        await _pubSub.UpdateManager(request.AdmissionId);
         
         if (!await _rpc.CheckStatusClosed(admission.Id))
-            _pubSub.UpdateStatus(request.AdmissionId, AdmissionStatus.Created);
+            await _pubSub.UpdateStatus(request.AdmissionId, AdmissionStatus.Created);
         
         return Unit.Value;
     }

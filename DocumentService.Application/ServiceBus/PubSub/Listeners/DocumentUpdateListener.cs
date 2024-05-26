@@ -36,7 +36,7 @@ public class DocumentUpdateListener : BackgroundService
             {
                 var email = await _bus.Rpc.RequestAsync<GetUserEmailRequest, GetUserEmailResponse>(new GetUserEmailRequest(doc.UserId));
                 //todo: check
-                _bus.PubSub.Publish(new UpdatedToEmailMessage(email.Email, $"Your education document with name {doc.Name} was deleted. \\n" +
+                await _bus.PubSub.PublishAsync(new UpdatedToEmailMessage(email.Email, $"Your education document with name {doc.Name} was deleted. \\n" +
                     $"Such education document type was removed from system"));
 
             }

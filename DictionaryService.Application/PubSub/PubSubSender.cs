@@ -15,47 +15,47 @@ public class PubSubSender
     }
 
 
-    public void SoftDeleteDocuments(List<DocumentType> documentsToDelete)
+    public async Task SoftDeleteDocuments(List<DocumentType> documentsToDelete)
     {
         var documentsToDeleteIds = documentsToDelete.Select(doc => doc.Id).ToList();
-        _bus.PubSub.Publish(new DocumentsToDeleteMessage(documentsToDeleteIds));
+        await _bus.PubSub.PublishAsync(new DocumentsToDeleteMessage(documentsToDeleteIds));
         //todo: check
     }
 
-    public void SoftDeletePrograms(List<Program> programsToDelete)
+    public async Task SoftDeletePrograms(List<Program> programsToDelete)
     {
         var programsToDeleteIds = programsToDelete.Select(program => program.Id).ToList();
-        _bus.PubSub.Publish(new ProgramsToDeleteMessage(programsToDeleteIds));
+        await _bus.PubSub.PublishAsync(new ProgramsToDeleteMessage(programsToDeleteIds));
         //todo: check
     }
 
-    public void UpdateDocumentType(DocumentType existingDocumentType)
+    public async Task UpdateDocumentType(DocumentType existingDocumentType)
     {
-        _bus.PubSub.Publish(new UpdateDocumentTypeMessage(existingDocumentType.Id));
+        await _bus.PubSub.PublishAsync(new UpdateDocumentTypeMessage(existingDocumentType.Id));
         //todo: check
     }
 
-    public void UpdateProgram(Program existingProgram)
+    public async Task UpdateProgram(Program existingProgram)
     {
-        _bus.PubSub.Publish(new ProgramToUpdateMessage(existingProgram.Id));
+        await _bus.PubSub.PublishAsync(new ProgramToUpdateMessage(existingProgram.Id));
         //todo: check
     }
     
 
-    public void UpdateDocumentTypesByEducationLevel(List<Guid> documentTypesIds)
+    public async Task UpdateDocumentTypesByEducationLevel(List<Guid> documentTypesIds)
     {
         foreach (var doc in documentTypesIds)
         {
-            _bus.PubSub.Publish(new UpdateDocumentTypeMessage(doc));
+            await _bus.PubSub.PublishAsync(new UpdateDocumentTypeMessage(doc));
             //todo: check
         }
     }
 
-    public void UpdatePrograms(IReadOnlyList<Program> programs)
+    public async Task UpdatePrograms(IReadOnlyList<Program> programs)
     {
         foreach (var program in programs)
         {
-            _bus.PubSub.Publish(new ProgramToUpdateMessage(program.Id));
+            await _bus.PubSub.PublishAsync(new ProgramToUpdateMessage(program.Id));
             //todo: check
         }
     }

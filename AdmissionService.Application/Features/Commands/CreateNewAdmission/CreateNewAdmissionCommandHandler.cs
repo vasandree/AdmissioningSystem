@@ -84,7 +84,7 @@ public class CreateNewAdmissionCommandHandler : IRequestHandler<CreateNewAdmissi
                 EducationDocumentId = educationDoc.Id
             };
 
-            _pubSub.UpdateApplicantRole(applicant.ApplicantId);
+            await _pubSub.UpdateApplicantRole(applicant.ApplicantId);
             await _applicant.CreateAsync(applicant);
         }
 
@@ -103,7 +103,7 @@ public class CreateNewAdmissionCommandHandler : IRequestHandler<CreateNewAdmissi
         
         await _admission.CreateAsync(admission);
 
-        _pubSub.Admission(admission.AdmissionId);
+        await _pubSub.Admission(admission.AdmissionId);
 
     return Unit.Value;
 }

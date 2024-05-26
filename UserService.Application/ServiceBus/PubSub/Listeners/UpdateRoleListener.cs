@@ -21,7 +21,7 @@ public class UpdateRoleListener : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _bus.PubSub.Subscribe<UpdateUserRoleMessage>("update_role_subscription_id",
+        await _bus.PubSub.SubscribeAsync<UpdateUserRoleMessage>("update_role_subscription_id",
             UpdateUserRole);
     }
 

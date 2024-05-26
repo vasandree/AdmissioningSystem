@@ -40,7 +40,7 @@ public class EditUserEducationDocumentCommandHandler : IRequestHandler<EditUserE
 
         }
 
-        _pubSub.EditUserEducationDocument(request.UserId, request.Name);
+        await _pubSub.EditUserEducationDocument(request.UserId, request.Name);
         
         return Unit.Value;
     }

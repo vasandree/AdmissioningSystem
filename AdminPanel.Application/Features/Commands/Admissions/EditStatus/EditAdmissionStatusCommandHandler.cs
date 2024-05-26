@@ -34,7 +34,7 @@ public class EditAdmissionStatusCommandHandler : IRequestHandler<EditAdmissionSt
         if (admission.ManagerId != request.ManagerId)
             throw new Forbidden("You are not a manager of this admission");
         
-        _pubSub.UpdateStatus(request.AdmissionId, request.Status);
+        await _pubSub.UpdateStatus(request.AdmissionId, request.Status);
         
         return Unit.Value;
     }

@@ -21,7 +21,7 @@ public class UpdateListener : BackgroundService
     
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _bus.PubSub.Subscribe<UpdatedToEmailMessage>("email_notification_subscription_id",  SendUpdateEmail);
+        await _bus.PubSub.SubscribeAsync<UpdatedToEmailMessage>("email_notification_subscription_id",  SendUpdateEmail);
     } //todo: check
 
     private async Task SendUpdateEmail(UpdatedToEmailMessage message)

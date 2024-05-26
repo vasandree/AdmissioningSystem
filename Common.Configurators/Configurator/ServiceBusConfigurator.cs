@@ -1,4 +1,3 @@
-using System.Reflection;
 using Common.Configurators.ConfigClasses;
 using EasyNetQ;
 using Microsoft.AspNetCore.Builder;

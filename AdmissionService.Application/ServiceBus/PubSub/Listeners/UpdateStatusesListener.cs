@@ -20,7 +20,7 @@ public class UpdateStatusesListener : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _bus.PubSub.Subscribe<UpdateStatusMessage>("update_statuses_subscription_id",
+        await _bus.PubSub.SubscribeAsync<UpdateStatusMessage>("update_statuses_subscription_id",
             UpdateStatuses);
     }
 

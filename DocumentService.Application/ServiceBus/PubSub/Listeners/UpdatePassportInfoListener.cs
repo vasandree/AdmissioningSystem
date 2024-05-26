@@ -21,7 +21,7 @@ public class UpdatePassportInfoListener : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _bus.PubSub.Subscribe<UpdatePassportMessage>("update_passport_info_subscription_id", UpdatePassport);
+        await _bus.PubSub.SubscribeAsync<UpdatePassportMessage>("update_passport_info_subscription_id", UpdatePassport);
     }
 
     private async Task UpdatePassport(UpdatePassportMessage message)

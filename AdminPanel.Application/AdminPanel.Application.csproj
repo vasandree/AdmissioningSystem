@@ -19,4 +19,8 @@
       <ProjectReference Include="..\Common.Services\Common.Services.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Features\Commands\Account\EditEmail\" />
+    </ItemGroup>
+
 </Project>

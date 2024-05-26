@@ -37,7 +37,7 @@ public class EditUserInfoCommandHandler : IRequestHandler<EditUserInfoCommand, U
 
         }
 
-        _pubSub.UpdateUserInfo(request.UserId, request.FullName, null, null, request.Gender, request.Nationality,
+        await _pubSub.UpdateUserInfo(request.UserId, request.FullName, request.Gender, request.Nationality,
             request.BirthDate);
 
         return Unit.Value;

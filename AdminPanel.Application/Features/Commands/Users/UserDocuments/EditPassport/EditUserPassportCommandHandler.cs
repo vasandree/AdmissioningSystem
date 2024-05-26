@@ -29,7 +29,7 @@ public class EditUserPassportCommandHandler : IRequestHandler<EditUserPassportCo
 
         if (manager.Id == request.UserId)
             throw new BadRequest("You are not allowed to edit your documents as manager");
-        
+
 
         if (!await _rpc.CheckDocumentExistence(request.UserId, DocumentType.Passport))
             throw new BadRequest("Provided user does not have education doc");
@@ -37,12 +37,11 @@ public class EditUserPassportCommandHandler : IRequestHandler<EditUserPassportCo
 
         if (await _repository.CheckIfManager(manager))
         {
-            if (await _rpc.CheckManagersApplicant(request.ManagerId, request.UserId)) 
+            if (await _rpc.CheckManagersApplicant(request.ManagerId, request.UserId))
                 throw new Forbidden("You are not a manager of this applicant");
-
         }
 
-        _pubSub.EditUserPassport(request.UserId, request.SeriesAndNumber, request.IssuedBy, request.DateOfBirth,
+        await _pubSub.EditUserPassport(request.UserId, request.SeriesAndNumber, request.IssuedBy, request.DateOfBirth,
             request.IssueDate);
 
         return Unit.Value;

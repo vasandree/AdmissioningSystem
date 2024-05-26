@@ -33,7 +33,7 @@ public class EditPriorityCommandHandler : IRequestHandler<EditPriorityCommand, U
         if (!await _rpc.CheckPriorityAvailable(request.AdmissionId, request.NewPriority))
             throw new BadRequest("New priority is not available for this user");
         
-        _pubSub.EditAdmissionPriority(request.AdmissionId, request.NewPriority);
+        await _pubSub.EditAdmissionPriority(request.AdmissionId, request.NewPriority);
         
         return Unit.Value;
     }

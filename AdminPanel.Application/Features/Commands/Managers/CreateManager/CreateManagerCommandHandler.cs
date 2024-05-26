@@ -57,9 +57,9 @@ public class CreateManagerCommandHandler : IRequestHandler<CreateManagerCommand,
                 BaseManager = user
             });
 
-            _pubSub.UpdateRole(user.UserId, "Manager", request.FacultyId);
+            await _pubSub.UpdateRole(user.UserId, "Manager", request.FacultyId);
             
-            _pubSub.SendEmail(user.Email, "Manager", request.FacultyId);
+            await _pubSub.SendEmail(user.Email, "Manager", request.FacultyId);
         }
 
 
@@ -74,7 +74,7 @@ public class CreateManagerCommandHandler : IRequestHandler<CreateManagerCommand,
             BaseManager = user
         });
 
-        _pubSub.UpdateRole(user.UserId, "HeadManager");
+        await _pubSub.UpdateRole(user.UserId, "HeadManager");
 
         return Unit.Value;
     }

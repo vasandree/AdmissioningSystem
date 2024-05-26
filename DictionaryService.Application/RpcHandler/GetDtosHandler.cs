@@ -5,7 +5,6 @@ using Common.ServiceBus.RabbitMqMessages;
 using Common.ServiceBus.RabbitMqMessages.Request;
 using Common.ServiceBus.RabbitMqMessages.Response;
 using DictionaryService.Application.Contracts.Persistence;
-using DictionaryService.Domain.Entities;
 using EasyNetQ;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -44,6 +43,22 @@ public class GetDtosHandler : BaseRpcHandler
 
         _bus.Rpc.RespondAsync<GetProgramIdsRequest, GetProgramIdsResponse>(async (request) =>
             HandleException(await GetProgramIds(request)));
+
+        _bus.Rpc.RespondAsync<GetFacultyRequest, GetFacultyResponse>(async (request) =>
+            HandleException(await GetFaculty(request.FacultyId)));
+    }
+
+    private async Task<GetFacultyResponse> GetFaculty(Guid facultyId)
+    {
+        using (var scope = _serviceProvider.CreateScope())
+        {
+            var repository = scope.ServiceProvider.GetRequiredService<IFacultyRepository>();
+            var mapper = scope.ServiceProvider.GetRequiredService<IMapper>();
+
+            var faculty = await repository.GetById(facultyId);
+
+            return new GetFacultyResponse(_mapper.Map<FacultyDto>(faculty));
+        }
     }
 
     private async Task<GetProgramIdsResponse> GetProgramIds(GetProgramIdsRequest request)

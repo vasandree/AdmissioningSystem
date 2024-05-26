@@ -22,7 +22,7 @@ public class AdmissionListener : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _bus.PubSub.Subscribe<AdmissionMessage>("admission_creation_subscription_id", CreateAdmission);
+        await _bus.PubSub.SubscribeAsync<AdmissionMessage>("admission_creation_subscription_id", CreateAdmission);
     }
 
     private async Task CreateAdmission(AdmissionMessage message)

@@ -35,7 +35,7 @@ public class DeleteManagerCommandHandler : IRequestHandler<DeleteManagerCommand,
         
         await _repository.DeleteAsync(manager);
         
-        _pubSub.UpdateRole(manager.UserId, role[0]);
+        await _pubSub.UpdateRole(manager.UserId, role[0]);
 
         return Unit.Value;
     }

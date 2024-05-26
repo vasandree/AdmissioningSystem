@@ -23,7 +23,7 @@ public class DocumentDeleteListener : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-         _bus.PubSub.Subscribe<DocumentsToDeleteMessage>("delete_documents_subscription_id",
+         await _bus.PubSub.SubscribeAsync<DocumentsToDeleteMessage>("delete_documents_subscription_id",
             SoftDeleteDocuments);
     }
 
@@ -38,7 +38,7 @@ public class DocumentDeleteListener : BackgroundService
             {
                 await repository.SoftDelete(doc);
                 var email = await _bus.Rpc.RequestAsync<GetUserEmailRequest, GetUserEmailResponse>(new GetUserEmailRequest(doc.UserId));
-                _bus.PubSub.Publish(new DeletedToEmailMessage(email.Email, $"Your education document with name {doc.Name} was deleted. \\n" +
+                await _bus.PubSub.PublishAsync(new DeletedToEmailMessage(email.Email, $"Your education document with name {doc.Name} was deleted. \\n" +
                     $"Such education document type was removed from system"));
             }
         }

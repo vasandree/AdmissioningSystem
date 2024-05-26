@@ -22,7 +22,7 @@ public class AdmissionDeleteListener : BackgroundService
     
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _bus.PubSub.Subscribe<DeleteAdmissionMessage>("admission_deletion_subscription_id",
+        await _bus.PubSub.SubscribeAsync<DeleteAdmissionMessage>("admission_deletion_subscription_id",
             DeleteAdmission);
     }
 

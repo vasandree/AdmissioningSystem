@@ -21,7 +21,7 @@ public class FileDeleteListener : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _bus.PubSub.Subscribe<DeleteFileMessage>("delete_file_subscription_id", DeleteFile);
+        await _bus.PubSub.SubscribeAsync<DeleteFileMessage>("delete_file_subscription_id", DeleteFile);
     }
 
     private async Task DeleteFile(DeleteFileMessage message)

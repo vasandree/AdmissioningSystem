@@ -12,9 +12,9 @@ public class PubSubSender
         _bus = bus;
     }
 
-    public void UpdateStatus(Guid userId)
+    public async Task UpdateStatus(Guid userId)
     {
-        _bus.PubSub.Publish(new UpdateStatusMessage(userId));
+        await _bus.PubSub.PublishAsync(new UpdateStatusMessage(userId));
     }
     
 }

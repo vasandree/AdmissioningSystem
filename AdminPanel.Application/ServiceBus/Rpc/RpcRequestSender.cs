@@ -1,10 +1,11 @@
 using AdminPanel.Application.Features.Queries.Admissions.GetAllAdmissions;
-using Common.Models.Models;
+using Common.Models.Models.Dtos;
 using Common.Models.Models.Enums;
 using Common.ServiceBus.RabbitMqMessages.Request;
 using Common.ServiceBus.RabbitMqMessages.Response;
 using EasyNetQ;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using AdmissionDto = Common.Models.Models.AdmissionDto;
 
 namespace AdminPanel.Application.ServiceBus.Rpc;
 
@@ -143,5 +144,13 @@ public class RpcRequestSender
             await _bus.Rpc.RequestAsync<GetPassportRequest, GetPassportResponse>(new GetPassportRequest(applicantId));
         
         return response;
+    }
+
+    public async Task<FacultyDto?> GetFaculty(Guid facultyId)
+    {
+        var response =
+            await _bus.Rpc.RequestAsync<GetFacultyRequest, GetFacultyResponse>(new GetFacultyRequest(facultyId));
+
+        return response.Faculty;
     }
 }
