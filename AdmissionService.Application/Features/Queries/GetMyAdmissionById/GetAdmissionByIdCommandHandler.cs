@@ -1,8 +1,9 @@
 using AdmissionService.Application.Contracts.Persistence;
 using AdmissionService.Application.Dtos.Responses;
-using AdmissionService.Application.RPC;
+using AdmissionService.Application.ServiceBus.RPC;
 using AutoMapper;
 using Common.Models.Exceptions;
+using Common.Models.Models;
 using MediatR;
 
 namespace AdmissionService.Application.Features.Queries.GetMyAdmissionById;
@@ -24,7 +25,7 @@ public class GetAdmissionByIdCommandHandler : IRequestHandler<GetAdmissionByIdCo
     }
 
     public async Task<AdmissionDto> Handle(GetAdmissionByIdCommand request, CancellationToken cancellationToken)
-    {//todo: check
+    {
         if (!await _applicant.CheckIfApplicantExists(request.UserId))
             throw new BadRequest("Applicant does not have any admissions yet");
 

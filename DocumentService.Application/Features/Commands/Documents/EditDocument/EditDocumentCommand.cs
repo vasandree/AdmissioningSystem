@@ -1,4 +1,4 @@
-using DocumentService.Domain.Enums;
+using Common.Models.Models.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 

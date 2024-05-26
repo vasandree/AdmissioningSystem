@@ -18,4 +18,5 @@ public interface IUserRepository : IGenericRepository<ApplicationUser>
     Task AddRole(ApplicationUser user, string role);
 
     Task DeleteRole(ApplicationUser user, string role);
+    Task<ApplicationUser> GetAdmin();
 }

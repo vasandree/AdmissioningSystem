@@ -1,8 +1,11 @@
 using Common.Models.Exceptions;
+using Common.Models.Models.Dtos;
+using Common.Models.Models.Enums;
 using DocumentService.Application.Contracts.Persistence;
 using DocumentService.Application.Dtos.Requests;
+using DocumentService.Application.ServiceBus.PubSub.Sender;
+using DocumentService.Application.ServiceBus.RPC.RpcSender;
 using DocumentService.Domain.Entities;
-using DocumentService.Domain.Enums;
 using MediatR;
 
 namespace DocumentService.Application.Features.Commands.PassportInfo.AddPassportInfo;
@@ -10,14 +13,22 @@ namespace DocumentService.Application.Features.Commands.PassportInfo.AddPassport
 public class AddPassportInfoCommandHandler : IRequestHandler<AddPassportInfoCommand, Unit>
 {
     private readonly IDocumentRepository<Passport> _passport;
+    private readonly RpcRequestSender _rpc;
+    private readonly PubSubSender _pubSub;
 
-    public AddPassportInfoCommandHandler(IDocumentRepository<Passport> passport)
+    public AddPassportInfoCommandHandler(IDocumentRepository<Passport> passport, RpcRequestSender rpc, PubSubSender pubSub)
     {
         _passport = passport;
+        _rpc = rpc;
+        _pubSub = pubSub;
     }
 
     public async Task<Unit> Handle(AddPassportInfoCommand request, CancellationToken cancellationToken)
     {
+        if (await _rpc.CheckStatusClosed(request.UserId))
+            throw new BadRequest("You cannot edit your profile, because one of your admissions is closed");
+
+        
         if (await _passport.CheckExistence(request.UserId))
         {
             await ModifyExistingEntity(request.PassportInfo, request.UserId);
@@ -27,6 +38,9 @@ public class AddPassportInfoCommandHandler : IRequestHandler<AddPassportInfoComm
             await CreateNewPassportEntity(request.PassportInfo, request.UserId);
         }
 
+        _pubSub.UpdateStatus(request.UserId);
+
+        
         return Unit.Value;
     }
 

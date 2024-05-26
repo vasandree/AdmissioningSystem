@@ -1,3 +1,4 @@
+using Common.Models.Models.Dtos;
 using DocumentService.Application.Dtos.Requests;
 using DocumentService.Application.Features.Commands.PassportInfo.AddPassportInfo;
 using DocumentService.Application.Features.Commands.PassportInfo.DeletePassportInfo;

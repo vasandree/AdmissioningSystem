@@ -2,6 +2,7 @@ using AdmissionService.Application.Contracts.Persistence;
 using AdmissionService.Domain.Entities;
 using AdmissionService.Infrastructure;
 using Common.Models.Models.Dtos;
+using Common.Models.Models.Enums;
 using Common.Services.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -124,5 +125,15 @@ public class AdmissionRepository : GenericRepository<Admission>, IAdmissionRepos
     public bool CheckIfProgramIsChosen(Guid userId, Guid programId)
     {
         return _context.Admissions.Any(x => x.ApplicantId == userId && x.ProgramId == programId);
+    }
+
+    public Task<bool> CheckClosed(Guid userId)
+    {
+        return _context.Admissions.AnyAsync(x => x.ApplicantId == userId && x.Status == AdmissionStatus.Closed);
+    }
+
+    public IQueryable<Admission> GetAsQueryable()
+    {
+        return _context.Admissions.AsQueryable();
     }
 }

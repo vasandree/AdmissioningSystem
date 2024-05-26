@@ -1,5 +1,5 @@
 using AutoMapper;
-using DocumentService.Application.Dtos.Responses;
+using Common.Models.Models.Dtos;
 using DocumentService.Domain.Entities;
 
 namespace DocumentService.Application.AutoMapper;

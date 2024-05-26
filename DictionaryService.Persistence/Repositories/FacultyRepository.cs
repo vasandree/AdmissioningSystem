@@ -69,4 +69,10 @@ public class FacultyRepository : DictionaryRepository<Faculty>, IFacultyReposito
     {
         return await _context.Faculties.AnyAsync(x => x.Id == id);
     }
+
+    public async Task<bool> CheckIfNotDeleted(Guid id)
+    {
+        var faculty = await GetById(id);
+        return !faculty.IsDeleted;
+    }
 }

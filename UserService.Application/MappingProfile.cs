@@ -1,5 +1,6 @@
 using System.Runtime.Intrinsics.X86;
 using AutoMapper;
+using Common.Models.Models.Dtos;
 using UserApi.Domain.DbEntities;
 using UserService.Application.Dtos.Requests;
 using UserService.Application.Dtos.Responses;

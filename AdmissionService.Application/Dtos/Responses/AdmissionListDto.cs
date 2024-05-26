@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
-using AdmissionService.Application.Dtos.CustomValidationAttributes;
+using AdmissionService.Application.Dtos.CustomValidationAtrribute;
+using Common.Models.Models.Enums;
 
 namespace AdmissionService.Application.Dtos.Responses;
 
@@ -14,4 +15,7 @@ public class AdmissionListDto
     
     [Required]
     public string ProgramName { get; set; }
+    
+    [Required]
+    public AdmissionStatus Status { get; set; }
 }

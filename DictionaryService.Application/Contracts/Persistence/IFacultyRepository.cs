@@ -19,4 +19,6 @@ public interface IFacultyRepository : IDictionaryRepository<Faculty>
     Faculty Convert(JObject jsonFaculty);
 
     Task<bool> CheckIfExists(Guid id);
+
+    Task<bool> CheckIfNotDeleted(Guid id);
 }

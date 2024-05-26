@@ -1,9 +1,9 @@
 
 using Common.Models.Consts.DocumentService;
 using Common.Models.Exceptions;
+using Common.Models.Models.Enums;
 using DocumentService.Application.Contracts.Persistence;
 using DocumentService.Domain.Entities;
-using DocumentService.Domain.Enums;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.StaticFiles;
 

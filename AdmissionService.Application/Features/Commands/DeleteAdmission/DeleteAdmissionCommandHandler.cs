@@ -1,7 +1,8 @@
 using AdmissionService.Application.Contracts.Persistence;
 using AdmissionService.Application.Helpers;
-using AdmissionService.Application.PubSub.Senders;
+using AdmissionService.Application.ServiceBus.PubSub.Senders;
 using Common.Models.Exceptions;
+using Common.Models.Models.Enums;
 using MediatR;
 
 namespace AdmissionService.Application.Features.Commands.DeleteAdmission;
@@ -23,17 +24,24 @@ public class DeleteAdmissionCommandHandler : IRequestHandler<DeleteAdmissionComm
 
     public async Task<Unit> Handle(DeleteAdmissionCommand request, CancellationToken cancellationToken)
     {
+        if (await _admission.CheckClosed(request.UserId))
+            throw new BadRequest("You cannot edit info, because your admission is closed");
+        
         if (!await _applicant.CheckIfApplicantExists(request.UserId))
             throw new BadRequest("Applicant does not have any admissions");
         
         if (!await _admission.CheckIfAdmissionExists(request.AdmissionId))
             throw new BadRequest("Provided admission does not exist");
-        //todo: check
+        
         if (!await _admission.CheckIfAdmissionBelongsToApplicant(request.UserId,
                 request.AdmissionId))
             throw new BadRequest("Applicant does not have provided admission");
 
         var admission = await _admission.GetById(request.AdmissionId);
+
+        if (admission.Status == AdmissionStatus.Closed)
+            throw new BadRequest("This admission is closed");
+        
         await _admission.DeleteAsync(admission);
         await _helper.RearrangeAdmissionsByDeletion(request.UserId, admission.Priority);
 
@@ -44,7 +52,7 @@ public class DeleteAdmissionCommandHandler : IRequestHandler<DeleteAdmissionComm
             await _applicant.DeleteAsync(applicant);
         }
            
-        //todo: check
+        _pubSub.Admission(request.AdmissionId);
         
         return Unit.Value;
     }

@@ -5,7 +5,9 @@ using Common.ServiceBus.RabbitMqMessages;
 using Common.ServiceBus.RabbitMqMessages.Request;
 using Common.ServiceBus.RabbitMqMessages.Response;
 using DictionaryService.Application.Contracts.Persistence;
+using DictionaryService.Domain.Entities;
 using EasyNetQ;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DictionaryService.Application.RpcHandler;
@@ -27,7 +29,7 @@ public class GetDtosHandler : BaseRpcHandler
     {
         _bus.Rpc.RespondAsync<EducationDocumentTypeCheckRequest, EducationDocumentTypeCheckResponse>(async (request) =>
             HandleException(await CheckDocumentType(request.DocumentTypeId)));
-        
+
         _bus.Rpc.RespondAsync<GetDocumentTypeDtoRequest, GetDocumentTypeDtoResponse>(async (request) =>
             HandleException(await GetDocumentType(request.DocumentTypeId)));
 
@@ -36,6 +38,43 @@ public class GetDtosHandler : BaseRpcHandler
 
         _bus.Rpc.RespondAsync<GetProgramDtoRequest, GetProgramDtoResponse>(async (request) =>
             HandleException(await GetProgramDto(request.ProgramId)));
+
+        _bus.Rpc.RespondAsync<CheckFacultyRequest, CheckFacultyResponse>(async (request) =>
+            HandleException(await CheckFaculty(request)));
+
+        _bus.Rpc.RespondAsync<GetProgramIdsRequest, GetProgramIdsResponse>(async (request) =>
+            HandleException(await GetProgramIds(request)));
+    }
+
+    private async Task<GetProgramIdsResponse> GetProgramIds(GetProgramIdsRequest request)
+    {
+        using (var scope = _serviceProvider.CreateScope())
+        {
+            var repository = scope.ServiceProvider.GetRequiredService<IProgramRepository>();
+
+            var programs = repository.GetAllAsQueryable();
+
+            var res =  programs.Where(x => request.FacultyIds.Contains(x.Faculty.Id)).Include(x => x.Faculty)
+                .Select(x => x.Id).ToList();
+
+            return new GetProgramIdsResponse(res);
+        }
+    }
+
+    private async Task<CheckFacultyResponse> CheckFaculty(CheckFacultyRequest request)
+    {
+        using (var scope = _serviceProvider.CreateScope())
+        {
+            var repository = scope.ServiceProvider.GetRequiredService<IFacultyRepository>();
+
+            if (!await repository.CheckIfExists(request.FacultyId))
+                return new CheckFacultyResponse(false, new NotFound("Provided document type does not exist"));
+
+            if (!await repository.CheckIfNotDeleted(request.FacultyId))
+                return new CheckFacultyResponse(false, new NotFound("Provided document wsa deleted"));
+
+            return new CheckFacultyResponse(true);
+        }
     }
 
     private async Task<EducationDocumentTypeCheckResponse> CheckDocumentType(Guid documentTypeId)
@@ -45,7 +84,8 @@ public class GetDtosHandler : BaseRpcHandler
             var repository = scope.ServiceProvider.GetRequiredService<IDocumentTypeRepository>();
 
             if (!await repository.CheckExistenceById(documentTypeId))
-                return new EducationDocumentTypeCheckResponse(false, new NotFound("Provided document type does not exist"));
+                return new EducationDocumentTypeCheckResponse(false,
+                    new NotFound("Provided document type does not exist"));
 
             if (await repository.CheckIfNotDeleted(documentTypeId))
                 return new EducationDocumentTypeCheckResponse(false, new NotFound("Provided document wsa deleted"));
@@ -60,12 +100,12 @@ public class GetDtosHandler : BaseRpcHandler
         using (var scope = _serviceProvider.CreateScope())
         {
             var programRepository = scope.ServiceProvider.GetRequiredService<IProgramRepository>();
-            
-            if(!await programRepository.CheckExistenceById(programId))
+
+            if (!await programRepository.CheckExistenceById(programId))
                 return new GetProgramDtoResponse(null, new NotFound("Provided program does not exist"));
 
             var program = await programRepository.GetById(programId);
-            
+
             if (program.IsDeleted)
                 return new GetProgramDtoResponse(null, new NotFound("Provided program was deleted"));
 

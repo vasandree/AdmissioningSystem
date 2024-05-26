@@ -2,8 +2,9 @@ using System.Reflection;
 using Common.Configurators.ConfigClasses;
 using DocumentService.Application.AutoMapper;
 using DocumentService.Application.Helpers;
-using DocumentService.Application.PubSub;
-using DocumentService.Application.RPC;
+using DocumentService.Application.ServiceBus.PubSub.Listeners;
+using DocumentService.Application.ServiceBus.PubSub.Sender;
+using DocumentService.Application.ServiceBus.RPC.RpcSender;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -19,7 +20,13 @@ public static class DocumentServiceConfigurator
         builder.Services.AddScoped<Helper>();
         
         builder.Services.AddScoped<RpcRequestSender>();
+        builder.Services.AddScoped<PubSubSender>();
+        
         builder.Services.AddHostedService<DocumentDeleteListener>();
         builder.Services.AddHostedService<DocumentUpdateListener>();
+        builder.Services.AddHostedService<UpdateDocumentInfoListener>();
+        builder.Services.AddHostedService<UpdatePassportInfoListener>();
+        builder.Services.AddHostedService<FileDeleteListener>();
+        builder.Services.AddHostedService<UploadNewFileListener>();
     }
 }

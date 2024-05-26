@@ -1,7 +1,7 @@
 using AutoMapper;
 using Common.Models.Exceptions;
+using Common.Models.Models.Dtos;
 using DocumentService.Application.Contracts.Persistence;
-using DocumentService.Application.Dtos.Responses;
 using DocumentService.Domain.Entities;
 using MediatR;
 

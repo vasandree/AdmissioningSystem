@@ -1,3 +1,4 @@
+using Common.Configurators.Configurator;
 using NotificationApi.Application.Configurators;
 using NotificationApi.Infrastructure.Configurators;
 
@@ -10,6 +11,8 @@ builder.ConfigureNotificationApplication();
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen();
+
+builder.ConfigureServiceBus();
 
 var app = builder.Build();
 

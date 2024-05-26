@@ -1,5 +1,5 @@
 using System.ComponentModel.DataAnnotations;
-using AdmissionService.Application.Dtos.CustomValidationAttributes;
+using AdmissionService.Application.Dtos.CustomValidationAtrribute;
 
 namespace AdmissionService.Application.Dtos.Requests;
 

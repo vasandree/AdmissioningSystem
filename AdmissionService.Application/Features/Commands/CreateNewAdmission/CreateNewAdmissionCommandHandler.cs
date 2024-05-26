@@ -1,10 +1,10 @@
 using AdmissionService.Application.Contracts.Persistence;
 using AdmissionService.Application.Helpers;
-using AdmissionService.Application.PubSub.Senders;
-using AdmissionService.Application.RPC;
+using AdmissionService.Application.ServiceBus.PubSub.Senders;
+using AdmissionService.Application.ServiceBus.RPC;
 using AdmissionService.Domain.Entities;
-using AdmissionService.Domain.Enums;
 using Common.Models.Exceptions;
+using Common.Models.Models.Enums;
 using MediatR;
 
 namespace AdmissionService.Application.Features.Commands.CreateNewAdmission;
@@ -29,19 +29,20 @@ public class CreateNewAdmissionCommandHandler : IRequestHandler<CreateNewAdmissi
 
     public async Task<Unit> Handle(CreateNewAdmissionCommand request, CancellationToken cancellationToken)
     {
+        if (await _admission.CheckClosed(request.UserId))
+            throw new BadRequest("You cannot edit info, because your admission is closed");
+
         if (!await _admission.CheckIfAdmissionIsAvailable(request.UserId))
             throw new BadRequest("You added the maximum number of programs");
 
         if (_admission.CheckIfProgramIsChosen(request.UserId, request.CreateAdmissionRequest.ProgramId))
             throw new BadRequest("You have already created an admission for this program");
-        
+
         var educationDocId = await _rpc.CheckIfApplicantHasDocument(request.UserId);
 
         if (educationDocId == null)
             throw new BadRequest("You have to add an education document first");
 
-        //todo: check
-        
         var educationDoc = await _rpc.GetEducationDocument(educationDocId.Value);
 
         if (educationDoc == null)
@@ -63,9 +64,8 @@ public class CreateNewAdmissionCommandHandler : IRequestHandler<CreateNewAdmissi
         {
             if (!_admission.CheckIfNewPriorityIsAvailable(request.UserId, request.CreateAdmissionRequest.Priority))
                 throw new BadRequest("New priority is out of range of applicant's admissions");
-
         }
-        
+
         if (await _admission.CheckIfPriorityAvailable(request.UserId, request.CreateAdmissionRequest.Priority) == false)
         {
             await _helper.RearrangeAdmissionsByAddingNewOne(request.UserId, request.CreateAdmissionRequest.Priority);
@@ -83,25 +83,29 @@ public class CreateNewAdmissionCommandHandler : IRequestHandler<CreateNewAdmissi
                 ApplicantId = request.UserId,
                 EducationDocumentId = educationDoc.Id
             };
-            
+
             _pubSub.UpdateApplicantRole(applicant.ApplicantId);
             await _applicant.CreateAsync(applicant);
         }
-           
+
+        var admission = new Admission
+            {
+                AdmissionId = Guid.NewGuid(),
+                ApplicantId = request.UserId,
+                Status = AdmissionStatus.Created,
+                Priority = request.CreateAdmissionRequest.Priority,
+                ProgramId = request.CreateAdmissionRequest.ProgramId,
+                Applicant = applicant,
+                EducationLevelId = program.EducationLevel.Id,
+                IsDeleted = false,
+                ManagerId = null
+            };
         
-        await _admission.CreateAsync(new Admission
-        {
-            AdmissionId = Guid.NewGuid(),
-            ApplicantId = request.UserId,
-            Status = AdmissionStatus.Created,
-            Priority = request.CreateAdmissionRequest.Priority,
-            ProgramId = request.CreateAdmissionRequest.ProgramId,
-            Applicant = applicant,
-            EducationLevelId = program.EducationLevel.Id,
-            IsDeleted = false,
-            ManagerId = null
-        });
-        
-        return Unit.Value;
-    }
+        await _admission.CreateAsync(admission);
+
+        _pubSub.Admission(admission.AdmissionId);
+
+    return Unit.Value;
+}
+
 }

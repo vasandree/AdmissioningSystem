@@ -20,7 +20,10 @@ public class EditPriorityCommandHandler : IRequestHandler<EditPriorityCommand, U
     }
 
     public async Task<Unit> Handle(EditPriorityCommand request, CancellationToken cancellationToken)
-    {//todo: check
+    {
+        if (await _admission.CheckClosed(request.UserId))
+            throw new BadRequest("You cannot edit info, because your admission is closed");
+        
         if (!await _applicant.CheckIfApplicantExists(request.UserId))
             throw new BadRequest("Applicant does not have any admissions");
 

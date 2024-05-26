@@ -15,16 +15,15 @@ public static class NotificationInfrastructureConfigurator
     {
         var rabbitMqConfig = builder.Configuration.GetSection("RabbitMQ").Get<RabbitMQConfig>()!; 
         var connectionString = $"host={rabbitMqConfig.Host};username={rabbitMqConfig.UserName};password={rabbitMqConfig.Password};virtualHost={rabbitMqConfig.VirtualHost}"; 
-
-        var bus = RabbitHutch.CreateBus(connectionString); 
-        bus.Advanced.QueueDeclare("email_queue");
-        builder.Services.AddSingleton<IBus>(bus);
-
         
         builder.Services.Configure<EmailConfig>(builder.Configuration.GetSection("EmailSettings"));
         builder.Services.AddSingleton<IEmailSender, SmtpEmailSender>();
         
         builder.Services.AddHostedService<ResetPasswordCodeListener>();
+        builder.Services.AddHostedService<UpdateListener>();
         builder.Services.AddHostedService<DeletionListener>();
+        builder.Services.AddHostedService<ManagerAddedListener>();
+        builder.Services.AddHostedService<EmailToManagerListener>();
+        builder.Services.AddHostedService<EmailToApplicantListener>();
     }
 }

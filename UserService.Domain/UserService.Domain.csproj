@@ -12,5 +12,9 @@
         <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="8.0.4" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0"/>
     </ItemGroup>
+    
+    <ItemGroup>
+      <ProjectReference Include="..\Common.Models\Common.Models.csproj" />
+    </ItemGroup>
 
 </Project>

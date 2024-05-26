@@ -1,4 +1,4 @@
-using DocumentService.Application.Dtos.Responses;
+using Common.Models.Models.Dtos;
 using MediatR;
 
 namespace DocumentService.Application.Features.Queries.GetEducationDocumentInfo;

@@ -66,4 +66,9 @@ public class UserRepository : GenericRepository<ApplicationUser>, IUserRepositor
     {
         await _userManager.RemoveFromRoleAsync(user, role);
     }
+
+    public async Task<ApplicationUser> GetAdmin()
+    {
+        return  _userManager.GetUsersInRoleAsync("Admin").GetAwaiter().GetResult()[0];
+    }
 }

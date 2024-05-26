@@ -1,5 +1,5 @@
+using Common.Models.Models.Enums;
 using Microsoft.AspNetCore.Identity;
-using UserApi.Domain.Enums;
 
 namespace UserApi.Domain.DbEntities;
 

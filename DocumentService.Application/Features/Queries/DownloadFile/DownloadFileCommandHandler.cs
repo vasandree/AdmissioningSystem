@@ -1,8 +1,8 @@
 using Common.Models.Exceptions;
+using Common.Models.Models.Enums;
 using DocumentService.Application.Contracts.Persistence;
 using DocumentService.Application.Helpers;
 using DocumentService.Domain.Entities;
-using DocumentService.Domain.Enums;
 using MediatR;
 
 namespace DocumentService.Application.Features.Queries.DownloadFile;

@@ -1,8 +1,10 @@
 using Common.Models.Exceptions;
+using Common.Models.Models.Enums;
 using DocumentService.Application.Contracts.Persistence;
 using DocumentService.Application.Helpers;
+using DocumentService.Application.ServiceBus.PubSub.Sender;
+using DocumentService.Application.ServiceBus.RPC.RpcSender;
 using DocumentService.Domain.Entities;
-using DocumentService.Domain.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 
@@ -11,19 +13,27 @@ namespace DocumentService.Application.Features.Commands.Documents.UploadDocument
 public class UploadDocumentRequestHandler : IRequestHandler<UploadDocumentRequest, Unit>
 {
     private readonly Helper _helper;
+    private readonly PubSubSender _pubSub;
+    private readonly RpcRequestSender _rpc;
     private readonly IDocumentRepository<Passport> _passport;
     private readonly IDocumentRepository<EducationDocument> _educationDocument;
 
     public UploadDocumentRequestHandler(Helper helper, IDocumentRepository<Passport> passport,
-        IDocumentRepository<EducationDocument> educationDocument)
+        IDocumentRepository<EducationDocument> educationDocument, RpcRequestSender rpc, PubSubSender pubSub)
     {
         _helper = helper;
         _passport = passport;
         _educationDocument = educationDocument;
+        _rpc = rpc;
+        _pubSub = pubSub;
     }
 
     public async Task<Unit> Handle(UploadDocumentRequest request, CancellationToken cancellationToken)
     {
+        if (await _rpc.CheckStatusClosed(request.Id))
+            throw new BadRequest("You cannot edit your profile, because one of your admissions is closed");
+
+        
         switch (request.DocumentType)
         {
             case DocumentType.Passport:
@@ -65,6 +75,7 @@ public class UploadDocumentRequestHandler : IRequestHandler<UploadDocumentReques
             await _passport.DeleteAsync(existingPassport);
         }
         
+        _pubSub.UpdateStatus(id);
 
         return Unit.Value;
     }
@@ -98,6 +109,8 @@ public class UploadDocumentRequestHandler : IRequestHandler<UploadDocumentReques
             await _educationDocument.UpdateAsync(existingEducationDocument);
         }
 
+        _pubSub.UpdateStatus(id);
+        
         return Unit.Value;
     }
 }

@@ -30,4 +30,6 @@ public interface IAdmissionRepository : IGenericRepository<Admission>
 
     Task<List<Admission>> GetAdmissionsByProgramId(Guid programId);
     bool CheckIfProgramIsChosen(Guid userId, Guid programId);
+    Task<bool> CheckClosed(Guid userId);
+    IQueryable<Admission> GetAsQueryable();
 }

@@ -1,3 +1,4 @@
+using Common.Models.Models.Dtos;
 using MediatR;
 using UserApi.Domain.DbEntities;
 using UserService.Application.Dtos.Responses;

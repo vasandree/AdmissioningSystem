@@ -1,9 +1,9 @@
 using System.Reflection;
 using AdmissionService.Application.Helpers;
 using AdmissionService.Application.MappingProfiles;
-using AdmissionService.Application.PubSub.Listeners;
-using AdmissionService.Application.PubSub.Senders;
-using AdmissionService.Application.RPC;
+using AdmissionService.Application.ServiceBus.PubSub.Listeners;
+using AdmissionService.Application.ServiceBus.PubSub.Senders;
+using AdmissionService.Application.ServiceBus.RPC;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -22,5 +22,11 @@ public static class AdmissionServiceApplicationConfigurator
 
         builder.Services.AddHostedService<ProgramDeletionListener>();
         builder.Services.AddHostedService<ProgramUpdateListener>();
+        builder.Services.AddHostedService<AdmissionDeleteListener>();
+        builder.Services.AddHostedService<AdmissionPriorityChangeListener>();
+        builder.Services.AddHostedService<AdmissionStatusUpdateListener>();
+        builder.Services.AddHostedService<DeleteManagerFromAdmissionListener>();
+        builder.Services.AddHostedService<UpdateStatusesListener>();
+        builder.Services.AddHostedService<GetApplicantListener>();
     }
 }

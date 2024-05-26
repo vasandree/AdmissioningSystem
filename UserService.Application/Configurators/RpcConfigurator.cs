@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
-using UserService.Application.RPCHandler;
+using UserService.Application.ServiceBus.RPC.RPCHandler;
 
 namespace UserService.Application.Configurators;
 

@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using DocumentService.Domain.Enums;
+using Common.Models.Models.Enums;
 
 namespace DocumentService.Domain.Entities;
 

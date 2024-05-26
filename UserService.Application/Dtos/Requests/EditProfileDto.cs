@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Common.Models.Models.Enums;
 using Common.Models.Models.ValidationAttributes;
 using UserApi.Domain.Enums;
 

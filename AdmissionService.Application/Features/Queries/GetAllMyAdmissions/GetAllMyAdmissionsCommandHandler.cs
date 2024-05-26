@@ -1,12 +1,13 @@
 using AdmissionService.Application.Contracts.Persistence;
 using AdmissionService.Application.Dtos.Responses;
-using AdmissionService.Application.RPC;
+using AdmissionService.Application.ServiceBus.RPC;
 using AutoMapper;
+using Common.Models.Models;
 using MediatR;
 
 namespace AdmissionService.Application.Features.Queries.GetAllMyAdmissions;
 
-public class GetAllMyAdmissionsCommandHandler : IRequestHandler<GetAllMyAdmissionsCommand, List<AdmissionListDto>>
+public class GetAllMyAdmissionsCommandHandler : IRequestHandler<GetAllMyAdmissionsCommand, List<AdmissionDto>>
 {
     private readonly IAdmissionRepository _admission;
     private readonly IMapper _mapper;
@@ -19,16 +20,15 @@ public class GetAllMyAdmissionsCommandHandler : IRequestHandler<GetAllMyAdmissio
         _rpc = rpc;
     }
 
-    public async Task<List<AdmissionListDto>> Handle(GetAllMyAdmissionsCommand request, CancellationToken cancellationToken)
-    {//todo: check
+    public async Task<List<AdmissionDto>> Handle(GetAllMyAdmissionsCommand request, CancellationToken cancellationToken)
+    {
         var admissions = await _admission.GetApplicantsAdmissions(request.UserId);
 
-        var resultDto = new List<AdmissionListDto>();
+        var resultDto = new List<AdmissionDto>();
         foreach (var admission in admissions)
         {
-            var dto = _mapper.Map<AdmissionListDto>(admission);
+            var dto = _mapper.Map<AdmissionDto>(admission);
             var program = await _rpc.GetProgram(admission.ProgramId);
-            dto.ProgramName = program!.Name;
             
             resultDto.Add(dto);
         }

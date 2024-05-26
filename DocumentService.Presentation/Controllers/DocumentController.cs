@@ -1,8 +1,8 @@
+using Common.Models.Models.Enums;
 using DocumentService.Application.Features.Commands.Documents.DeleteDocument;
 using DocumentService.Application.Features.Commands.Documents.EditDocument;
 using DocumentService.Application.Features.Commands.Documents.UploadDocument;
 using DocumentService.Application.Features.Queries.DownloadFile;
-using DocumentService.Domain.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
