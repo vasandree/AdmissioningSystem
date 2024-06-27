@@ -34,8 +34,8 @@ public class SendEmailCodeHandler : IRequestHandler<SendEmailCode, Unit>
             {
                 Email = user.Email!,
                 ConfirmCode = confirmCode
-            };
-             _bus.PubSub.Publish(notificationMessage, cancellationToken: cancellationToken);
+            }; 
+            _bus.PubSub.Publish(notificationMessage, cancellationToken: cancellationToken);
 
             return Unit.Value;
         }
